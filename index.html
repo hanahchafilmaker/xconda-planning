@@ -1,0 +1,1325 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>XCONDA 기획 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f4f1;--surface:#fff;--surface2:#ecece7;--ink:#171713;--ink2:#55554e;--line:#dcdcd2;--yellow:#f2b705;--yellow-soft:#fff3c4;--red:#b91c1c;--red-bg:#fdecea;--green:#166534;--green-bg:#e6f4ea;--amber:#92400e;--amber-bg:#fef3c7;--blue-bg:#dbeafe;--blue:#1e40af;--mono:'IBM Plex Mono',monospace}
+@media (prefers-color-scheme:dark){:root{--bg:#121210;--surface:#1c1c19;--surface2:#262622;--ink:#f2f1ea;--ink2:#b3b2a6;--line:#33332c;--yellow-soft:#3a2f05;--red-bg:#3a1713;--green-bg:#14301f;--amber-bg:#382a0d;--red:#ff9a8a;--green:#7fd99a;--amber:#fbbf24;--blue-bg:#1e3a5f;--blue:#93c5fd}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6;font-size:15px}
+a{color:inherit}button,select,summary{min-height:40px}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 18px 60px}
+.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap;padding:8px 0 18px;border-bottom:3px solid var(--ink)}
+.top h1{font-size:clamp(28px,5vw,42px);line-height:1.08;letter-spacing:-.03em;margin:0;font-weight:900}.top h1 span{background:var(--yellow);padding:0 8px;color:#171713}
+.top p{margin:10px 0 0;color:var(--ink2);font-size:14.5px;max-width:640px}
+.top-meta{font-family:var(--mono);font-size:12.5px;text-align:right;color:var(--ink2);line-height:1.9}.top-meta b{color:var(--ink)}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 16px;border:1.5px solid var(--ink);border-radius:999px;font-weight:700;font-size:13.5px;text-decoration:none;background:var(--surface);cursor:pointer;color:var(--ink)}.btn.primary{background:var(--ink);color:var(--bg)}
+/* status strip */
+.strip{margin-top:18px;background:var(--ink);color:#f5f4ee;border-radius:16px;padding:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media (prefers-color-scheme:dark){.strip{background:#f2f1ea;color:#171713}}
+.strip .cell{padding:4px 6px}.strip .k{font-size:12.5px;font-weight:700;opacity:.7;letter-spacing:.02em}.strip .v{font-size:21px;font-weight:900;letter-spacing:-.02em;line-height:1.25;margin-top:2px}.strip .s{font-size:13px;opacity:.8;margin-top:2px}.strip .v em{font-style:normal;color:#b91c1c;background:var(--yellow);padding:0 6px;border-radius:6px}
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px}.kpi .num{font-size:38px;font-weight:900;letter-spacing:-.03em;line-height:1}.kpi .num small{font-size:15px;font-weight:700;color:var(--ink2)}.kpi .lab{font-size:13.5px;color:var(--ink2);margin-top:8px;font-weight:600}.kpi.bad .num{color:var(--red)}
+section{margin-top:40px}.sec-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}.sec-head h2{font-size:23px;letter-spacing:-.02em;margin:0;font-weight:900}.sec-head .no{font-family:var(--mono);font-size:12px;background:var(--yellow);color:#171713;padding:3px 9px;border-radius:999px;font-weight:600}.sec-sub{color:var(--ink2);font-size:14px;margin:0 0 18px;max-width:760px}
+/* blockers */
+.blockers{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.blocker{background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--red);border-radius:16px;padding:20px}.blocker h3{margin:0 0 8px;font-size:17px}.blocker p{margin:0;font-size:14px;color:var(--ink2)}.blocker .tag{display:inline-block;font-family:var(--mono);font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:999px;background:var(--red-bg);color:var(--red);margin-bottom:12px}
+/* rhythm flow */
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr 1.2fr;gap:10px;align-items:stretch}
+.fstep{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:18px}.fstep .stepno{font-family:var(--mono);font-size:12px;color:var(--ink2);font-weight:600}.fstep b{display:block;font-size:17px;margin:4px 0 6px}.fstep p{margin:0;font-size:13.5px;color:var(--ink2)}
+.farrow{display:grid;place-items:center;font-size:22px;font-weight:900;color:var(--ink2)}
+.fstep.fast{background:#171713;color:#f5f4ee;border-color:#171713}.fstep.fast p{color:#d8d8d0}.fstep.fast .stepno{color:var(--yellow)}
+.sheet-note{margin-top:12px;background:var(--surface);border:1.5px dashed var(--ink2);border-radius:12px;padding:13px 16px;font-size:13.5px;color:var(--ink2)}.sheet-note b{color:var(--ink)}
+/* timeline */
+.tl{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px 20px}.tl li{display:flex;gap:16px;padding:15px 0;border-bottom:1px solid var(--line)}.tl li:last-child{border-bottom:0}.tl .d{font-family:var(--mono);font-weight:600;font-size:13.5px;white-space:nowrap;padding-top:2px;min-width:92px}.tl .d em{display:block;font-style:normal;font-size:11.5px;color:var(--red);font-weight:600}.tl b{font-size:15.5px;display:block}.tl p{margin:2px 0 0;font-size:13.5px;color:var(--ink2)}
+/* sticky task toolbar */
+.ttoolbar{position:sticky;top:0;z-index:30;background:var(--bg);padding:14px 0 10px;border-bottom:2px solid var(--ink)}
+.viewbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.vbtn{padding:10px 18px;border-radius:999px;border:1.5px solid var(--ink);background:var(--surface);font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;color:var(--ink)}.vbtn.on{background:var(--ink);color:var(--bg)}.vbtn .cnt{font-family:var(--mono);font-size:12px;opacity:.65;font-weight:600}
+.ffilters{display:flex;gap:8px;flex-wrap:wrap}.ffilters select{padding:9px 12px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-family:inherit;font-weight:700;font-size:13.5px;color:var(--ink);cursor:pointer;max-width:100%}
+.tcount{font-family:var(--mono);font-size:12.5px;color:var(--ink2);margin:8px 0 0}
+/* task groups */
+.tgroup{margin-top:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface);overflow:hidden}
+.group-head{width:100%;display:flex;gap:12px;align-items:center;text-align:left;background:var(--surface2);border:0;padding:16px 18px;font-family:inherit;cursor:pointer;color:var(--ink);flex-wrap:wrap}
+.glabel{font-size:17px;font-weight:900;letter-spacing:-.01em}.gmeta{font-size:13px;color:var(--ink2);font-weight:600}.chev{margin-left:auto;font-size:18px;transition:transform .2s}.tgroup:not(.open) .group-body{display:none}.tgroup.open .chev{transform:rotate(180deg)}
+.tcard{padding:18px;border-top:1px solid var(--line)}.tcard.hide{display:none}
+.tmain{display:flex;gap:16px;justify-content:space-between;align-items:flex-start}
+.tleft{min-width:0;flex:1}.tidrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:7px}.tid{font-family:var(--mono);font-weight:600;font-size:14px}
+.ttitle{margin:0;font-size:16.5px;line-height:1.45;letter-spacing:-.01em;font-weight:800}
+.chip{font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;background:var(--surface2);color:var(--ink2);white-space:nowrap}.chip.fast{background:var(--red);color:#fff}.chip.track{background:var(--yellow-soft);color:var(--ink)}
+.tchips{display:flex;flex-direction:column;gap:7px;align-items:flex-end;flex:none}
+.chip.due{font-family:var(--mono);font-weight:600}.chip.due.overdue{background:var(--red);color:#fff}
+.chip.status.st-doing{background:var(--amber-bg);color:var(--amber)}.chip.status.st-done{background:var(--green-bg);color:var(--green)}.chip.status.st-check{background:var(--red-bg);color:var(--red)}.chip.status.st-todo{background:var(--surface2);color:var(--ink2)}.chip.status.st-other{background:var(--surface2);color:var(--ink)}
+.owner{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700}.owner select{padding:7px 10px;border-radius:9px;border:1.5px solid var(--line);background:var(--surface);font-family:inherit;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;max-width:170px}
+.detail-btn{border:1.5px solid var(--line);background:transparent;border-radius:9px;padding:6px 12px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;color:var(--ink)}
+.tdetail{margin-top:12px;background:var(--surface2);border-radius:12px;padding:14px 16px}.tdetail p{margin:0}.tfull{font-size:14.5px;line-height:1.65}.tsrc{margin-top:8px!important;font-size:12.5px;color:var(--ink2);font-family:var(--mono)}
+.tempty{text-align:center;color:var(--ink2);font-size:14px;padding:22px}
+/* decisions summary */
+.dec-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.dsum{text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:15px 16px;font-family:inherit;cursor:pointer;color:var(--ink)}.dsum.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}.dsum .did{font-family:var(--mono);font-weight:600;font-size:13px;display:block}.dsum .dq{font-size:14px;font-weight:700;display:block;margin:6px 0 9px;line-height:1.45}
+.pill{font-size:11.5px;font-weight:800;padding:4px 9px;border-radius:999px;white-space:nowrap}.pill.ok{background:var(--green-bg);color:var(--green)}.pill.wait{background:var(--amber-bg);color:var(--amber)}
+.dec-detail{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px}.dec-detail h3{margin:0 0 10px;font-size:17px}.dec-detail .ans{background:var(--surface2);border-radius:10px;padding:13px 15px;font-size:14.5px;font-weight:600;line-height:1.65}.dec-detail .meta{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}.dec-detail .blocks{font-family:var(--mono);font-size:12px;color:var(--ink2)}
+.copy{border:1.5px solid var(--ink);background:transparent;border-radius:9px;padding:8px 14px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;color:var(--ink)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.fbtn{padding:9px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-family:inherit;font-weight:700;font-size:13.5px;cursor:pointer;color:var(--ink)}.fbtn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+/* folds + wbs + tracks + checks */
+details.fold{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:0 20px;margin-top:12px}
+details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 0;list-style:none}details.fold summary::-webkit-details-marker{display:none}details.fold .fold-body{padding-bottom:20px}
+.wbs-total{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;flex-wrap:wrap}.wbs-total .big{font-size:38px;font-weight:900;letter-spacing:-.03em}
+.bar{display:flex;height:46px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}.bar div{display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12.5px;font-weight:600;color:#171713;min-width:0;overflow:hidden;white-space:nowrap}.bar .a{background:var(--yellow);width:54.7%}.bar .b{background:#9ec5e8;width:28.3%}.bar .c{background:#c9c9bf;width:13.2%}.bar .d{background:#f2b705;width:3.8%;font-size:11px}
+.wbs-rows{margin-top:14px;display:grid;gap:8px}.wbs-row{display:flex;justify-content:space-between;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 15px;font-size:14px;flex-wrap:wrap}.wbs-row b{font-family:var(--mono)}.wbs-note{font-size:13px;color:var(--ink2);margin-top:10px}
+.tracks{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.track{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:18px}.track h3{margin:0 0 4px;font-size:16.5px}.track .st{font-family:var(--mono);font-size:11.5px;font-weight:600;margin-bottom:10px;display:inline-block;padding:4px 9px;border-radius:999px}.st.go{background:var(--green-bg);color:var(--green)}.st.hold{background:var(--amber-bg);color:var(--amber)}.track ul{margin:0;padding-left:17px;font-size:14px;color:var(--ink2);display:grid;gap:6px}.track ul b{color:var(--ink)}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:12px}.check-card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:18px}.check-card h3{margin:0 0 12px;font-size:15.5px}.check-card ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:14px}.check-card li{display:flex;gap:9px;align-items:flex-start;color:var(--ink2)}.check-card li b{color:var(--ink)}
+.mark{flex:none;width:21px;height:21px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:900;margin-top:1px}.mark.ok{background:var(--green-bg);color:var(--green)}.mark.fix{background:var(--red-bg);color:var(--red)}
+.foot{margin-top:44px;border-top:1px solid var(--line);padding-top:18px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--ink2)}.foot .tabs{font-family:var(--mono);font-size:12px;line-height:1.9}
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,80px);background:var(--ink);color:var(--bg);padding:12px 19px;border-radius:999px;font-size:14px;font-weight:700;transition:transform .25s;z-index:60;max-width:92vw;text-align:center}#toast.show{transform:translate(-50%,0)}
+
+.statline{margin-top:18px;background:var(--ink);color:#f5f4ee;border-radius:16px;padding:16px 18px;display:grid;grid-template-columns:repeat(7,1fr);gap:12px}
+@media (prefers-color-scheme:dark){.statline{background:#f2f1ea;color:#171713}}
+.stat .sk{display:block;font-size:12px;font-weight:700;opacity:.65}
+.stat .sv{font-size:19px;font-weight:900;letter-spacing:-.02em;line-height:1.3}
+.stat .sv small{font-size:12px;font-weight:700;opacity:.75;letter-spacing:0}
+.stat.gate .sv{background:var(--yellow);color:#b91c1c;padding:1px 7px;border-radius:6px;display:inline-block}
+.fastbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:22px}
+.fastbox-head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}.fastbox-head b{font-size:16.5px}.fastbox-head span{font-size:13px;color:var(--ink2)}
+.fastlist{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 22px;list-style:none;margin:13px 0 0;padding:0}
+.fastlist li{font-size:14px;display:flex;gap:9px;align-items:baseline}.fastlist b{font-family:var(--mono);font-size:13px;background:var(--red);color:#fff;padding:2px 8px;border-radius:999px;flex:none}
+.subh{font-size:16.5px;margin:24px 0 10px;font-weight:900}
+.dmeta{display:block;font-family:var(--mono);font-size:11.5px;color:var(--ink2);margin-top:8px}
+.bigfold{margin-top:40px}.bigfold>summary{font-size:19px}
+.bigfold .links{margin-top:0}
+@media(max-width:820px){.statline{grid-template-columns:repeat(2,1fr)}.fastlist{grid-template-columns:1fr}}
+@media(max-width:900px){.flow{grid-template-columns:1fr}.farrow{transform:rotate(90deg);padding:2px}.tracks{grid-template-columns:1fr}}
+@media(max-width:820px){.strip{grid-template-columns:1fr 1fr}.kpis{grid-template-columns:1fr 1fr}.blockers,.checks,.dec-sum{grid-template-columns:1fr 1fr}.top-meta{text-align:left}.tmain{flex-direction:column}.tchips{flex-direction:row;flex-wrap:wrap;align-items:center}}
+@media(max-width:480px){.strip,.kpis,.blockers,.checks,.dec-sum{grid-template-columns:1fr}.wrap{padding:16px 14px 52px}.ttitle{font-size:16px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div><h1>XCONDA<br><span>기획 대시보드</span></h1>
+  <p>급한 것만 먼저 보여요. 나머지는 아래 「전체 보기」 안에 접어 뒀어요. 숫자는 v0.3 시트 2026-11-13 저녁 전수 대조 기준이에요.</p>
+  </div>
+  <div class="top-meta">기준 시각 <b>2026-11-13 (금) 21:17</b><br>담당 <b>차하나 PM · 전유준 · 권태윤</b></div>
+</header>
+
+<!-- 지금 상태 한 줄 -->
+<div class="statline" role="status" aria-label="지금 상태 한 줄 요약">
+  <div class="stat"><span class="sk">요구</span><span class="sv">46건</span></div>
+  <div class="stat"><span class="sk">기능</span><span class="sv">74건</span></div>
+  <div class="stat"><span class="sk">WBS</span><span class="sv">13.25MD</span></div>
+  <div class="stat"><span class="sk">QA TC</span><span class="sv">74건 <small>판정 0/74</small></span></div>
+  <div class="stat"><span class="sk">커버리지</span><span class="sv">87%</span></div>
+  <div class="stat"><span class="sk">미결</span><span class="sv">31건</span></div>
+  <div class="stat gate"><span class="sk">배포 게이트</span><span class="sv">미통과 <small>PAY-E2E 차단</small></span></div>
+</div>
+
+<!-- 2. 지금 급한 것 -->
+<section id="blockers">
+  <div class="sec-head"><span class="no">01</span><h2>지금 급한 것</h2></div>
+  <p class="sec-sub">월요일을 기다리지 않는 패스트트랙 8건, 11/18 운영 배포를 막는 블로커 4건, 이번 주 일정이에요.</p>
+  <div class="fastbox">
+    <div class="fastbox-head"><b>패스트트랙 — 즉시 착수 8건</b><span>신규 AI 모델 · 비상사태 · 오류 대응 · 결제 · 보안</span></div>
+    <ul class="fastlist">
+      <li><b>T-06</b> 결제 PortOne V2</li>
+      <li><b>T-07</b> 턴 / Kling 연동</li>
+      <li><b>T-14</b> 핵심 결제 보안 수정 (최우선)</li>
+      <li><b>T-25</b> test.xconda.ai 차단</li>
+      <li><b>T-44</b> Seedream 5.5 UI 반영</li>
+      <li><b>T-47</b> MiniMax H3 UID·GID + $100 크레딧</li>
+      <li><b>T-48</b> MiniMax H3 테스트 장면 5개</li>
+      <li><b>T-49</b> MiniMax H3 API 테스트 화면</li>
+    </ul>
+  </div>
+  <h3 class="subh">블로커 4건</h3>
+  <div class="blockers">
+    <article class="blocker"><span class="tag">배포 차단 · PAY-E2E · 11/17</span><h3>PAY-E2E 게이트 미통과 — 11/18 배포 차단 조건</h3><p>TC-PAY-005 (KRW 1건 + USD 1건) 통과와 증빙 캡처가 필요해요. 미통과면 11/18 운영 배포를 할 수 없어요. 이게 지금 게이트가 “미통과”인 이유예요. (T-82)</p></article>
+    <article class="blocker"><span class="tag">검증 수단 없음 · 결-8</span><h3>결-8 관련 TC가 0건이에요</h3><p>결-1~7은 관련 TC가 연결됐는데(총 22건) 결-8만 0건이라, 확정해도 검증할 방법이 없어요. 결정권자는 v0.3에서 “차하나 PM · 전유준”으로 수정됐어요. (T-94)</p></article>
+    <article class="blocker"><span class="tag">일정 공란 · 턴/Kling</span><h3>TRN/Kling 11행 기한이 전부 비어 있어요</h3><p>TRN-REQ-01~06과 TRN-TAB은 정의됐고 TC-TRN 4건도 있지만, 4탭 TRN/KLING 11행 기한이 공란이라 공수·기한이 여전히 [확인 필요]예요. 지연 불가 트랙이라 가장 위험해요. (T-07)</p></article>
+    <article class="blocker"><span class="tag">미선택 · 결-6 · 11/16 마감</span><h3>결-6 선택지가 아직 안 골라졌어요</h3><p>도면 업로드 용량·형식은 서버 한도 확인 후 결정해야 해요. 한도 확인 없이는 확정안을 쓸 수 없어요. 결-1~8 확정안 8/8 공란, 마감은 11/16이에요.</p></article>
+  </div>
+
+  <div>
+    <h3 class="subh">이번 주 일정</h3>
+    <ul class="tl">
+      <li><span class="d">11/15 (일)</span><div><b>G1 목표 — [초안] 통과 확인</b><p>첫 배포 전제 조건이에요. 통과 확인 전에는 다음 단계로 못 가요.</p></div></li>
+      <li><span class="d">11/16 (월)<em>결정 마감 · 배포일 아님</em></span><div><b>결-1~8 확정 마감</b><p>결-1~8 확정안 마감이에요. 11/16은 배포일이 아니에요.</p></div></li>
+      <li><span class="d">11/17 (화)</span><div><b>test 배포 · TC 74건 판정 실행 · PAY-E2E</b><p>TC 판정 실행 (목표 S1·S2 잔여 0) + PAY-E2E 통과가 11/18 배포 조건이에요.</p></div></li>
+      <li><span class="d">11/18 (수)<em>운영 배포 · 수요일 예외</em></span><div><b>운영 배포</b><p>정기 월요일 배포의 이번 주 예외예요. PAY-E2E 미통과면 배포 금지예요.</p></div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 5. 결정 보드 -->
+<section id="decisions">
+  <div class="sec-head"><span class="no">02</span><h2>결-1~8 확정안</h2></div>
+  <p class="sec-sub">전부 확정안 공란이고 기한은 11/16이에요. 카드를 누르면 추천 문안과 복사 버튼이 아래에 열려요.</p>
+  <div class="filters" role="group" aria-label="결정 필터"><button class="fbtn on" data-f="all">전체 8건</button><button class="fbtn" data-f="ok">바로 확정 가능 6건</button><button class="fbtn" data-f="wait">확인 필요 2건</button></div>
+  <div class="dec-sum" id="decSum"></div>
+  <div class="dec-detail" id="decDetail" hidden></div>
+</section>
+
+<!-- 운영 리듬 -->
+<section id="rhythm">
+  <div class="sec-head"><span class="no">03</span><h2>운영 리듬</h2></div>
+<div class="flow" aria-label="운영 리듬 흐름">
+    <div class="fstep"><span class="stepno">STEP 1</span><b>주간 계획</b><p>한 주 단위로 개발 계획을 세우고 진행해요.</p></div><div class="farrow" aria-hidden="true">→</div>
+    <div class="fstep"><span class="stepno">STEP 2 · 마감</span><b>수정 요청 수요일 마감</b><p>수요일까지 들어온 요청만 그 주 배포에 들어가요. 이후 내용은 다음 주로 넘어가요.</p></div><div class="farrow" aria-hidden="true">→</div>
+    <div class="fstep"><span class="stepno">STEP 3 · 배포</span><b>월요일 배포</b><p>정기 배포는 월요일이에요. 이번 주 일정은 위에 있어요.</p></div>
+    <div class="fstep fast"><span class="stepno">패스트트랙 · 즉시 착수</span><b>월요일을 기다리지 않아요</b><p>신규 AI 모델 · 비상사태 · 오류 대응 · 결제 관련 · 보안 — 이 다섯 가지는 들어오는 즉시 시작해요.</p></div>
+  </div>
+</section>
+
+<!-- 전체 보기 -->
+<details class="fold bigfold" id="allFold"><summary>전체 보기 — 태스크 98건 · WBS 상세 · 트랙별 현황 · 점검 · 링크 ▾</summary><div class="fold-body">
+<!-- 4. 태스크 보드 -->
+<section id="tasks">
+  <h3 style="font-size:19px;margin:4px 0 6px;font-weight:900">전체 태스크 — T-01~T-98</h3>
+  <p class="sec-sub">그룹 제목을 눌러 펼치세요. 행의 「상세」를 누르면 출처와 원문이 보여요. 담당은 직접 골라 지정하세요 — 고른 담당은 이 브라우저에 저장돼요.</p>
+  <div class="ttoolbar">
+    <div class="viewbar" role="group" aria-label="뷰 전환">
+      <button class="vbtn" data-view="plan">기획자 뷰 <span class="cnt" id="cntPlan"></span></button>
+      <button class="vbtn" data-view="dev">개발자 뷰 <span class="cnt" id="cntDev"></span></button>
+      <button class="vbtn on" data-view="all">전체 보기 <span class="cnt" id="cntAll"></span></button>
+    </div>
+    <div class="ffilters">
+      <select id="trackFilter" aria-label="트랙 필터"><option value="all">트랙 전체</option><option value="블로킹보드">블로킹보드</option><option value="결제·턴">결제·턴</option><option value="스트라이프 사고">스트라이프 사고</option><option value="SEO·GEO">SEO·GEO</option><option value="MiniMax·Seedream">MiniMax·Seedream</option><option value="UI개편">UI개편</option><option value="워크스페이스·MCP">워크스페이스·MCP</option><option value="가이드">가이드</option><option value="기타">기타</option></select>
+      <select id="statusFilter" aria-label="상태 필터"><option value="all">상태 전체</option><option value="doing">진행 중</option><option value="todo">미착수</option><option value="check">확인 필요·미결</option><option value="done">완료</option><option value="other">보류·중단 등</option></select>
+      <select id="ownerFilter" aria-label="담당 필터"><option value="all">담당 전체</option><option value="미지정">미지정만</option></select>
+    </div>
+    <p class="tcount" id="tcount" role="status"></p>
+  </div>
+  <div id="tgroups"><div class="tgroup" data-group="fast">
+  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">패스트트랙 — 즉시 착수</span><span class="gmeta">8건 · 월요일을 기다리지 않는 8건이에요. 신규 AI 모델·결제·보안 건입니다.</span><span class="chev" aria-hidden="true">▾</span></button>
+  <div class="group-body"><article class="tcard" data-id="T-06" data-cat="개발" data-track="결제·턴" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-06</span><span class="chip fast">즉시 착수</span><span class="chip track">결제·턴</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">결제 PortOne V2</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/16 (PAY-01~06)</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-06" aria-label="T-06 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">결제 PortOne V2 (v0.3 PAY-REQ-01~07, FN-PAY-01~03) — PAY-01~06 기한 2026-11-16, PAY-E2E 게이트 미통과 (11/18 배포 차단, T-82). PAY-REQ-01 재확인 필요, PAY-REQ-05/06은 TC 0·범위 제외</p><p class="tsrc">출처 · 운영 시트 4_결제 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 결제·턴</p></div>
+</article>
+<article class="tcard" data-id="T-07" data-cat="개발" data-track="결제·턴" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-07</span><span class="chip fast">즉시 착수</span><span class="chip track">결제·턴</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">턴 / Kling 연동</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-07" aria-label="T-07 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">턴/Kling (v0.3 TRN-REQ-01~06 + TRN-TAB 정의됨, TC-TRN-001~004 존재 — TRN-REQ-04/06은 TC 0·범위 제외, Kling 4.0·3.0 Pro·3.0 4K·OMNI·Image O1) — 공수·기한은 여전히 [확인 필요] (4탭 TRN/KLING 11행 기한 공란), 지연 불가</p><p class="tsrc">출처 · 운영 시트 4_결제 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 결제·턴</p></div>
+</article>
+<article class="tcard" data-id="T-14" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-14</span><span class="chip fast">즉시 착수</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">핵심 결제 보안 수정 (최우선)</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 즉시 착수 (패스트트랙: 결제·보안)</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-14" aria-label="T-14 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">핵심 결제 보안 수정 (최우선) — 운영 서버 테스트 결제 크레딧 적립 완전 차단, 결제 확인 API 직접 적립 방지, test·test2 외부 악용 및 운영 DB 영향 경로 차단, Stripe 웹훅 서명 비밀 교체·노출 비밀값 정리, 중복·우회 핵심 보안 테스트</p><p class="tsrc">출처 · 대표 검토 결과 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-25" data-cat="개발" data-track="스트라이프 사고" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-25</span><span class="chip fast">즉시 착수</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">test.xconda.ai 차단</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 요청 당일 중 (날짜 확인 필요)</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-25" aria-label="T-25 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">test.xconda.ai 차단 — 차단 전 access log export (시각·IP·UA·경로·Referer, 사내 보관 + SHA-256) → 전체에 Basic 인증 또는 IP allowlist</p><p class="tsrc">출처 · 차하나 요청 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-44" data-cat="개발" data-track="MiniMax·Seedream" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-44</span><span class="chip fast">즉시 착수</span><span class="chip track">MiniMax·Seedream</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">Seedream 5.5 UI 반영</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/12~12/11 (30일)</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-44" aria-label="T-44 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">Seedream 5.5 UI 반영 — Next 이미지 생성기 모델 목록 별도 추가·Early Access 배지, 4K 비디오 해상도 추가·화이트리스트 계정만 표시 (4K·Next 크레딧 환산 [미정])</p><p class="tsrc">출처 · 차하나 요청 11/13 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · MiniMax·Seedream</p></div>
+</article>
+<article class="tcard" data-id="T-47" data-cat="기획" data-track="MiniMax·Seedream" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-47</span><span class="chip fast">즉시 착수</span><span class="chip track">MiniMax·Seedream</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">MiniMax H3 UID·GID + $100 크레딧</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-47" aria-label="T-47 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">MiniMax H3 계정 UID·GID 확인 + 100달러 크레딧 입금 확인</p><p class="tsrc">출처 · 대표 지시 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · MiniMax·Seedream</p></div>
+</article>
+<article class="tcard" data-id="T-48" data-cat="기획" data-track="MiniMax·Seedream" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-48</span><span class="chip fast">즉시 착수</span><span class="chip track">MiniMax·Seedream</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">MiniMax H3 테스트 장면 5개</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-48" aria-label="T-48 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">MiniMax H3 테스트 장면 5개 선정 (대사/감정/동작/사극 전투/오컬트) + 레퍼런스 5장 이내 정리, Seedance 2.5 결과 먼저 뽑기</p><p class="tsrc">출처 · 대표 지시 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · MiniMax·Seedream</p></div>
+</article>
+<article class="tcard" data-id="T-49" data-cat="개발" data-track="MiniMax·Seedream" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-49</span><span class="chip fast">즉시 착수</span><span class="chip track">MiniMax·Seedream</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">MiniMax H3 API 테스트 화면</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 크레딧 입금 후</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-49" aria-label="T-49 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">MiniMax H3 API 연결 테스트 화면 (장면 넣고 바로 생성)</p><p class="tsrc">출처 · 대표 지시 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · MiniMax·Seedream</p></div>
+</article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
+</div>
+<div class="tgroup" data-group="week">
+  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">이번 주 — 11/16 배포에 닿는 일</span><span class="gmeta">12건 · 기한이 이번 주(11/14~11/18)에 걸린 태스크예요. (11/16은 결정 마감, 11/17 test, 11/18 운영)</span><span class="chev" aria-hidden="true">▾</span></button>
+  <div class="group-body"><article class="tcard" data-id="T-01" data-cat="기획" data-track="블로킹보드" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-01</span><span class="chip track">블로킹보드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">결-1~8 확정</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/16(월)</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-01" aria-label="T-01 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">결-1~8 확정 (차하나 PM / 승인 이진서 대표). v0.3에서 2c_결정_요청 전용 탭으로 분리, 관련 TC 22건 연결 (결-1: 2, 결-2: 3, 결-3: 3, 결-4: 3, 결-5: 5, 결-6: 3, 결-7: 3, 결-8: 0). 확정안 8/8 공란. 결-1·2 기한 시리얼 46342 → 2026-11-16으로 수정, 결-8 결정권자 “차하나 PM · 전유준”으로 수정. 추천안 초안 6건 있음. 결-6은 전유준 확인 필요, 결-8은 사용자 직접 결정 필요</p><p class="tsrc">출처 · 운영 시트 v0.3 2c_결정 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article>
+<article class="tcard" data-id="T-02" data-cat="개발" data-track="블로킹보드" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-02</span><span class="chip track">블로킹보드</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">WBS 13.25MD 개발 — 11/17 test → 11/18 운영</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/18(수) 운영</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-02" aria-label="T-02 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">WBS 13.25MD 개발 — 착수 11/13 → 11/17(화) test → 11/18(수) 운영 (v0.3 분담: 전유준 7.25 / 권태윤 3.75 / 공동 1.75 / 차하나 PM 0.5 — 구 공동 2.25 정정)</p><p class="tsrc">출처 · 운영 시트 3_UI &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article>
+<article class="tcard" data-id="T-08" data-cat="공통" data-track="블로킹보드" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-08</span><span class="chip track">블로킹보드</span><span class="chip cat">공통</span></div>
+    <h3 class="ttitle">배포 게이트 — 11/17 test → 11/18 운영 (PAY-E2E 차단 중)</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/16(월)</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-08" aria-label="T-08 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">배포 게이트 — 11/16은 결정 확정 마감 (배포일 아님). 11/15 G1 [초안] 통과 → 11/16 결정 마감 → 11/17 test 배포·TC 실행 → 11/18(수) 운영 배포 (수요일 예외). 차단 조건: PAY-E2E 게이트 미통과</p><p class="tsrc">출처 · 주간 체크리스트 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article>
+<article class="tcard" data-id="T-28" data-cat="기획" data-track="SEO·GEO" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-28</span><span class="chip track">SEO·GEO</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">UTM v1.0 확정본 MHW 전달</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/16까지</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-28" aria-label="T-28 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">UTM v1.0 확정 버전 MHW 전달 + 캠페인 탭 flexboard_202611, case_kbs_202611 &#x27;확인 필요&#x27;→&#x27;확정&#x27; (UTM v1.0은 11/13 대표 승인됨)</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-31" data-cat="기획" data-track="SEO·GEO" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-31</span><span class="chip track">SEO·GEO</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">도메인·SNS 구분 정리표</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/18까지</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-31" aria-label="T-31 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">도메인·SNS 구분 정리표 — cubeberry.ai·미국 관리 SNS / cuberry.kr·한국 본사 관리 SNS / YouTube·X 관리 주체 후보와 의견</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-32" data-cat="기획" data-track="SEO·GEO" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-32</span><span class="chip track">SEO·GEO</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">cubeberry.ai 도메인 소유권 확인</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/18까지</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-32" aria-label="T-32 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">cubeberry.ai 도메인 소유자·등록기관·관리자 계정 확인 (소유권·복구 권한 포함)</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-35" data-cat="기획" data-track="SEO·GEO" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-35</span><span class="chip track">SEO·GEO</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">만료 Seedance 30% 프로모션 정리 (#12)</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/17</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-35" aria-label="T-35 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">#12 만료 Seedance 30% 프로모션 정리 — 영문 notice 2건 + 영문 홈 노출 제거/종료 표기, 완료 후 영문 홈 직접 확인</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-38" data-cat="개발" data-track="SEO·GEO" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-38</span><span class="chip track">SEO·GEO</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">GitHub 공개 저장소 비공개 전환 검토</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/14까지 보고</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-38" aria-label="T-38 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">GitHub 공개 저장소 XCONDA_info 비공개 전환 검토 — GitHub Pages 허브 중단 여부 확인, 전환 전 키·토큰 점검·교체, 결과 보고</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-39" data-cat="공통" data-track="SEO·GEO" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-39</span><span class="chip track">SEO·GEO</span><span class="chip cat">공통</span></div>
+    <h3 class="ttitle">팀 의견 (a)~(f) 제출</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/16(월) 12시까지</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-39" aria-label="T-39 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">팀 의견 (a)~(f) 스레드 댓글 — (a) Stripe 정정 공지 (b) 일정 서면화 (c) 최소 게시 주기 (d) 웹사이트 재구성 (e) 브랜드북 승인 절차 (f) 유료 광고 사전 승인 조건. 없으면 &#x27;의견 없음&#x27;</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-40" data-cat="기획" data-track="SEO·GEO" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-40</span><span class="chip track">SEO·GEO</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">cuberry.kr 항목별 보고</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/16(월) 12시까지 보고</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-40" aria-label="T-40 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">cuberry.kr 항목별 보고 — 제목·설명 수정안 (11/17 적용), 네이버 서치어드바이저 3가지, GSC 속성 유형·소유 확인 계정·사이트맵·색인 요청, 리치 결과 테스트, Bing 등록 여부</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-52" data-cat="기획" data-track="MiniMax·Seedream" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-52</span><span class="chip track">MiniMax·Seedream</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">가이드 재제작</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/13 / 11/16~11/27</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-52" aria-label="T-52 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">XCONDA 가이드 재제작 — P0 03·04 (기한 11/13), P1 18 신규·19 최신화+편입, P2 20·21·23·24 제작 여부 결정 (11/16~11/27). 역할 분리 결정 (2026-11-13, 큐브베리원 승인): 웹 가이드=영상 중심 한 화면 / 허브=문서+다운로드. 동선: 웹 영상 파악 → 「허브에서 전체 가이드 보기」 → 허브 문서 정독 → 다운로드.</p><p class="tsrc">출처 · 가이드 재제작 계획 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · MiniMax·Seedream</p></div>
+</article>
+<article class="tcard" data-id="T-61" data-cat="개발" data-track="UI개편" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-61</span><span class="chip track">UI개편</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">최종현 개선안 4가지</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 월요일 배포</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-61" aria-label="T-61 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">최종현 개선안 4가지 — 생성 버튼 고정, 프롬프트 글자 크기 조절, 패널 폭 조절, 레퍼런스·결과 크게 보기 (최피디 컨펌본 있음). 주중에 모아서 월요일 배포</p><p class="tsrc">출처 · 슬랙 (최종현) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · UI개편</p></div>
+</article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
+</div>
+<div class="tgroup" data-group="blocking">
+  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">블로킹보드 — 나머지</span><span class="gmeta">4건 · 이번 주·패스트트랙에 안 들어간 블로킹보드 태스크예요.</span><span class="chev" aria-hidden="true">▾</span></button>
+  <div class="group-body"><article class="tcard" data-id="T-03" data-cat="기획" data-track="블로킹보드" data-scat="done" data-status="완료">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-03</span><span class="chip track">블로킹보드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">QA 테스트 시트 만들기 — v0.3에서 완료</h3></div>
+    <div class="tchips"><span class="chip due">기한 · —</span><span class="chip status st-done">완료</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-03" aria-label="T-03 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">QA 테스트 시트 만들기 — v0.3에서 해결됨: 5_QA시트 TC 74건 존재 (UI 65 + PAY 5 + TRN 4, 판정 전부 미실행, S1 20/S2 35/S3 19, P0 47/P1 27). 판정 실행은 T-83으로 이관</p><p class="tsrc">출처 · 전체 점검 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article>
+<article class="tcard" data-id="T-04" data-cat="기획" data-track="블로킹보드" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-04</span><span class="chip track">블로킹보드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">FR-23 기능 추가안</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-04" aria-label="T-04 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">FR-23 — v0.3에서 “미정의 — 기능ID 부여 전까지 범위 제외 (P2)”로 명시됨. 남은 일: FR-23 기능 ID 부여 (다음 차수). 커버리지 미커버 6건 중 1건</p><p class="tsrc">출처 · 전체 점검 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article>
+<article class="tcard" data-id="T-05" data-cat="기획" data-track="블로킹보드" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-05</span><span class="chip track">블로킹보드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">FR-07·FR-22 모순 해소</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-05" aria-label="T-05 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">FR-07·FR-22 — v0.3에서 둘 다 “다음 차수 (11/23~)”로 명시, 범위 제외 표시됨. 남은 것: FR-22 연결 기능 “—”인데 TC-UI-047 존재, FR-22 배지 위치 추가 필요 (11/18 제외, T-87)</p><p class="tsrc">출처 · 전체 점검 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article>
+<article class="tcard" data-id="T-09" data-cat="기획" data-track="블로킹보드" data-scat="other" data-status="보류">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-09</span><span class="chip track">블로킹보드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">체험판·입문용·전문가용 3분할 충돌 (CR-04)</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-other">보류</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-09" aria-label="T-09 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">체험판·입문용·전문가용 3분할 vs REQ-GOV-01 단일 UI 충돌 (CR-04) — 대표 승인 전 요구사항·코드 반영 금지</p><p class="tsrc">출처 · 11/01 일정 협의 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
+</div>
+<div class="tgroup" data-group="stripe">
+  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">스트라이프 사고 — 나머지</span><span class="gmeta">15건 · 사고 대응 중 이번 주·패스트트랙 외 태스크예요.</span><span class="chev" aria-hidden="true">▾</span></button>
+  <div class="group-body"><article class="tcard" data-id="T-10" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-10</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">악용 계정 134개 차단 재확인</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 지시 후 12시간 이내</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-10" aria-label="T-10 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">134개 악용 계정 추가 결제·영상 생성 차단 여부 재확인</p><p class="tsrc">출처 · 대표 1차 지시 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-11" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-11</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">정상 사용자 크레딧 영향 검증</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 지시 후 12시간 이내</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-11" aria-label="T-11 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">정상 사용자 크레딧에 영향이 없는지 검증</p><p class="tsrc">출처 · 대표 1차 지시 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-12" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-12</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">피해금액 재검증</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 지시 후 24시간 이내</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-12" aria-label="T-12 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">피해금액 재검증 — 의심 계정 크레딧 차감 합계 1,808,429크레딧, 소비자가 5원 기준 약 9,042,145원 (잠정). 실제 외부 AI API 원가는 별도 산정</p><p class="tsrc">출처 · 대표 1차 지시 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-13" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-13</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">Stripe 테스트 결제 원인 규명</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 지시 후 24시간 이내 (1차 분석)</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-13" aria-label="T-13 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">Stripe 테스트 결제 원인 규명 — 테스트 API 키 유출 여부, 결제·웹훅 검증 로직 점검, 테스트·운영 결제 환경 완전 분리, 우회·중복 적립 방지</p><p class="tsrc">출처 · 대표 1차 지시 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-15" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-15</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">운영·테스트 GCP 프로젝트 분리</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-15" aria-label="T-15 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">운영·테스트 GCP 프로젝트 분리 (결제 정상화를 지연시키지 않는 방향으로 병행/순차)</p><p class="tsrc">출처 · 대표 검토 결과 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-16" data-cat="개발" data-track="스트라이프 사고" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-16</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">test2 서버 중단 검토</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-16" aria-label="T-16 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">test2 서버 사용 필요성 확인, 불필요 시 증거 보존 후 중단 검토</p><p class="tsrc">출처 · 대표 검토 결과 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-17" data-cat="개발" data-track="스트라이프 사고" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-17</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">실결제 테스트 (내부 계정 소액)</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-17" aria-label="T-17 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">실결제 테스트 — 내부 계정 소액 테스트 (핵심 수정 완료 + 운영 영향 확인 후, 대표 승인 후)</p><p class="tsrc">출처 · 대표 검토 결과 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-18" data-cat="공통" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-18</span><span class="chip track">스트라이프 사고</span><span class="chip cat">공통</span></div>
+    <h3 class="ttitle">Stripe 결제 기능 재개 금지</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 보안 검증 완료까지</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-18" aria-label="T-18 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">Stripe 결제 기능 재개 금지 — 보안 검증 완료 전, 대표 승인 없이 재개하지 않음</p><p class="tsrc">출처 · 대표 1차 지시 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-19" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-19</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">영상 생성 증거 확보 (134개 계정)</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 지시 후 12/36/48시간</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-19" aria-label="T-19 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">영상 생성 증거 확보 (134개 계정) — 생성 이력 전수, 프롬프트 원문·레퍼런스·최종 생성 영상 원본 확보 (URL 만료 전 우선 보존), 계정 UID·작업 ID·생성 일시·모델·차감 크레딧 정리</p><p class="tsrc">출처 · 대표 2차 지시 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-20" data-cat="개발" data-track="스트라이프 사고" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-20</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">계정 간 연관성 분석</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 지시 후 48시간 이내</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-20" aria-label="T-20 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">계정 간 연관성 분석 — 동일 레퍼런스·유사 프롬프트·캐릭터·영상 반복 여부, IP·접속 시간·기기 정보와 생성 기록 교차 분석, 신원 추적 단서 분류</p><p class="tsrc">출처 · 대표 2차 지시 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-21" data-cat="개발" data-track="스트라이프 사고" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-21</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">악용 계정 생성물 확보</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-21" aria-label="T-21 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">악용 계정 생성물 확보 (최종현 요청) — 계정별 생성 영상·이미지(480p·1080p), 프롬프트 원문, 레퍼런스 원본, 모델·설정값. T-19 증거 확보와 겹치므로 통합 관리, 개인·업체를 범인으로 단정하지 않음</p><p class="tsrc">출처 · 슬랙 (최종현) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-22" data-cat="공통" data-track="스트라이프 사고" data-scat="check" data-status="확인 필요">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-22</span><span class="chip track">스트라이프 사고</span><span class="chip cat">공통</span></div>
+    <h3 class="ttitle">악용 계정 삭제 보류 · 증거 보존</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-check">확인 필요</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-22" aria-label="T-22 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">악용 계정 삭제 보류 (수사 증거 보존, 로그·IP·결제 기록 보존) — 한편 11/7~8 일반 가입 사용자 4,284건 삭제 완료 (태윤). 두 집합이 별개인지 확인 필요</p><p class="tsrc">출처 · 대표 1차 지시 / 태윤 보고 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-23" data-cat="공통" data-track="스트라이프 사고" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-23</span><span class="chip track">스트라이프 사고</span><span class="chip cat">공통</span></div>
+    <h3 class="ttitle">최종 사고 분석 보고서 · API 원가</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 지시 후 5영업일 이내</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-23" aria-label="T-23 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">최종 사고 분석 보고서 및 실제 API 원가</p><p class="tsrc">출처 · 대표 1차 지시 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-24" data-cat="공통" data-track="스트라이프 사고" data-scat="done" data-status="완료 (모니터링 중)">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-24</span><span class="chip track">스트라이프 사고</span><span class="chip cat">공통</span></div>
+    <h3 class="ttitle">일반 이메일 신규가입 임시 제한</h3></div>
+    <div class="tchips"><span class="chip due">기한 · —</span><span class="chip status st-done">완료 (모니터링 중)</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-24" aria-label="T-24 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">일반 이메일 신규가입 임시 제한 (전화번호 인증 도입 전까지) — 숨김 처리 완료, 당분간 모니터링 후 진행</p><p class="tsrc">출처 · 태윤 보고 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article>
+<article class="tcard" data-id="T-26" data-cat="기획" data-track="스트라이프 사고" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-26</span><span class="chip track">스트라이프 사고</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">test 관리자 계정 정리</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-26" aria-label="T-26 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">test 관리자 계정 정리 — test 분리 후 admin 받을 직원 메일 지정 (01 계정 제외, 회사·직원 계정만)</p><p class="tsrc">출처 · 태윤 요청 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
+</article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
+</div>
+<div class="tgroup" data-group="seo">
+  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">SEO·GEO / MHW</span><span class="gmeta">10건 · MHW 협업과 검색 노출 관련 태스크예요.</span><span class="chev" aria-hidden="true">▾</span></button>
+  <div class="group-body"><article class="tcard" data-id="T-27" data-cat="공통" data-track="SEO·GEO" data-scat="check" data-status="확인 필요">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-27</span><span class="chip track">SEO·GEO</span><span class="chip cat">공통</span></div>
+    <h3 class="ttitle">MHW 30·60·90일 계획 수신</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/13</span><span class="chip status st-check">확인 필요</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-27" aria-label="T-27 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">MHW 30·60·90일 계획 수신</p><p class="tsrc">출처 · SEO·GEO 실행계획 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-29" data-cat="기획" data-track="SEO·GEO" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-29</span><span class="chip track">SEO·GEO</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">허브 발행 체크리스트 운영</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 상시</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-29" aria-label="T-29 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">허브 발행 체크리스트 운영, 중복 글 정리, AI 모니터링 질문 세트·영문 콘텐츠 브리프</p><p class="tsrc">출처 · SEO·GEO 실행계획 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-30" data-cat="기획" data-track="SEO·GEO" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-30</span><span class="chip track">SEO·GEO</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">뉴스 커버 · Bing 등록 · 색인 요청</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-30" aria-label="T-30 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">뉴스 2건 커버 이미지, Bing 등록·구글 색인 요청, 종료 프로모션 정리</p><p class="tsrc">출처 · SEO·GEO 실행계획 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-33" data-cat="기획" data-track="SEO·GEO" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-33</span><span class="chip track">SEO·GEO</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">X 계정 접근 방식 의견</h3></div>
+    <div class="tchips"><span class="chip due overdue">⚠ 기한 지남 · 11/12 경과</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-33" aria-label="T-33 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">X 계정 접근 방식 의견 제시 (#28, 위임 / 비밀번호 관리자 중, 비밀번호 직접 공유 금지)</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-34" data-cat="기획" data-track="SEO·GEO" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-34</span><span class="chip track">SEO·GEO</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">MHW 개별 계정 권한 부여</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 계정 수령 즉시</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-34" aria-label="T-34 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">MHW 개별 계정 권한 부여 — Notion 초대, GA4(분석가), GSC(제한), YouTube 편집자, Meta 부분 접근 (공용 메일 1개가 아닌 개인 계정으로)</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-36" data-cat="개발" data-track="SEO·GEO" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-36</span><span class="chip track">SEO·GEO</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">JSON-LD #17 초안</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/20까지 (초안)</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-36" aria-label="T-36 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">JSON-LD #17 초안 — xconda.ai Organization을 cubeberry.ai(미국)/cuberry.kr(한국) 서로 다른 @id로 분리, sameAs는 각 측 SNS만. 나서영 정리표와 맞춰보고 초안 먼저 공유</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-37" data-cat="개발" data-track="SEO·GEO" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-37</span><span class="chip track">SEO·GEO</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">개발 우선순위 1 — test 접근 제한 · noindex · 사이트맵</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-37" aria-label="T-37 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">개발 우선순위 1 — test.xconda.ai 접근 제한/noindex #15, /studio/*·/category noindex #16, 허브 사이트맵 갱신·hreflang #18 (사이트맵 406건→약 189건 원인 확인)</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-41" data-cat="기획" data-track="SEO·GEO" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-41</span><span class="chip track">SEO·GEO</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">MHW 결정 업무목록 반영</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-41" aria-label="T-41 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">MHW 자료 5종 대표 결정 내부 업무목록 반영 (blog 신설 안 함, 허브 유지, 새 채널 승인, Cubeberry 표기 등)</p><p class="tsrc">출처 · 대표 결정 11/13 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-42" data-cat="공통" data-track="SEO·GEO" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-42</span><span class="chip track">SEO·GEO</span><span class="chip cat">공통</span></div>
+    <h3 class="ttitle">MHW 창구 원칙</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 상시</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-42" aria-label="T-42 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">MHW 창구 원칙 — Stripe·테스트 서버 질문은 직접 답하지 않고 대표 확인 후 답함. 가격·결제·계정·권한은 대표 확인 후 답함</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article>
+<article class="tcard" data-id="T-43" data-cat="기획" data-track="SEO·GEO" data-scat="done" data-status="완료">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-43</span><span class="chip track">SEO·GEO</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">팩트시트·UTM 선전달</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/08</span><span class="chip status st-done">완료</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-43" aria-label="T-43 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">팩트시트·UTM 규칙 MHW 선전달</p><p class="tsrc">출처 · SEO·GEO 실행계획 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+</article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
+</div>
+<div class="tgroup" data-group="minimax">
+  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">MiniMax · Seedream · 가이드 — 나머지</span><span class="gmeta">4건 · 모델·가이드 관련 나머지 태스크예요.</span><span class="chev" aria-hidden="true">▾</span></button>
+  <div class="group-body"><article class="tcard" data-id="T-45" data-cat="개발" data-track="MiniMax·Seedream" data-scat="done" data-status="완료 (모니터링 중)">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-45</span><span class="chip track">MiniMax·Seedream</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">Seedream 5.5 운영 배포 완료</h3></div>
+    <div class="tchips"><span class="chip due">기한 · —</span><span class="chip status st-done">완료 (모니터링 중)</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-45" aria-label="T-45 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">Seedream 5.5 운영 배포 완료 — 모니터링 필요, 공지 게시 (이미지 첨부, 필요 정보 최대한)</p><p class="tsrc">출처 · 태윤 보고 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · MiniMax·Seedream</p></div>
+</article>
+<article class="tcard" data-id="T-46" data-cat="공통" data-track="MiniMax·Seedream" data-scat="check" data-status="확인 필요">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-46</span><span class="chip track">MiniMax·Seedream</span><span class="chip cat">공통</span></div>
+    <h3 class="ttitle">Seedream 5.5 할인 종료일 확인</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-check">확인 필요</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-46" aria-label="T-46 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">Seedream 5.5 40% 할인 종료일 — 파트너 확정 전 외부 표기 금지</p><p class="tsrc">출처 · 컨텍스트 문서 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · MiniMax·Seedream</p></div>
+</article>
+<article class="tcard" data-id="T-50" data-cat="기획" data-track="MiniMax·Seedream" data-scat="check" data-status="확인 필요">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-50</span><span class="chip track">MiniMax·Seedream</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">MiniMax H3 홍보 문구 컨펌</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-check">확인 필요</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-50" aria-label="T-50 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">MiniMax H3 홍보 문구 컨펌 (2K·최대 15초·네이티브 스테레오, 2K 초당 주류 모델 3분의 1 미만 등)</p><p class="tsrc">출처 · 차하나 요청 11/13 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · MiniMax·Seedream</p></div>
+</article>
+<article class="tcard" data-id="T-51" data-cat="기획" data-track="MiniMax·Seedream" data-scat="check" data-status="확인 필요">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-51</span><span class="chip track">MiniMax·Seedream</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">가이드 영상 확인</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-check">확인 필요</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-51" aria-label="T-51 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">XCONDA 가이드 영상 확인 — Turn 설명, Video Generator + 에셋 가이드 (황보민혁 업로드)</p><p class="tsrc">출처 · 슬랙 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · MiniMax·Seedream</p></div>
+</article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
+</div>
+<div class="tgroup" data-group="ui">
+  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">UI개편</span><span class="gmeta">10건 · 전체 UI/UX 개편 관련 태스크예요.</span><span class="chev" aria-hidden="true">▾</span></button>
+  <div class="group-body"><article class="tcard" data-id="T-53" data-cat="기획" data-track="UI개편" data-scat="check" data-status="미결">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-53</span><span class="chip track">UI개편</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">재설계안 B 결정 5건</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-check">미결</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-53" aria-label="T-53 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">재설계안 B 결정 5건 — 권장 첫 경로, 블로킹 기준본, 무료 완결 범위, 일정 충돌, 대표 홈 반영 범위</p><p class="tsrc">출처 · 컨텍스트 문서 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · UI개편</p></div>
+</article>
+<article class="tcard" data-id="T-54" data-cat="기획" data-track="UI개편" data-scat="check" data-status="확인 필요">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-54</span><span class="chip track">UI개편</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">웰컴 크레딧 금액 확정</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-check">확인 필요</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-54" aria-label="T-54 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">웰컴 크레딧 금액 확정 (홈 미표기 / 허브 공지 500 / 확인 계정 잔액 110)</p><p class="tsrc">출처 · 컨텍스트 문서 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · UI개편</p></div>
+</article>
+<article class="tcard" data-id="T-55" data-cat="기획" data-track="UI개편" data-scat="check" data-status="확인 필요">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-55</span><span class="chip track">UI개편</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">디자인 토큰 최종본</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-check">확인 필요</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-55" aria-label="T-55 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">디자인 토큰 최종본 (v0.1 피그마 vs B안 vs 블로킹보드 체험판)</p><p class="tsrc">출처 · 컨텍스트 문서 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · UI개편</p></div>
+</article>
+<article class="tcard" data-id="T-56" data-cat="기획" data-track="UI개편" data-scat="check" data-status="확인 필요">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-56</span><span class="chip track">UI개편</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">블로킹보드 단계명 기준</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-check">확인 필요</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-56" aria-label="T-56 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">블로킹보드 단계명 기준 (운영 5단계 vs 라이브 Layout·Camera·Timing·Output)</p><p class="tsrc">출처 · 컨텍스트 문서 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · UI개편</p></div>
+</article>
+<article class="tcard" data-id="T-57" data-cat="기획" data-track="UI개편" data-scat="check" data-status="확인 필요">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-57</span><span class="chip track">UI개편</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">헤더 메뉴 8개 결정</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-check">확인 필요</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-57" aria-label="T-57 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">헤더 메뉴 8개 묶을지 결정</p><p class="tsrc">출처 · 컨텍스트 문서 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · UI개편</p></div>
+</article>
+<article class="tcard" data-id="T-58" data-cat="기획" data-track="UI개편" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-58</span><span class="chip track">UI개편</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">미작성 문서 작성</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-58" aria-label="T-58 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">미작성 문서 — 로그아웃 홈·가입/웰컴 플로, 모바일 상세, 각 도구 내부 상태(로딩·오류), 블로킹보드 운영판 피그마 프레임</p><p class="tsrc">출처 · 컨텍스트 문서 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · UI개편</p></div>
+</article>
+<article class="tcard" data-id="T-59" data-cat="기획" data-track="UI개편" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-59</span><span class="chip track">UI개편</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">기능명세 v0.1 vs v1.0 차이 정리</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-59" aria-label="T-59 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">기능명세 PC v0.1 vs v1.0 차이 정리</p><p class="tsrc">출처 · 컨텍스트 문서 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · UI개편</p></div>
+</article>
+<article class="tcard" data-id="T-60" data-cat="기획" data-track="UI개편" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-60</span><span class="chip track">UI개편</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">피그마 미반영 항목 처리</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-60" aria-label="T-60 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">피그마 미반영 항목 — 다른 화면 ✓ 정리, 마커 0-08·1-04·3-20, QA·WBS 프레임 (Figma MCP 호출 한도)</p><p class="tsrc">출처 · 컨텍스트 문서 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · UI개편</p></div>
+</article>
+<article class="tcard" data-id="T-62" data-cat="공통" data-track="UI개편" data-scat="other" data-status="중단">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-62</span><span class="chip track">UI개편</span><span class="chip cat">공통</span></div>
+    <h3 class="ttitle">반응형 작업 중단</h3></div>
+    <div class="tchips"><span class="chip due">기한 · —</span><span class="chip status st-other">중단</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-62" aria-label="T-62 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">반응형 작업 중단 (11/13 지시, 전체 UI 수정으로 전환). 태블릿 1~3번 승인 건도 중단 대상인지 확인 필요. v0.3의 결-8·TRN-TAB·다음 차수 항목이 중단 대상인지 시트에 반영 없음 — [확인 필요]</p><p class="tsrc">출처 · 차하나 지시 11/13 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · UI개편</p></div>
+</article>
+<article class="tcard" data-id="T-63" data-cat="기획" data-track="UI개편" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-63</span><span class="chip track">UI개편</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">워크스페이스 QA 체크리스트</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-63" aria-label="T-63 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">워크스페이스 QA 체크리스트 같이 하기 (상담 신청·운영자 Applications)</p><p class="tsrc">출처 · 슬랙 (차하나) &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · UI개편</p></div>
+</article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
+</div>
+<div class="tgroup" data-group="etc">
+  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">기타</span><span class="gmeta">4건 · 위 트랙에 안 들어가는 운영 태스크예요.</span><span class="chev" aria-hidden="true">▾</span></button>
+  <div class="group-body"><article class="tcard" data-id="T-64" data-cat="기획" data-track="기타" data-scat="check" data-status="확인 필요">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-64</span><span class="chip track">기타</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">크몽 리뷰</h3></div>
+    <div class="tchips"><span class="chip due overdue">⚠ 기한 지남 · 11/10 지남</span><span class="chip status st-check">확인 필요</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-64" aria-label="T-64 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">크몽 리뷰 — PD들 결제·리뷰 (기한 11/10 지남). 정정본 (최저 29만원, 크몽 안 직접 결제) 대표 승인 전 미발송</p><p class="tsrc">출처 · 슬랙 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 기타</p></div>
+</article>
+<article class="tcard" data-id="T-65" data-cat="기획" data-track="기타" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-65</span><span class="chip track">기타</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">포트폴리오 관리 운영</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/08부터</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-65" aria-label="T-65 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">포트폴리오 관리 방식 운영 (11/8부터) — 드라이브 업로드 → 관리대장 자동 기록 → 승인 영상만 MHW용 Notion 공개</p><p class="tsrc">출처 · 차하나 공지 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 기타</p></div>
+</article>
+<article class="tcard" data-id="T-66" data-cat="기획" data-track="기타" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-66</span><span class="chip track">기타</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">교육 기준 교체 (카페 3명)</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-66" aria-label="T-66 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">XCONDA 체험판 가이드 영상·따라하기 카드·교육안 기준 교체 (카페 3명 기준, 11/12 교육)</p><p class="tsrc">출처 · 11/12 교육 기준 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 기타</p></div>
+</article>
+<article class="tcard" data-id="T-67" data-cat="기획" data-track="기타" data-scat="check" data-status="확인 필요">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-67</span><span class="chip track">기타</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">트라이얼 가이드 영상·패키지</h3></div>
+    <div class="tchips"><span class="chip due overdue">⚠ 기한 지남 · 11/08 지남</span><span class="chip status st-check">확인 필요</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-67" aria-label="T-67 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">XCONDA 트라이얼 가이드 영상·트라이얼 패키지 (목표: 11/08 지남)</p><p class="tsrc">출처 · 목표 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 기타</p></div>
+</article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
+</div>
+</div>
+<div class="tgroup" data-group="workspace">
+  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">워크스페이스 Beta · MCP · 리퍼럴 — 알프레드</span><span class="gmeta">14건 · 알프레드 단독 DRI (T-68~T-81). Workspace Beta 9건 · MCP 4건 · 리퍼럴 1건이에요.</span><span class="chev" aria-hidden="true">▾</span></button>
+  <div class="group-body"><article class="tcard" data-id="T-68" data-cat="개발" data-track="워크스페이스·MCP" data-scat="check" data-status="확인 필요">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-68</span><span class="chip track">워크스페이스·MCP</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">Workspace Beta 운영 배포</h3></div>
+    <div class="tchips"><span class="chip due overdue">⚠ 기한 지남 · 11/02 지남</span><span class="chip status st-check">확인 필요</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-68" aria-label="T-68 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">Workspace Beta 운영 배포 (목표 11/2 지남 — test2→main PR 승인됨, 운영 배포 여부 [확인 필요]). 알프레드 단독 DRI</p><p class="tsrc">출처 · 슬랙 (알프레드) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 워크스페이스·MCP</p></div>
+</article><article class="tcard" data-id="T-69" data-cat="개발" data-track="워크스페이스·MCP" data-scat="check" data-status="확인 필요">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-69</span><span class="chip track">워크스페이스·MCP</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">Workspace Beta QA 트래커 마무리</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-check">확인 필요</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-69" aria-label="T-69 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">Workspace Beta QA 트래커 마무리 (65건: 10/30 기준 Pass 55·Fail 2·검토 8, 부분 검증과 전체 통과 구분)</p><p class="tsrc">출처 · 슬랙 (대표 QA) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 워크스페이스·MCP</p></div>
+</article><article class="tcard" data-id="T-70" data-cat="개발" data-track="워크스페이스·MCP" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-70</span><span class="chip track">워크스페이스·MCP</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">QA-039 Workspace 파일 비공개</h3></div>
+    <div class="tchips"><span class="chip due">기한 · Beta 외부 공개 전 필수</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-70" aria-label="T-70 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">QA-039 Workspace 파일 비공개 (미디어 호스트 차단 — 태윤 WAF 룰, 직접 URL 403, 미리보기·다운로드는 멤버십 확인 후)</p><p class="tsrc">출처 · 슬랙 (알프레드) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 워크스페이스·MCP</p></div>
+</article><article class="tcard" data-id="T-71" data-cat="개발" data-track="워크스페이스·MCP" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-71</span><span class="chip track">워크스페이스·MCP</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">QA-038 계정 전환·초안 격리 검증</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-71" aria-label="T-71 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">QA-038 계정 전환·초안 격리 검증 (동일 브라우저·탭 전환 시 이전 사용자 조직·프로젝트·예산·초안 노출 차단 — 시크릿 창 테스트만으로 완료 처리 금지)</p><p class="tsrc">출처 · 슬랙 (알프레드) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 워크스페이스·MCP</p></div>
+</article><article class="tcard" data-id="T-72" data-cat="개발" data-track="워크스페이스·MCP" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-72</span><span class="chip track">워크스페이스·MCP</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">QA-042 Hydration 경고 원인 조사</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-72" aria-label="T-72 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">QA-042 Hydration 경고 원인 조사 (개발 빌드로 재현해 원인 확인)</p><p class="tsrc">출처 · 슬랙 (알프레드) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 워크스페이스·MCP</p></div>
+</article><article class="tcard" data-id="T-73" data-cat="개발" data-track="워크스페이스·MCP" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-73</span><span class="chip track">워크스페이스·MCP</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">SendGrid 연결 (초대 이메일)</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-73" aria-label="T-73 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">SendGrid 연결 (초대 이메일 발송용: Cubeberry 소유 계정·Mail Send API 키·발신자 인증/DNS 3건 — 키는 Secret Manager 저장됨, 일일 전송 제한 0이라 Plan 업그레이드 심사 필요할 수 있음; 그전까지 수동 초대 링크로 운영)</p><p class="tsrc">출처 · 슬랙 (알프레드·태윤) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 워크스페이스·MCP</p></div>
+</article><article class="tcard" data-id="T-74" data-cat="개발" data-track="워크스페이스·MCP" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-74</span><span class="chip track">워크스페이스·MCP</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">Workspace 도입 상담 신청 화면·로직</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-74" aria-label="T-74 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">Workspace 도입 상담 신청 화면·로직 개발 (시안 A/B/C 중 1개 확정, 신청 완료 화면, 헤더 메뉴, Pricing Enterprise 영역, 상태별 분기 — 접수담당 김재환, #workspace-applications 채널로 알림)</p><p class="tsrc">출처 · 슬랙 (나서영·승인 요약 11/06) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 워크스페이스·MCP</p></div>
+</article><article class="tcard" data-id="T-75" data-cat="공통" data-track="워크스페이스·MCP" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-75</span><span class="chip track">워크스페이스·MCP</span><span class="chip cat">공통</span></div>
+    <h3 class="ttitle">Workspace 운영 스모크 테스트</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 운영 배포 후</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-75" aria-label="T-75 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">Workspace 운영 스모크 테스트 (운영 배포 후: cuberry01 Operator 10 Cr 발행→프로젝트 1 Cr 배정→Z Image 1K 1회, 비용 1 Cr 이내)</p><p class="tsrc">출처 · 슬랙 (대표 지시) &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · 워크스페이스·MCP</p></div>
+</article><article class="tcard" data-id="T-76" data-cat="개발" data-track="워크스페이스·MCP" data-scat="done" data-status="완료">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-76</span><span class="chip track">워크스페이스·MCP</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">Firestore 인덱스 동기화</h3></div>
+    <div class="tchips"><span class="chip due">기한 · —</span><span class="chip status st-done">완료</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-76" aria-label="T-76 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">Firestore 인덱스 동기화 (test2 106개, 운영 105개 + 예외 1개 — operations 단일 필드 인덱스)</p><p class="tsrc">출처 · 슬랙 (태윤) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 워크스페이스·MCP</p></div>
+</article><article class="tcard" data-id="T-77" data-cat="개발" data-track="워크스페이스·MCP" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-77</span><span class="chip track">워크스페이스·MCP</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">MCP 제품화 (18개 도구)</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 총 15-25 영업일</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-77" aria-label="T-77 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">MCP 제품화 (18개 도구 재구축 금지, Bizspring 핸드오프 재현·갭 매트릭스, 인증된 사용자로 실제 이미지 작업 E2E — 견적 확인·멱등 차감/환불·R2 저장, Director&#x27;s Cut to Video Skill). 알프레드 단독 DRI</p><p class="tsrc">출처 · 슬랙 (대표 지시 10/22) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 워크스페이스·MCP</p></div>
+</article><article class="tcard" data-id="T-78" data-cat="공통" data-track="워크스페이스·MCP" data-scat="check" data-status="확인 필요">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-78</span><span class="chip track">워크스페이스·MCP</span><span class="chip cat">공통</span></div>
+    <h3 class="ttitle">MCP 소스·권리 확인</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-check">확인 필요</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-78" aria-label="T-78 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">MCP 소스·권리 확인 (Bizspring 서버 인수 vs 자체 구축 — 핸드오프 패키지에 소스 없음, 소유권·라이선스·핸드오프 세션 확인 필요)</p><p class="tsrc">출처 · 슬랙 (알프레드 질문) &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · 워크스페이스·MCP</p></div>
+</article><article class="tcard" data-id="T-79" data-cat="개발" data-track="워크스페이스·MCP" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-79</span><span class="chip track">워크스페이스·MCP</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">MCP 최종 기술 승인</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-79" aria-label="T-79 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">MCP 최종 기술 승인 (OAuth·테넌트 격리·차감/환불·보안·운영 배포)</p><p class="tsrc">출처 · 슬랙 (대표 지시) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 워크스페이스·MCP</p></div>
+</article><article class="tcard" data-id="T-80" data-cat="개발" data-track="워크스페이스·MCP" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-80</span><span class="chip track">워크스페이스·MCP</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">MCP 화·금 주간 보고</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 상시 (화·금)</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-80" aria-label="T-80 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">MCP 화·금 주간 보고 (DONE/NEXT/BLOCKED/RISKS/LINKS, 10줄 이내)</p><p class="tsrc">출처 · 슬랙 (대표 지시) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 워크스페이스·MCP</p></div>
+</article><article class="tcard" data-id="T-81" data-cat="개발" data-track="워크스페이스·MCP" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-81</span><span class="chip track">워크스페이스·MCP</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">리퍼럴 코드 시스템 MVP</h3></div>
+    <div class="tchips"><span class="chip due">기한 · MCP 이후</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-81" aria-label="T-81 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">리퍼럴 코드 시스템 MVP (일반 추천코드 양쪽 5% 크레딧, 파트너 10% 수수료 + 고객 5% 크레딧, 12개월, 결제 성공 시 적립·환불/취소/차지백 시 회수, 세금·할인·일회성 충전 제외, 자기추천·중복 금지, 파트너 수수료 수동 정산) — MCP 이후, 착수 전 구독·웹훅 검토 + 구현 계획·일정 공유 선행</p><p class="tsrc">출처 · 슬랙 (대표 지시) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 워크스페이스·MCP</p></div>
+</article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
+</div>
+<div class="tgroup" data-group="v03">
+  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">v0.3 신규 — 대조에서 새로 나온 일</span><span class="gmeta">14건 · v0.3 전수 대조 신규 항목 T-82~T-95예요. PAY-E2E·TC 실행이 11/17 핵심이에요.</span><span class="chev" aria-hidden="true">▾</span></button>
+  <div class="group-body"><article class="tcard" data-id="T-82" data-cat="개발" data-track="결제·턴" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-82</span><span class="chip track">결제·턴</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">PAY-E2E 통과 (TC-PAY-005)</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/17</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-82" aria-label="T-82 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">PAY-E2E 통과 (TC-PAY-005, KRW 1건 + USD 1건, 증빙 캡처) — 미통과 시 11/18 운영 배포 금지. 게이트 차단 조건</p><p class="tsrc">출처 · 운영 시트 v0.3 4_결제·5_QA &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 결제·턴</p></div>
+</article><article class="tcard" data-id="T-83" data-cat="개발" data-track="블로킹보드" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-83</span><span class="chip track">블로킹보드</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">TC 74건 판정 실행 (11/17 test)</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/17</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-83" aria-label="T-83 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">TC 74건 판정 실행 (11/17 test) — S1 20건 포함, 목표 S1·S2 잔여 0. 11/18 제외 TC 3건 (TC-UI-018/019/047) 포함 여부는 [확인 필요]</p><p class="tsrc">출처 · 운영 시트 v0.3 5_QA &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article><article class="tcard" data-id="T-84" data-cat="공통" data-track="기타" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-84</span><span class="chip track">기타</span><span class="chip cat">공통</span></div>
+    <h3 class="ttitle">미결 23건 종결</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-84" aria-label="T-84 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">미결 23건 종결 (7_확인필요_미결) — 기능 7건은 결-1~7 확정 시 자동 종결, 실행 16건은 기한 없음. 전체 미결은 31건 (결정 8 + 기능 7 + 실행 16)</p><p class="tsrc">출처 · 운영 시트 v0.3 7_미결 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · 기타</p></div>
+</article><article class="tcard" data-id="T-85" data-cat="개발" data-track="결제·턴" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-85</span><span class="chip track">결제·턴</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">PAY-REQ-01 재확인 + 05/06 범위 제외 확인</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/16</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-85" aria-label="T-85 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">PAY-REQ-01 재확인 (MON-01~03, 11/02 기한 경과) + PAY-REQ-05/06 범위 제외 확인</p><p class="tsrc">출처 · 운영 시트 v0.3 2b·4_결제 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 결제·턴</p></div>
+</article><article class="tcard" data-id="T-86" data-cat="개발" data-track="결제·턴" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-86</span><span class="chip track">결제·턴</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">TRN-REQ-04/06 범위 제외 확인</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-86" aria-label="T-86 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">TRN-REQ-04/06 범위 제외 확인 + TRN 잔여 범위 확정</p><p class="tsrc">출처 · 운영 시트 v0.3 2b·6_추적 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 결제·턴</p></div>
+</article><article class="tcard" data-id="T-87" data-cat="기획" data-track="블로킹보드" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-87</span><span class="chip track">블로킹보드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">FR-22 배지 위치 추가</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-87" aria-label="T-87 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">FR-22 배지 위치 추가 (TC-UI-047 비고, 11/18 제외)</p><p class="tsrc">출처 · 운영 시트 v0.3 5_QA &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article><article class="tcard" data-id="T-88" data-cat="기획" data-track="블로킹보드" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-88</span><span class="chip track">블로킹보드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">3탭 6.2 QA-ID 참조 정리</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-88" aria-label="T-88 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">3탭 6.2 QA-ID 참조 정리 — “회귀 QA(QA-01·02·04·05·06·07)”인데 5_QA시트에 해당 ID 없음. TC-UI-xxx로 매핑하거나 문구 수정</p><p class="tsrc">출처 · 운영 시트 v0.3 3_UI &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article><article class="tcard" data-id="T-89" data-cat="기획" data-track="블로킹보드" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-89</span><span class="chip track">블로킹보드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">6-08 REQ-BB-PRS-04 정리</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-89" aria-label="T-89 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">6-08 관련 요구사항 셀 정리 — REQ-BB-PRS-04 잔존 (구 시트 지적 미수정)</p><p class="tsrc">출처 · 운영 시트 v0.3 3_UI &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article><article class="tcard" data-id="T-90" data-cat="기획" data-track="블로킹보드" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-90</span><span class="chip track">블로킹보드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">NFR-03 SRS 연계 채우기</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-90" aria-label="T-90 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">NFR-03 SRS 연계 “—” 채우기</p><p class="tsrc">출처 · 운영 시트 v0.3 2_UI &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article><article class="tcard" data-id="T-91" data-cat="기획" data-track="블로킹보드" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-91</span><span class="chip track">블로킹보드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">“이번 배포 기능 70/74” 정의 + 미커버 불일치 정리</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-91" aria-label="T-91 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">대시보드 수치 정합 — “이번 배포 기능 70/74” 정의 [확인 필요] (1탭: 이번 배포 70 + 배지 제외 2 + 다음 차수 2). 미커버 내역 불일치: 00탭 “범위 제외 4 + FR-23 + 실행 전 1” vs 6탭 “범위 제외 5 + 기능 미정의 1” — “실행 전 1”이 무엇인지 명시 없음</p><p class="tsrc">출처 · 운영 시트 v0.3 00_대시보드·6_추적 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article><article class="tcard" data-id="T-92" data-cat="기획" data-track="블로킹보드" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-92</span><span class="chip track">블로킹보드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">3탭 다음 차수 표 삭제 후속 확인</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-92" aria-label="T-92 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">3탭 다음 차수 표 삭제 후속 — D02 6.5MD, D03-02/03, 반응형 3건 상세 행 복원/이관 여부 확인 (삭제 의도 불명)</p><p class="tsrc">출처 · 운영 시트 v0.3 3_UI &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article><article class="tcard" data-id="T-93" data-cat="기획" data-track="블로킹보드" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-93</span><span class="chip track">블로킹보드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">NFR-02/07/08 “검증 화면으로 대체” 예외 처리</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-93" aria-label="T-93 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">NFR-02/07/08 양방향 검증 “검증 화면으로 대체” — 9탭 일치 판정이 예외 처리임 (9탭 불일치 0건은 이 예외 포함)</p><p class="tsrc">출처 · 운영 시트 v0.3 9_양방향 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article><article class="tcard" data-id="T-94" data-cat="기획" data-track="블로킹보드" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-94</span><span class="chip track">블로킹보드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">결-8 관련 TC 0건 — 검증 수단 마련</h3></div>
+    <div class="tchips"><span class="chip due">기한 · 11/16</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-94" aria-label="T-94 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">결-8 관련 TC 0건 — 결-8 확정 시 검증 수단 없음 (블로커)</p><p class="tsrc">출처 · 운영 시트 v0.3 2c·5_QA &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article><article class="tcard" data-id="T-95" data-cat="기획" data-track="블로킹보드" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-95</span><span class="chip track">블로킹보드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">0탭 13행 stale 참조 정리</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-95" aria-label="T-95 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">0탭 13행 stale 참조 정리 — “(2_UI 하단 표)”이나 결정표는 2c탭에 있음</p><p class="tsrc">출처 · 운영 시트 v0.3 0_실행요약 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
+</article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
+<div class="tgroup" data-group="guide">
+  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">가이드 — 역할 분리 (웹 가이드=영상 · 허브=문서+다운로드)</span><span class="gmeta">3건 · 2026-11-13 큐브베리원 결정 — 웹 가이드(xconda.ai/guides)는 영상 중심 한 화면, 허브(hub.xconda.ai)는 문서+다운로드예요. T-96~T-98.</span><span class="chev" aria-hidden="true">▾</span></button>
+  <div class="group-body"><article class="tcard" data-id="T-96" data-cat="기획" data-track="가이드" data-scat="doing" data-status="진행 중">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-96</span><span class="chip track">가이드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">웹 가이드 HTML 나머지 문서 제작 (HTML 방식 + 언어 패치)</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-doing">진행 중</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-96" aria-label="T-96 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영" selected>나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">웹 가이드 HTML 나머지 문서 제작 — turn_guide.html 승인됨 (큐브베리원 “이렇게 진행하시죠”), 나머지 HTML 문서 제작 진행 중. 웹 가이드는 HTML 방식으로 제작해 개발자에게 전달 (+ 언어 패치). 웹 가이드(xconda.ai/guides)는 영상 중심 한 화면 — 기존 튜토리얼 영상 그대로 활용, 요약 콘텐츠 추가 제작 불필요</p><p class="tsrc">출처 · 나서영 11/13 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 가이드</p></div>
+</article><article class="tcard" data-id="T-97" data-cat="기획" data-track="가이드" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-97</span><span class="chip track">가이드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">허브 가이드 문서+다운로드 구조</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-97" aria-label="T-97 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">허브 가이드 문서+다운로드 구조 — 글+스크린샷 단계 구조, 다운로드 파일은 가이드 문서 그 자체, 모달 상단에 「문서 다운로드」 버튼 배치 (다운로드가 잘 안 보인다는 피드백 반영), 상세 가이드·팁·활용법·뉴스를 허브 한곳에</p><p class="tsrc">출처 · 큐브베리원 결정 11/13 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 가이드</p></div>
+</article><article class="tcard" data-id="T-98" data-cat="기획" data-track="가이드" data-scat="todo" data-status="미착수">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-98</span><span class="chip track">가이드</span><span class="chip cat">기획</span></div>
+    <h3 class="ttitle">가이드 동선 연결</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <label class="owner">담당 <select class="owner-sel" data-task="T-98" aria-label="T-98 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">가이드 동선 연결 — 웹 가이드에 「허브에서 전체 가이드 보기」 링크 배치, 허브로 이동 후 문서 정독 → 다운로드 흐름 확인</p><p class="tsrc">출처 · 큐브베리원 결정 11/13 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 가이드</p></div>
+</article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
+</div>
+</div>
+  <div class="tempty" id="tempty" style="display:none;background:var(--surface);border:1.5px dashed var(--line);border-radius:14px;margin-top:14px">이 조건에 맞는 태스크가 없어요. 필터를 바꿔보세요.</div>
+</section>
+
+
+<details class="fold"><summary>WBS 현황 — 블로킹보드 13.25MD ▾</summary><div class="fold-body">
+    <p style="color:var(--ink2);font-size:14px;margin:0 0 14px">블로킹보드 WBS만 일정·공수가 잡혀 있는 상태예요.</p>
+    <div class="wbs-total"><span class="big">13.25</span><span style="font-weight:800">MD</span><span style="color:var(--ink2);font-size:13.5px">대분류 합계와 일치 · 검증 완료</span></div>
+    <div class="bar" role="img" aria-label="담당별 공수: 전유준 7.25MD, 권태윤 3.75MD, 공동 1.75MD, 차하나 PM 0.5MD"><div class="a">전유준 7.25</div><div class="b">권태윤 3.75</div><div class="c">공동 1.75</div><div class="d">PM 0.5</div></div>
+    <div class="wbs-rows"><div class="wbs-row"><span>전유준 — 공통 셸·도면 분석·저장·내보내기 문서계</span><b>7.25 MD</b></div><div class="wbs-row"><span>권태윤 — PLAN·3D·카메라, 무빙 영상, 영상툴로 보내기</span><b>3.75 MD</b></div><div class="wbs-row"><span>공동 — 1.1 · 6.2 · 6.3</span><b>1.75 MD</b></div><div class="wbs-row"><span>차하나 PM</span><b>0.5 MD</b></div></div>
+    <p class="wbs-note">주의: 선행 관계와 일정이 안 맞아요. 5.1의 선행 4.4는 11/17에 끝나는데 5.1은 11/13에 시작하고, 3.1·3.3·4.2·5.4도 마찬가지예요. 전부 11/13 시작이라 사실상 병렬 일정으로 읽혀요.</p>
+  </div></details>
+
+  <details class="fold"><summary>트랙별 현황 ▾</summary><div class="fold-body">
+    <p style="color:var(--ink2);font-size:14px;margin:0 0 14px">시트 v0.3 탭 13개 — 00_대시보드 · 1_UI · 2_UI · 2b_결제·턴 · 2c_결정_요청 · 3_UI WBS · 4_결제·턴·Kling · 5_QA · 6_추적 · 7_미결 · 8_QC · 9_양방향 등 — 를 트랙으로 묶은 거예요. 시트는 하나로 유지해요.</p>
+    <div class="tracks">
+      <article class="track"><h3>블로킹보드 UI</h3><span class="st go">일정 있음 · 13.25MD</span><ul><li><b>요구 46건</b> (FR 33 + PAY 7 + TRN 6) · 커버리지 <b>40/46 = 87%</b></li><li><b>기능 74개</b> 관련 요구사항 연결 완료 · <b>QA TC 74건</b> (판정 전부 미실행)</li><li>FR-08·FR-11·FR-16 “외 N” 표기는 v0.3에서 전수 표기로 수정 (7개·7개·14개), FR-15는 3-20만으로 축소, FR-22 연결 기능은 “—”로 비워짐</li><li>P0인데 “다음 차수”로 빠진 <b>FR-07</b>(재배치·잠금)·<b>FR-22</b>(추정값 배지) — 우선순위를 내리거나 제외 사유를 적어야 해요</li><li>체험판 UI를 운영 서버로 옮기고 잠긴 저장·4·5단계·파일 메뉴를 여는 것이 골자</li></ul></article>
+      <article class="track"><h3>결제 — PortOne V2</h3><span class="st hold">일정 [확인 필요]</span><ul><li><b>PAY-REQ-01~07 · FN-PAY-01~03</b></li><li>PAY-01~06 기한 <b>2026-11-16</b></li><li><b>PAY-E2E 미통과</b>가 11/18 배포 차단 조건 (TC-PAY-005, T-82)</li><li>해외(Stripe) 우선 방침, 토스는 가입만 된 상태로 별도 확인이 필요해요</li></ul></article>
+      <article class="track"><h3>턴 · Kling</h3><span class="st hold">권태윤 확인 후 기입</span><ul><li><b>TRN-REQ-01~06 + TRN-TAB</b> 정의됨 · TC-TRN 4건</li><li>대상 모델: <b>Kling 4.0 · 3.0 Pro · 3.0 4K · OMNI · Image O1</b></li><li>공수·기한은 여전히 [확인 필요] — 4탭 TRN/KLING <b>11행 기한 공란</b></li><li>Kling/턴 지연 불가(거래처 요구) — 일정이 비어 있는 게 가장 위험한 트랙이에요</li></ul></article>
+    </div>
+  </div></details>
+
+  <details class="fold"><summary>전체 점검 결과 — 품질 게이트 11개 ▾</summary><div class="fold-body">
+    <p style="color:var(--ink2);font-size:14px;margin:0 0 14px">planning-docs-kit 품질 게이트 11개로 본 결과예요. 2026-11-13 저녁 v0.3 전수 대조 기준. v0.3 검증 verify_v03.py 38항목 통과 38 · 실패 0.</p>
+    <div class="checks">
+      <div class="check-card"><h3>통과한 것</h3><ul><li><span class="mark ok">✓</span><span><b>WBS 합계 13.25MD</b>가 대분류 합과 일치하고, 담당 분담 7.25 / 3.75 / 1.75 / 0.5 합도 맞아요 (구 공동 2.25는 v0.3에서 정정).</span></li><li><span class="mark ok">✓</span><span><b>요구 46건</b> (FR 33 + PAY 7 + TRN 6)에 기준이 있고, 기능 74건에 관련 요구사항이 있어요 (FR-23은 기능 미정의로 범위 제외).</span></li><li><span class="mark ok">✓</span><span><b>[확인 필요] 표기</b>가 잘 지켜지고 있어요 — 없는 수치를 지어내지 않은 부분이에요.</span></li><li><span class="mark ok">✓</span><span>시트 서식 통일 — 제목행·헤더행·고정·필터·열 너비가 전 탭 같은 기준으로 맞춰져 있어요.</span></li></ul></div>
+      <div class="check-card"><h3>고칠 것</h3><ul><li><span class="mark fix">!</span><span><b>ID 체계가 3개로 섞여 있어요</b> — 스킬(REQ-·FNC-·TC-) / 시트(FR-·기능번호·WBS) / SRS(REQ-GOV-·REQ-BB-). 매핑표가 없어 WBS의 REQ-GOV-04를 2_UI에서 찾을 수 없어요.</span></li><li><span class="mark ok">✓</span><span><b>QA 심각도·우선순위가 잡혔어요</b> — v0.3 QA TC 74건: S1 20 / S2 35 / S3 19, P0 47 / P1 27. QC 이슈 12건은 전부 완료예요.</span></li><li><span class="mark fix">!</span><span><b>작은 연결 오류</b> — 6-08 관련 요구사항 칸에 REQ-BB-PRS-04가 FR 자리에 들어갔고, FR-08·FR-11·FR-16 전수 표기는 v0.3에서 수정됐지만, 6-08 REQ-BB-PRS-04 잔존(T-89), NFR-03 SRS 연계 “—”(T-90), 8탭 #12 “기능 6건”이라 적고 7개 ID 나열 [확인 필요], 0탭 13행 stale 참조 “(2_UI 하단 표)”(T-95), “이번 배포 기능 70/74” 정의·미커버 내역 불일치(T-91)가 남아 있어요.</span></li><li><span class="mark fix">!</span><span><b>FR-14 연결</b> — FR-14(Blender JSON 빼기)에 정작 5-04 Blender JSON이 관련 기능으로 연결돼 있어요.</span></li></ul></div>
+    </div>
+  </div></details>
+
+  <details class="fold"><summary>기획 레포 상태 ▾</summary><div class="fold-body">
+    <div class="checks">
+      <div class="check-card"><h3>xconda-planning — 만들어짐</h3><ul><li><span class="mark ok">✓</span><span><a href="https://github.com/hanahchafilmaker/xconda-planning" target="_blank" rel="noopener"><b>github.com/hanahchafilmaker/xconda-planning</b></a> — Private, 브라우저에서 생성 확인 완료.</span></li><li><span class="mark fix">!</span><span>씨드 파일(README + 2026-11-13 현황 스냅샷)은 준비돼 있지만, 깃허브 앱 접근 허용 목록에 이 레포가 아직 없어서 업로드가 막혀 있어요. 허용 목록에 추가되면 바로 올릴 수 있어요.</span></li></ul></div>
+      <div class="check-card"><h3>레포에 들어갈 구조 (씨드 기준)</h3><ul><li><span class="mark ok">✓</span><span><b>README.md</b> — 레포 목적, 구조, 운영 시트·ID 체계</span></li><li><span class="mark ok">✓</span><span><b>docs/06-trace/current-state-2026-11-13.md</b> — 요구 46건·기능 74개·WBS 13.25MD·결-1~8·QA TC 74건까지 담은 현황 스냅샷 (v0.3 기준 갱신 필요)</span></li></ul></div>
+    </div>
+  </div></details>
+  <details class="fold"><summary>링크 모음 — 시트 · 레포 ▾</summary><div class="fold-body">
+    <div class="links"><a class="btn primary" href="https://docs.google.com/spreadsheets/d/19XTjmufejkJixSuMww5R4GmfMwoHpgooWy49HQhReiE/edit?usp=sharing" target="_blank" rel="noopener">운영 실행 시트 v0.3 열기 ↗</a><a class="btn" href="https://docs.google.com/spreadsheets/d/11cBzLOtgakf63jh5BOqLF5j40KFklUMCuHlu8salBII/edit?usp=sharing" target="_blank" rel="noopener">구 시트 v0.2 ↗</a><a class="btn" href="https://github.com/hanahchafilmaker/xconda-planning" target="_blank" rel="noopener">기획 레포 xconda-planning ↗</a></div>
+  </div></details>
+
+</div></details>
+<footer class="foot"><div>기준: XCONDA 운영 실행 시트 v0.3 · 2026-11-13 저녁 전수 대조 · 이 페이지는 그 시점의 스냅샷이에요.</div></footer>
+</div>
+<div id="toast" role="status" aria-live="polite">복사했어요</div>
+<script>
+(function(){
+  var toast=document.getElementById('toast'),timer=null;
+  function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(timer);timer=setTimeout(function(){toast.classList.remove('show');},2200);}
+  function copyText(text,doneMsg){function done(){showToast(doneMsg);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done).catch(function(){fallback();});}else{fallback();}
+    function fallback(){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(e){showToast('복사가 안 됐어요 — 문안을 직접 선택해 복사해주세요');}document.body.removeChild(ta);}}
+
+  /* Decisions: summary cards + detail pane */
+  var DECS=[
+   {id:'결-1',tc:2,sub:'1-04 카페 탑뷰 채우기',st:'ok',pill:'바로 확정 가능',q:'샘플 도면을 무엇으로 채울 것인가',ans:'(가) 「샘플 도면」 목록으로 변경 — 교육 예시 3종(오피스·한옥·골목)',blocks:'막는 작업 · WBS 3.3 · 관련 TC 2건',copy:'(가) 「샘플 도면」 목록으로 변경 — 교육 예시 3종(오피스·한옥·골목)'},
+   {id:'결-2',tc:3,sub:'2-03 템플릿',st:'ok',pill:'바로 확정 가능',q:'템플릿 제공 방식을 어떻게 둘 것인가',ans:'(가) 검증된 예시 3종 칩으로 유지',blocks:'막는 작업 · WBS 3.3',copy:'(가) 검증된 예시 3종 칩으로 유지'},
+   {id:'결-3',tc:3,sub:'3-03 카메라 추가',st:'ok',pill:'바로 확정 가능',q:'카메라 추가 버튼을 어디에 둘 것인가',ans:'(가) 촬영 패널 카메라 번호 옆에 [+ 카메라] 배치',blocks:'막는 작업 · WBS 4.2',copy:'(가) 촬영 패널 카메라 번호 옆에 [+ 카메라] 배치'},
+   {id:'결-4',tc:3,sub:'3-12 기타 도구',st:'ok',pill:'바로 확정 가능',q:'기타 도구에 무엇을 넣을 것인가',ans:'(가) [기타 도구 ▾]에 밀당·페인트·줄자·지우개 + 회전·크기·벽/문 포함',blocks:'막는 작업 · WBS 4.3',copy:'(가) [기타 도구 ▾]에 밀당·페인트·줄자·지우개 + 회전·크기·벽/문 포함'},
+   {id:'결-5',tc:5,sub:'6-13 샷리스트 형식',st:'ok',pill:'바로 확정 가능',q:'샷리스트를 어떤 형식으로 내보낼 것인가',ans:'(가) CSV (PDF는 6-14 샷북으로 별도 제공)',blocks:'막는 작업 · WBS 5.4',copy:'(가) CSV (PDF는 6-14 샷북으로 별도 제공)'},
+   {id:'결-6',tc:3,sub:'1-03 도면 업로드',st:'wait',pill:'전유준 확인 필요',q:'업로드 용량·형식을 얼마로 할 것인가',ans:'추천안이 “서버 한도 확인 후”예요. 기록 어디에도 image-to-room 업로드 한도가 없어서, 10MB인지 20MB인지·WEBP를 받는지 확인 없이는 정할 수 없어요. 확정안 칸에는 “전유준 확인 후 결정”까지만 적을 수 있어요.',blocks:'막는 작업 · WBS 3.1 · 관련 TC 3건',copy:'전유준 확인 후 결정 (서버 업로드 한도·허용 형식 확인 필요)'},
+   {id:'결-7',tc:3,sub:'0-01 로고 클릭',st:'ok',pill:'바로 확정 가능',q:'로고를 누르면 어디로 갈 것인가',ans:'(나) 블로킹보드 프로젝트 목록으로 이동 — 저장 안 됐으면 확인 창 표시',blocks:'막는 작업 · WBS 2.1 · 현행 “서비스 홈으로 이동”에서 변경',copy:'(나) 블로킹보드 프로젝트 목록으로 이동 — 저장 안 됐으면 확인 창 표시'},
+   {id:'결-8',tc:0,sub:'태블릿 좁은 화면',st:'wait',pill:'차PD 직접 결정 · TC 0건',q:'체험판 상단 바·편집기 세로를 어떻게 할 것인가',ans:'결정권자는 v0.3에서 “차하나 PM · 전유준”으로 수정됐어요. 관련 TC가 0건이라 확정해도 검증 수단이 없어요 (블로커, T-94). 가리키는 보고서 항목 자체가 11/12에 보류한 결정이라 차PD가 직접 정해야 해요. 추천은 상단 바 2줄, 세로는 「옆으로 더 있음」 표시예요.',blocks:'근거 · 태블릿 반응형 점검 보고 · 관련 TC 0건 (검증 수단 없음)',copy:'결정권자: 차하나 PM · 전유준 / 추천안(상단 바 2줄, 세로 「옆으로 더 있음」 표시) 채택 여부는 차PD 결정 필요 / 관련 TC 0건 — 검증 수단 없음'}
+  ];
+  var decSum=document.getElementById('decSum'),decDetail=document.getElementById('decDetail'),curDec=-1,curFilter='all';
+  function renderDecSum(){
+    decSum.innerHTML='';
+    DECS.forEach(function(d,i){
+      if(curFilter!=='all'&&d.st!==curFilter) return;
+      var b=document.createElement('button');b.type='button';b.className='dsum'+(i===curDec?' on':'');
+      b.innerHTML='<span class="did"></span><span class="dq"></span><span class="pill"></span><span class="dmeta"></span>';
+      b.querySelector('.did').textContent=d.id+' · '+d.sub;
+      b.querySelector('.dq').textContent=d.q;
+      var p=b.querySelector('.pill');p.textContent=d.pill;p.className='pill '+d.st;
+      b.querySelector('.dmeta').textContent='확정안 공란 · 기한 11/16 · 관련 TC '+d.tc+'건';
+      b.addEventListener('click',function(){showDec(i===curDec?-1:i);});
+      decSum.appendChild(b);
+    });
+  }
+  function showDec(i){
+    curDec=i;renderDecSum();
+    if(i<0){decDetail.hidden=true;decDetail.innerHTML='';return;}
+    var d=DECS[i];decDetail.hidden=false;
+    decDetail.innerHTML='<h3></h3><div class="ans"></div><div class="meta"><span class="blocks"></span><button type="button" class="copy">문안 복사</button></div>';
+    decDetail.querySelector('h3').textContent=d.id+' — '+d.q;
+    decDetail.querySelector('.ans').textContent=d.ans;
+    decDetail.querySelector('.blocks').textContent=d.blocks;
+    decDetail.querySelector('.copy').addEventListener('click',function(){copyText(d.copy,'확정안 문안을 복사했어요 — 시트에 붙여넣으면 돼요');});
+    decDetail.scrollIntoView({block:'nearest',behavior:'smooth'});
+  }
+  document.querySelectorAll('.fbtn').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.fbtn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');curFilter=b.getAttribute('data-f');curDec=-1;decDetail.hidden=true;renderDecSum();});});
+  renderDecSum();
+
+  /* Task groups toggle */
+  document.querySelectorAll('.tgroup').forEach(function(g){
+    var head=g.querySelector('.group-head');
+    head.addEventListener('click',function(){g.classList.toggle('open');head.setAttribute('aria-expanded',g.classList.contains('open'));});
+  });
+  /* Task detail toggle */
+  document.querySelectorAll('.tcard').forEach(function(c){
+    var btn=c.querySelector('.detail-btn'),det=c.querySelector('.tdetail');
+    btn.addEventListener('click',function(){var open=det.hidden;det.hidden=!open;btn.setAttribute('aria-expanded',open);btn.textContent=open?'상세 ▴':'상세 ▾';});
+  });
+
+  /* Task board: view + filters + assignee */
+  (function(){
+    var KEY='xconda-task-assignees-v1',saved={};
+    try{saved=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){saved={};}
+    var cards=Array.prototype.slice.call(document.querySelectorAll('.tcard'));
+    document.querySelectorAll('.owner-sel').forEach(function(sel){
+      var id=sel.getAttribute('data-task');
+      if(saved[id]) sel.value=saved[id];
+      sel.addEventListener('change',function(){saved[id]=sel.value;try{localStorage.setItem(KEY,JSON.stringify(saved));}catch(e){}showToast(id+' 담당을 '+sel.value+'(으)로 지정했어요 — 이 브라우저에 저장됐어요');applyFilters();});
+    });
+    var ownerFilter=document.getElementById('ownerFilter');
+    ['차하나','이진서(대표)','전유준','권태윤','나서영','김재환','박찬혁','최종현','황보민혁','알프레드','기타'].forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n;ownerFilter.appendChild(o);});
+    function inView(card,view){var cat=card.getAttribute('data-cat');if(view==='all')return true;if(view==='plan')return cat==='기획'||cat==='공통';return cat==='개발'||cat==='공통';}
+    var counts={plan:0,dev:0,all:cards.length};
+    cards.forEach(function(c){if(inView(c,'plan'))counts.plan++;if(inView(c,'dev'))counts.dev++;});
+    document.getElementById('cntPlan').textContent=counts.plan+'건';document.getElementById('cntDev').textContent=counts.dev+'건';document.getElementById('cntAll').textContent=counts.all+'건';
+    var curView='all',trackFilter=document.getElementById('trackFilter'),statusFilter=document.getElementById('statusFilter'),tcount=document.getElementById('tcount'),tempty=document.getElementById('tempty');
+    var filtering=false;
+    window.applyFilters=function(){
+      var tr=trackFilter.value,st=statusFilter.value,ow=ownerFilter.value;
+      filtering=!(tr==='all'&&st==='all'&&ow==='all'&&curView==='all');
+      var shown=0;
+      cards.forEach(function(c){var sel=c.querySelector('.owner-sel');var ok=inView(c,curView)&&(tr==='all'||c.getAttribute('data-track')===tr)&&(st==='all'||c.getAttribute('data-scat')===st)&&(ow==='all'||(sel&&sel.value===ow));c.classList.toggle('hide',!ok);if(ok)shown++;});
+      document.querySelectorAll('.tgroup').forEach(function(g){
+        var vis=g.querySelectorAll('.tcard:not(.hide)').length;
+        g.style.display=vis?'':'none';
+        var e=g.querySelector('.tempty');if(e)e.style.display='none';
+        if(filtering&&vis){g.classList.add('open');g.querySelector('.group-head').setAttribute('aria-expanded','true');}
+      });
+      tempty.style.display=shown?'none':'block';
+      var viewName=curView==='plan'?'기획자 뷰 (기획+공통)':curView==='dev'?'개발자 뷰 (개발+공통)':'전체 보기';
+      tcount.textContent=viewName+' · '+shown+'건 표시 중 / 전체 '+cards.length+'건';
+    };
+    document.querySelectorAll('.vbtn').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.vbtn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');curView=b.getAttribute('data-view');applyFilters();});});
+    [trackFilter,statusFilter,ownerFilter].forEach(function(el){el.addEventListener('change',applyFilters);});
+    applyFilters();
+  })();
+})();
+</script>
+</body>
+</html>

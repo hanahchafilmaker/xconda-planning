@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>XCONDA 마케팅 운영 대시보드</title>
+    <style>
+      :root {
+        --bg: #f6f6f4;
+        --panel: #ffffff;
+        --panel-2: #efefec;
+        --line: #dddcd6;
+        --text: #1c1c1e;
+        --muted: #5c5c60;
+        --accent: #b8860b;
+        --accent-strong: #8a6408;
+        --accent-soft: #fdf3d7;
+        --ok: #166534;
+        --ok-soft: #dcf2e3;
+        --warn: #92400e;
+        --warn-soft: #fdeeda;
+        --chip: #efefec;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0a0a0b;
+          --panel: #141416;
+          --panel-2: #1c1c1f;
+          --line: #2a2a2e;
+          --text: #f3f3f1;
+          --muted: #9b9ba1;
+          --accent: #ffc629;
+          --accent-strong: #ffd65c;
+          --accent-soft: #2b2108;
+          --ok: #7ddba3;
+          --ok-soft: #123324;
+          --warn: #fbbf24;
+          --warn-soft: #2b2108;
+          --chip: #1c1c1f;
+        }
+      }
+      * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 15px;
+        line-height: 1.55;
+      }
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.25rem; }
+      a { color: var(--accent-strong); }
+      .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 20px 56px; }
+
+      /* Header */
+      header.top { margin-bottom: 26px; }
+      .top-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+      .top-row h1 { flex: 1 1 auto; min-width: 0; }
+      h1 { font-size: 30px; line-height: 1.25; margin: 0 0 8px; letter-spacing: -0.01em; }
+      .lang-toggle {
+        flex: 0 0 auto; display: inline-flex; align-items: center; gap: 2px;
+        background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 3px;
+        margin-top: 2px;
+      }
+      .lang-toggle button {
+        border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 13.5px; font-weight: 700;
+        padding: 6px 12px; border-radius: 999px; cursor: pointer; min-height: 32px; line-height: 1;
+      }
+      .lang-toggle button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent-strong); }
+      .lang-toggle button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .lang-toggle .sep { color: var(--line); font-size: 12px; user-select: none; }
+      .subtitle { color: var(--muted); font-size: 15px; margin: 0 0 16px; }
+      .subtitle a { font-weight: 600; text-decoration: none; }
+      .subtitle a:hover { text-decoration: underline; }
+      .statusline {
+        display: flex; flex-wrap: wrap; gap: 8px;
+        background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+        padding: 12px 14px;
+      }
+      .stat { display: inline-flex; align-items: baseline; gap: 6px; background: var(--chip); border-radius: 999px; padding: 6px 12px; font-size: 14px; }
+      .stat b { font-size: 17px; color: var(--accent-strong); }
+      .stat .tag { font-size: 12.5px; color: var(--warn); font-weight: 700; }
+
+      /* Sections */
+      section { margin-top: 38px; }
+      h2 { font-size: 21px; margin: 0 0 6px; letter-spacing: -0.01em; }
+      .sec-note { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
+
+      /* How-to cards */
+      .howto { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+      .how-card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 16px 14px; display: flex; gap: 12px; }
+      .how-num {
+        flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%;
+        background: var(--accent-soft); color: var(--accent-strong);
+        font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center;
+      }
+      .how-card p { margin: 2px 0 0; font-size: 14.5px; }
+      .how-card code, .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; word-break: break-all; }
+      .note-bar {
+        margin-top: 12px; background: var(--warn-soft); color: var(--warn);
+        border-radius: 8px; padding: 10px 14px; font-size: 14px; font-weight: 600;
+      }
+
+      /* Campaign cards */
+      .campaigns { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+      .camp {
+        background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--accent);
+        border-radius: 10px; padding: 18px;
+      }
+      .camp-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+      .camp-name { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 18px; font-weight: 700; word-break: break-all; }
+      .badge { display: inline-block; font-size: 12.5px; font-weight: 700; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+      .badge-ok { background: var(--ok-soft); color: var(--ok); }
+      .badge-sample { background: var(--warn-soft); color: var(--warn); }
+      .camp-purpose { font-size: 16px; font-weight: 600; margin: 0 0 12px; }
+      .camp dl { margin: 0; display: grid; gap: 8px; }
+      .camp dl div { display: grid; grid-template-columns: 92px 1fr; gap: 10px; font-size: 14px; }
+      .camp dt { color: var(--muted); }
+      .camp dd { margin: 0; word-break: break-all; }
+
+      /* Docs & links */
+      .doc-list { display: grid; gap: 12px; }
+      .doc-card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: flex; gap: 14px; align-items: flex-start; }
+      .doc-num { flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-strong); font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+      .doc-body { flex: 1 1 auto; min-width: 0; }
+      .doc-title { font-size: 16px; font-weight: 700; line-height: 1.4; margin: 0 0 4px; }
+      .doc-title a { text-decoration: none; }
+      .doc-title a:hover { text-decoration: underline; }
+      .doc-badge { display: inline-block; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: var(--accent-soft); color: var(--accent-strong); margin-left: 8px; vertical-align: middle; white-space: nowrap; }
+      .doc-desc { color: var(--muted); font-size: 14px; margin: 0 0 8px; line-height: 1.55; }
+      .doc-url { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; word-break: break-all; }
+      .doc-url a { color: var(--muted); text-decoration: none; }
+      .doc-url a:hover { color: var(--accent-strong); text-decoration: underline; }
+
+      /* Social accounts */
+      .social-group { margin-bottom: 20px; }
+      .social-group:last-of-type { margin-bottom: 0; }
+      .social-group h3 { font-size: 16px; margin: 0 0 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .social-group h3 .group-tag { font-size: 12.5px; font-weight: 700; color: var(--muted); }
+      td.handle { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13.5px; white-space: nowrap; }
+      td.linkcell { font-size: 13px; word-break: break-all; }
+      td.linkcell a { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; }
+      .warn-inline { display: block; margin-top: 4px; font-size: 13px; font-weight: 700; color: var(--warn); }
+      .social-note { margin-top: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; font-size: 14px; color: var(--muted); }
+
+      /* Channel table */
+      .table-card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+      table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+      th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+      thead th { background: var(--panel-2); font-size: 13.5px; color: var(--muted); }
+      tbody tr:last-child td { border-bottom: none; }
+      td.src, td.med { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13.5px; }
+      td.note { color: var(--muted); font-size: 14px; }
+
+      /* Calendar */
+      .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+      .cal-dow { text-align: center; font-size: 13.5px; font-weight: 700; color: var(--muted); padding: 4px 0; }
+      .cal-cell {
+        background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+        min-height: 74px; padding: 7px 8px; font-size: 13.5px;
+      }
+      .cal-cell .d { font-weight: 700; font-size: 13.5px; }
+      .cal-cell.out { opacity: 0.45; }
+      .cal-cell.has { border-color: var(--accent); background: var(--accent-soft); }
+      .cal-event { margin-top: 5px; font-size: 12.5px; line-height: 1.4; font-weight: 600; }
+      .cal-event .team { color: var(--accent-strong); }
+      .sched-card {
+        margin-top: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px;
+      }
+      .sched-card h3 { margin: 0 0 4px; font-size: 17px; }
+      .sched-topic { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+      .kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px 18px; font-size: 14px; }
+      .kv div span { display: block; color: var(--muted); font-size: 13px; margin-bottom: 2px; }
+      .kv div { word-break: break-all; }
+      .link-row { margin-top: 14px; font-size: 13.5px; word-break: break-all; background: var(--panel-2); border-radius: 8px; padding: 10px 12px; }
+
+      /* Log */
+      .log-card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+      .log-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+      .log-head .date { font-weight: 800; font-size: 16px; }
+      .final-link {
+        display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap;
+        background: var(--panel-2); border-radius: 8px; padding: 10px 12px; margin-top: 12px;
+      }
+      .final-link .url { flex: 1 1 260px; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; word-break: break-all; align-self: center; }
+      .copy-btn {
+        flex: 0 0 auto; border: 1px solid var(--accent); background: var(--accent-soft); color: var(--accent-strong);
+        font-weight: 700; font-size: 14px; border-radius: 8px; padding: 8px 16px; cursor: pointer; min-height: 40px;
+      }
+      .copy-btn:active { transform: scale(0.97); }
+      .copy-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .empty-note {
+        margin-top: 14px; border: 1px dashed var(--line); border-radius: 8px;
+        padding: 12px 14px; color: var(--muted); font-size: 14px;
+      }
+
+      /* Info cards / definition rows (MHW sections) */
+      .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+      .info-card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+      .info-card h3 { margin: 0 0 8px; font-size: 16px; }
+      .info-card p { margin: 0; font-size: 14.5px; }
+      .info-card ul { margin: 6px 0 0; padding-left: 18px; }
+      .info-card li { font-size: 14.5px; margin: 4px 0; }
+      .def-list { display: grid; gap: 10px; }
+      .def-item { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; grid-template-columns: 132px 1fr; gap: 6px 14px; font-size: 14.5px; align-items: start; }
+      .def-item .k { font-weight: 700; }
+      .def-item p { margin: 0; }
+      .def-item .badge { justify-self: start; }
+      html[lang="en"] .def-item { grid-template-columns: 168px 1fr; }
+      .post-card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+      .post-card h3 { margin: 0 0 4px; font-size: 17px; }
+      .post-meta { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
+      .post-links { display: grid; gap: 8px; font-size: 14px; }
+      .post-links div { background: var(--panel-2); border-radius: 8px; padding: 10px 12px; word-break: break-all; }
+      .post-links .pl-label { display: block; color: var(--muted); font-size: 13px; margin-bottom: 2px; font-weight: 700; }
+      td .badge { font-size: 11.5px; padding: 2px 8px; }
+      .badge-pending { background: var(--warn-soft); color: var(--warn); }
+
+      html[lang="en"] .camp dl div { grid-template-columns: 158px 1fr; }
+      footer { margin-top: 48px; border-top: 1px solid var(--line); padding-top: 18px; color: var(--muted); font-size: 14px; }
+      footer p { margin: 4px 0; word-break: break-all; }
+
+      @media (max-width: 640px) {
+        .wrap { padding: 20px 14px 44px; }
+        h1 { font-size: 25px; }
+        .howto { grid-template-columns: 1fr; }
+        .campaigns { grid-template-columns: 1fr; }
+        /* 채널 표 → 카드형으로 쌓기 */
+        table, thead, tbody, tr, td { display: block; width: 100%; }
+        thead { display: none; }
+        tbody tr { padding: 10px 0; border-bottom: 1px solid var(--line); }
+        tbody tr:last-child { border-bottom: none; }
+        td { border-bottom: none; padding: 3px 14px; }
+        td.ch-name { font-weight: 700; font-size: 15px; padding-top: 4px; }
+        td.src::before { content: "utm_source · "; color: var(--muted); font-family: inherit; }
+        td.med::before { content: "utm_medium · "; color: var(--muted); font-family: inherit; }
+        td.handle::before { content: "Handle · "; color: var(--muted); font-family: inherit; }
+        td.linkcell::before { content: "Link · "; color: var(--muted); font-family: inherit; display: block; font-size: 12px; }
+        td.note:empty { display: none; }
+        .doc-card { padding: 14px; }
+        td.handle { white-space: normal; }
+        .cal-cell { min-height: 58px; padding: 5px 6px; }
+        .cal-event { font-size: 11.5px; }
+        .camp dl div { grid-template-columns: 80px 1fr; }
+        .def-item { grid-template-columns: 1fr; }
+        html[lang="en"] .def-item { grid-template-columns: 1fr; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .copy-btn:active { transform: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+
+      <header class="top">
+        <div class="top-row">
+          <h1 data-i18n="docTitle">XCONDA 마케팅 운영 대시보드</h1>
+          <div class="lang-toggle" role="group" aria-label="Language / 언어">
+            <button type="button" id="langKo" aria-pressed="true">한</button><span class="sep" aria-hidden="true">|</span><button type="button" id="langEn" aria-pressed="false">EN</button>
+          </div>
+        </div>
+        <p class="subtitle">
+          <span data-i18n="subtitleText">MHW 공유용 · UTM 규칙 v1.0 (2026-11-13 확정)</span> ·
+          <a href="https://docs.google.com/spreadsheets/d/1XKUuIWapeVTnmbXXkqZKfsTAxmcLGahaxJ6EE3TmUWg/edit?gid=1566450535#gid=1566450535" target="_blank" rel="noopener" data-i18n="openSheet">원본 시트 열기 ↗</a>
+        </p>
+        <div class="statusline" aria-label="현황 요약" data-i18n-aria="statusAria">
+          <span class="stat" data-i18n="statCampaigns">캠페인 <b>2건</b> 확정</span>
+          <span class="stat" data-i18n="statChannels">채널 <b>12개</b></span>
+          <span class="stat" data-i18n="statScheduled">예정 게시물 <b>1건</b> · 11/15</span>
+          <span class="stat" data-i18n="statLog">대장 기록 <b>1건</b> <span class="tag">예시</span></span>
+        </div>
+      </header>
+
+      <section aria-labelledby="howto-h">
+        <h2 id="howto-h" data-i18n="howtoTitle">사용법</h2>
+        <p class="sec-note" data-i18n="howtoNote">게시 링크를 만들 때 지키는 7가지 규칙입니다.</p>
+        <div class="howto">
+          <div class="how-card"><span class="how-num">1</span><p data-i18n="how1">노란 칸(게시일 · 채널 · 캠페인 · content · 도착 URL)만 입력합니다. 채널과 캠페인은 목록에서 고릅니다.</p></div>
+          <div class="how-card"><span class="how-num">2</span><p data-i18n="how2">최종 링크는 자동으로 만들어집니다. 그대로 복사해 게시물에 붙입니다.</p></div>
+          <div class="how-card"><span class="how-num">3</span><p data-i18n="how3">검사 결과가 OK가 아니면, 표시된 문제를 고친 뒤 게시합니다.</p></div>
+          <div class="how-card"><span class="how-num">4</span><p data-i18n="how4">content는 팀_일련번호 형식입니다 (<code>mhw_reel01</code>, <code>cb_post03</code>). 같은 소재를 여러 채널에 올리면 번호는 같게, 채널만 다르게 씁니다. 번호는 재사용하지 않습니다.</p></div>
+          <div class="how-card"><span class="how-num">5</span><p data-i18n="how5">도착 URL은 <code>www.xconda.ai</code> 또는 <code>hub.xconda.ai/en/…</code> 중 한 도메인만 씁니다. # 뒤에 UTM을 붙이지 않고, 허브 내부 링크에는 UTM을 쓰지 않습니다.</p></div>
+          <div class="how-card"><span class="how-num">6</span><p data-i18n="how6">개별 게시물은 사전 승인이 필요 없습니다. 큐브베리가 주 1회 대장을 확인합니다.</p></div>
+          <div class="how-card"><span class="how-num">7</span><p data-i18n="how7">잘못 게시된 링크는 지우지 말고 그대로 두고, 바로 아래 줄에 고친 링크를 새로 적습니다.</p></div>
+        </div>
+        <p class="note-bar" data-i18n="utmTermNote">유료 검색 광고(utm_term)는 처리 방식이 정해지면 칸을 추가할 예정입니다.</p>
+      </section>
+
+      <section aria-labelledby="camp-h">
+        <h2 id="camp-h" data-i18n="campTitle">캠페인</h2>
+        <p class="sec-note" data-i18n="campNote">확정된 캠페인 2건입니다. 새 캠페인은 시작 3영업일 전에 요청하고, 형식은 주제_YYYYMM (영문 소문자 · 숫자 · 밑줄만)입니다.</p>
+        <div class="campaigns">
+          <article class="camp">
+            <div class="camp-head"><span class="camp-name">flexboard_202611</span><span class="badge badge-ok" data-i18n="badgeConfirmed">확정</span></div>
+            <p class="camp-purpose" data-i18n="camp1Purpose">FLEXBOARD 11월 노출 · 가입</p>
+            <dl>
+              <div><dt data-i18n="labelLanding">기본 도착 URL</dt><dd class="mono">https://www.xconda.ai/</dd></div>
+              <div><dt data-i18n="labelIssued">발급일</dt><dd>2026-11-09</dd></div>
+              <div><dt data-i18n="labelStatus">상태</dt><dd data-i18n="statusConfirmed">확정 / Confirmed</dd></div>
+            </dl>
+          </article>
+          <article class="camp">
+            <div class="camp-head"><span class="camp-name">case_kbs_202611</span><span class="badge badge-ok" data-i18n="badgeConfirmed">확정</span></div>
+            <p class="camp-purpose" data-i18n="camp2Purpose">KBS 다큐 사례 확산</p>
+            <dl>
+              <div><dt data-i18n="labelLanding">기본 도착 URL</dt><dd class="mono">https://hub.xconda.ai/en/post/kbs-documentary-seongmul-xconda/</dd></div>
+              <div><dt data-i18n="labelIssued">발급일</dt><dd>2026-11-09</dd></div>
+              <div><dt data-i18n="labelStatus">상태</dt><dd data-i18n="statusConfirmed">확정 / Confirmed</dd></div>
+            </dl>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="docs-h">
+        <h2 id="docs-h" data-i18n="docsTitle">중요 문서·링크</h2>
+        <p class="sec-note" data-i18n="docsNote">영어 콘텐츠 작업은 1번 워크스페이스에서 시작합니다. 2~4번은 그 안에 있습니다.</p>
+        <div class="doc-list">
+          <article class="doc-card">
+            <span class="doc-num">1</span>
+            <div class="doc-body">
+              <p class="doc-title"><a href="https://app.notion.com/p/XCONDA-English-Content-Workspace-4122ebc017ad815fb893eae0a72a1aad" target="_blank" rel="noopener">XCONDA English Content Workspace (start here)</a><span class="doc-badge" data-i18n="docStartBadge">시작점</span></p>
+              <p class="doc-desc" data-i18n="doc1Desc">영어 콘텐츠 작업은 전부 여기에서. 2~4번은 이 워크스페이스 안에 있음.</p>
+              <p class="doc-url"><a href="https://app.notion.com/p/XCONDA-English-Content-Workspace-4122ebc017ad815fb893eae0a72a1aad" target="_blank" rel="noopener">https://app.notion.com/p/XCONDA-English-Content-Workspace-4122ebc017ad815fb893eae0a72a1aad</a></p>
+            </div>
+          </article>
+          <article class="doc-card">
+            <span class="doc-num">2</span>
+            <div class="doc-body">
+              <p class="doc-title"><a href="https://www.notion.so/4122ebc017ad8136a6a0e5cea7924d8a" target="_blank" rel="noopener">XCONDA Fact Sheet (official, approved facts)</a></p>
+              <p class="doc-desc" data-i18n="doc2Desc">이 페이지의 사실만 사용. 'Live Values' 표에 현재 크레딧 팩 가격·가입 크레딧·프로모션 상태가 있음. 수정 금지 — 큐브베리가 최신으로 유지.</p>
+              <p class="doc-url"><a href="https://www.notion.so/4122ebc017ad8136a6a0e5cea7924d8a" target="_blank" rel="noopener">https://www.notion.so/4122ebc017ad8136a6a0e5cea7924d8a</a></p>
+            </div>
+          </article>
+          <article class="doc-card">
+            <span class="doc-num">3</span>
+            <div class="doc-body">
+              <p class="doc-title"><a href="https://www.notion.so/4132ebc017ad81fcb514c184d20ba36d" target="_blank" rel="noopener">UTM Rules (v1.0, confirmed Nov 13)</a></p>
+              <p class="doc-desc" data-i18n="doc3Desc">11월 13일부터 발행하는 모든 링크에 이 규칙 적용.</p>
+              <p class="doc-url"><a href="https://www.notion.so/4132ebc017ad81fcb514c184d20ba36d" target="_blank" rel="noopener">https://www.notion.so/4132ebc017ad81fcb514c184d20ba36d</a></p>
+            </div>
+          </article>
+          <article class="doc-card">
+            <span class="doc-num">4</span>
+            <div class="doc-body">
+              <p class="doc-title"><a href="https://www.notion.so/ab782d11dc874787a48b9bc46cc998ea" target="_blank" rel="noopener">Cubeberry Portfolio (video reference)</a></p>
+              <p class="doc-desc" data-i18n="doc4Desc">큐브베리 영상 96편(광고·가이드·데모·TV·웹드라마)의 제목·카테고리·언어·해상도·길이·링크 목록. 승인된 영상만 자동으로 추가·삭제됨. 표는 자동 동기화되니 수정 금지. 영상 재게시 전, 특히 클라이언트 작업은 차하나와 먼저 확인할 것.</p>
+              <p class="doc-url"><a href="https://www.notion.so/ab782d11dc874787a48b9bc46cc998ea" target="_blank" rel="noopener">https://www.notion.so/ab782d11dc874787a48b9bc46cc998ea</a></p>
+            </div>
+          </article>
+          <article class="doc-card">
+            <span class="doc-num">5</span>
+            <div class="doc-body">
+              <p class="doc-title"><a href="https://docs.google.com/spreadsheets/d/1XKUuIWapeVTnmbXXkqZKfsTAxmcLGahaxJ6EE3TmUWg/edit" target="_blank" rel="noopener">Marketing Ops sheet (content calendar + UTM log, for you to fill in)</a></p>
+              <p class="doc-desc" data-i18n="doc5Desc">캘린더 탭에서 게시물을 계획하고, 발행한 모든 링크를 Log 탭에 기록. 최종 링크와 검사는 자동 생성.</p>
+              <p class="doc-url"><a href="https://docs.google.com/spreadsheets/d/1XKUuIWapeVTnmbXXkqZKfsTAxmcLGahaxJ6EE3TmUWg/edit" target="_blank" rel="noopener">https://docs.google.com/spreadsheets/d/1XKUuIWapeVTnmbXXkqZKfsTAxmcLGahaxJ6EE3TmUWg/edit</a></p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="social-h">
+        <h2 id="social-h" data-i18n="socialTitle">공식 소셜 계정</h2>
+        <p class="sec-note" data-i18n="socialNote">게시·연결할 때 아래 공식 계정만 사용합니다.</p>
+
+        <div class="social-group">
+          <h3><span data-i18n="socialEnTitle">영어 계정</span> <span class="group-tag">English</span></h3>
+          <div class="table-card">
+            <table>
+              <thead>
+                <tr><th scope="col" data-i18n="thSocialChannel">채널</th><th scope="col" data-i18n="thHandle">핸들</th><th scope="col" data-i18n="thLink">링크</th><th scope="col" data-i18n="thNotes2">비고</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="ch-name">Instagram</td><td class="handle">xconda_official</td><td class="linkcell"><a href="https://www.instagram.com/xconda_official/" target="_blank" rel="noopener">https://www.instagram.com/xconda_official/</a></td><td class="note"></td></tr>
+                <tr><td class="ch-name">Threads</td><td class="handle">xconda_official</td><td class="linkcell"><a href="https://www.threads.com/@xconda_official" target="_blank" rel="noopener">https://www.threads.com/@xconda_official</a></td><td class="note"></td></tr>
+                <tr><td class="ch-name">YouTube</td><td class="handle">Xconda_Official</td><td class="linkcell"><a href="https://www.youtube.com/@xconda_official" target="_blank" rel="noopener">https://www.youtube.com/@xconda_official</a></td><td class="note"></td></tr>
+                <tr><td class="ch-name">Facebook</td><td class="handle">XConda</td><td class="linkcell"><a href="https://www.facebook.com/profile.php?id=61584980414012" target="_blank" rel="noopener">https://www.facebook.com/profile.php?id=61584980414012</a></td><td class="note"></td></tr>
+                <tr><td class="ch-name">X</td><td class="handle">@Xconda_official</td><td class="linkcell"><a href="https://x.com/Xconda_official" target="_blank" rel="noopener">https://x.com/Xconda_official</a></td><td class="note" data-i18n="noteXEn">미사용 — 오피셜 계정은 쓰지 않음</td></tr>
+                <tr><td class="ch-name">LinkedIn</td><td class="handle">—</td><td class="linkcell">—</td><td class="note"><span class="badge badge-pending" data-i18n="badgeApprovedPending">개설 승인됨 · 계정 생성 전</span><br /><span data-i18n="noteNewChannel">계정 생성·권한은 미국 측 관리, 콘텐츠 검토는 큐브베리와 협의</span></td></tr>
+                <tr><td class="ch-name">TikTok</td><td class="handle">—</td><td class="linkcell">—</td><td class="note"><span class="badge badge-pending" data-i18n="badgeApprovedPending">개설 승인됨 · 계정 생성 전</span><br /><span data-i18n="noteNewChannel">계정 생성·권한은 미국 측 관리, 콘텐츠 검토는 큐브베리와 협의</span></td></tr>
+                <tr><td class="ch-name">X <span data-i18n="xUsLabel">(미국 계정)</span></td><td class="handle">—</td><td class="linkcell">—</td><td class="note"><span class="badge badge-pending" data-i18n="badgeXusPending">새로 개설 예정</span><br /><span data-i18n="noteXUs">기존 @Xconda_official과 구분되는 이름으로, 미국 측 관리. 기존 @Xconda_official은 그대로 유지</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="social-group">
+          <h3><span data-i18n="socialKoTitle">한국어 계정</span> <span class="group-tag" data-i18n="socialKoTag">큐브베리 운영</span></h3>
+          <div class="table-card">
+            <table>
+              <thead>
+                <tr><th scope="col" data-i18n="thSocialChannel2">채널</th><th scope="col" data-i18n="thHandle2">핸들</th><th scope="col" data-i18n="thLink2">링크</th><th scope="col" data-i18n="thNotes3">비고</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="ch-name">Instagram</td><td class="handle">xconda_korea</td><td class="linkcell"><a href="https://www.instagram.com/xconda_korea/" target="_blank" rel="noopener">https://www.instagram.com/xconda_korea/</a></td><td class="note"></td></tr>
+                <tr><td class="ch-name">Threads</td><td class="handle">xconda_korea</td><td class="linkcell"><a href="https://www.threads.com/@xconda_korea" target="_blank" rel="noopener">https://www.threads.com/@xconda_korea</a></td><td class="note"></td></tr>
+                <tr><td class="ch-name">YouTube</td><td class="handle">xconda_korea</td><td class="linkcell"><a href="https://www.youtube.com/@xconda_korea" target="_blank" rel="noopener">https://www.youtube.com/@xconda_korea</a></td><td class="note"></td></tr>
+                <tr><td class="ch-name">Facebook</td><td class="handle">엑스콘다</td><td class="linkcell"><a href="https://www.facebook.com/profile.php?id=61587791698809" target="_blank" rel="noopener">https://www.facebook.com/profile.php?id=61587791698809</a></td><td class="note"></td></tr>
+                <tr><td class="ch-name">X</td><td class="handle">@xconda_ai</td><td class="linkcell"><a href="https://x.com/xconda_ai" target="_blank" rel="noopener">https://x.com/xconda_ai</a></td><td class="note" data-i18n="noteXKo">사용 중 — 한국 X 계정</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p class="social-note" data-i18n="socialAutoNote">[확인 필요] 허브 자동 게시가 @xconda_ai로 연결되는지 확인이 필요합니다.</p>
+        <p class="social-note" data-i18n="socialFooterNote">이상한 점이 있거나 링크가 안 열리면 이 스레드에 알려주세요.</p>
+      </section>
+
+      <section aria-labelledby="collab-h">
+        <h2 id="collab-h" data-i18n="collabTitle">MHW 협업 현황</h2>
+        <p class="sec-note" data-i18n="collabNote">MHW 팀과의 소통 방식, 30/60/90일 계획 수령 내역, 검토 범위와 역할 분담입니다.</p>
+        <div class="info-grid">
+          <article class="info-card">
+            <h3 data-i18n="collabCommTitle">소통 · 회신 기준</h3>
+            <p data-i18n="collabCommBody">MHW 팀 공용 이메일로 소통합니다. 회신은 24시간 이내가 원칙이고, 상황에 따라 24~48시간이 걸릴 수 있습니다. 이메일은 한국어와 영어를 함께 씁니다 — 해외 팀원이 번역하는 과정에서 내용이 잘못 전달되는 것을 막기 위해서입니다.</p>
+          </article>
+          <article class="info-card">
+            <h3 data-i18n="collabDocsTitle">MHW 30/60/90일 계획 5종 수령 (2026-11-13)</h3>
+            <ul>
+              <li data-i18n="collabDoc1">XCONDA SEO 30/60/90일 계획 (엑셀)</li>
+              <li data-i18n="collabDoc2">XCONDA 검증 결과 (엑셀)</li>
+              <li data-i18n="collabDoc3">XCONDA 미국 SEO 및 지리 전략 (PPT)</li>
+              <li data-i18n="collabDoc4">XCONDA 소셜 미디어 감사 및 성장 계획 (PPT)</li>
+              <li data-i18n="collabDoc5">큐브베리 브랜드북 (PDF, 2026-11-11 업데이트)</li>
+            </ul>
+          </article>
+          <article class="info-card">
+            <h3 data-i18n="collabVerifyTitle">MHW 검토 범위 — "Requests for MHW Verification" 10개 항목</h3>
+            <p data-i18n="collabVerifyBody">허브 기술 태그 · 미국 AI 검색 가시성 · 경쟁사 인용 출처 · 디렉토리 등록 · 리다이렉트 · 미국 허브 접근성 · 영문 콘텐츠 품질 · 미국 키워드 우선순위 · 회사 정체성 · 허브 URL 구조</p>
+          </article>
+          <article class="info-card">
+            <h3 data-i18n="collabRolesTitle">역할 분담</h3>
+            <ul>
+              <li data-i18n="collabRoleCb">큐브베리 — 원본 제품 정보 제공, 기술 SEO 기반·자동화·허브 인프라 운영, 승인된 글 검토 후 hub.xconda.ai/en 게시</li>
+              <li data-i18n="collabRoleMhw">MHW — 미국 시장용 영문 글·영상 제작, 미국 검색 의도·키워드·경쟁사 조사, 승인 콘텐츠 재배포, 영어 현지화·참여·경쟁 모니터링, 주간·월간 보고</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="access-h">
+        <h2 id="access-h" data-i18n="accessTitle">권한·워크플로 결정</h2>
+        <p class="sec-note" data-i18n="accessNote">차하나 PD가 2026-11-13에 MHW에 안내한 내용입니다. 미결 항목은 날짜를 약속하지 않고 정리되는 대로 공유합니다.</p>
+        <div class="def-list">
+          <div class="def-item"><span class="k">Notion</span><p data-i18n="accessNotion">jlee@mhwdigital.ai를 게스트로 초대합니다. 글 흐름은 Draft → In Review → 승인/수정 → 게시이며, 차하나 PD가 검토합니다.</p></div>
+          <div class="def-item"><span class="k" data-i18n="accessHubKey">허브 게시</span><p data-i18n="accessHub">승인된 글은 hub.xconda.ai/en에 고유 주소로 게시되고 사이트맵에 포함됩니다.</p></div>
+          <div class="def-item"><span class="k" data-i18n="accessSocialKey">소셜 접근</span><p data-i18n="accessSocial">계정은 큐브베리 소유이며, MHW는 역할 권한으로 접근합니다 (YouTube Editor, Meta 비즈니스, X는 추후 안내).</p></div>
+          <div class="def-item"><span class="k" data-i18n="accessPlanBKey">접근 권한 (Plan B)</span><p data-i18n="accessPlanB">MHW는 담당자 부재에 대비해 계정마다 약 3명(팀 공용 이메일 + 실무 담당자)의 권한을 요청했습니다. 플랫폼별 담당자 이름·이메일을 받으면 그 명단으로 YouTube·Meta 초대와 GSC·GA4 권한을 진행합니다. 기존 'jlee@mhwdigital.ai 한 계정' 안은 이 명단으로 대체됩니다.</p></div>
+          <div class="def-item"><span class="k" data-i18n="accessOpsKey">운영 방식</span><p><span data-i18n="accessOps">MHW가 글로벌 SNS 운영 총괄과 초기 1~2개월 주 1회 사전 승인 후 업로드 방식을 제안했고, 차하나 PD는 "내부에서 상의한 뒤 답변드리겠습니다"라고 답했습니다. 차하나 PD의 2026-11-13 답변은 "영문 게시물은 사전 승인 없이 올리시면 됩니다"였지만, MHW의 주 1회 사전 승인 제안은 아직 미결입니다.</span> <span class="badge badge-pending" data-i18n="badgePending">미결</span></p></div>
+          <div class="def-item"><span class="k" data-i18n="accessAnalyticsKey">분석 (GSC·GA4)</span><p data-i18n="accessAnalytics">GSC·GA4 권한은 MHW 명단으로 진행합니다. 리포트 양식과 KPI는 30/60/90일 계획에 MHW가 제안합니다.</p></div>
+          <div class="def-item"><span class="k" data-i18n="accessFactKey">팩트시트</span><p data-i18n="accessFact">Notion 팩트시트(Live Values)가 기준이며, 창구는 차하나 PD입니다.</p></div>
+          <div class="def-item"><span class="k" data-i18n="accessCaseKey">사례</span><p data-i18n="accessCase">KBS 다큐부터 영문 사례를 준비 중입니다.</p></div>
+          <div class="def-item"><span class="k" data-i18n="accessPriceKey">가격</span><p data-i18n="accessPrice">팩트시트가 기준입니다. 구독 요금제는 발표 전이고, Stripe는 일시 중지 중입니다 — 사용자에게 안내하지 마세요.</p></div>
+        </div>
+      </section>
+
+      <section aria-labelledby="linkrules-h">
+        <h2 id="linkrules-h" data-i18n="linkRulesTitle">링크 기준</h2>
+        <p class="sec-note" data-i18n="linkRulesNote">허브 글과 SNS·커뮤니티 글에서 링크를 거는 기준입니다 (차하나 PD, 2026-11-13).</p>
+        <div class="howto">
+          <div class="how-card"><span class="how-num">1</span><p data-i18n="linkRule1">허브 글 안의 제품·가격·가입 링크는 www.xconda.ai로 겁니다. 허브 글끼리의 링크는 자유롭게 겁니다.</p></div>
+          <div class="how-card"><span class="how-num">2</span><p data-i18n="linkRule2">SNS·커뮤니티 글은 www 또는 해당 허브 글에 UTM을 붙여 링크합니다.</p></div>
+          <div class="how-card"><span class="how-num">3</span><p data-i18n="linkRule3">게시된 허브 글 주소는 Notion의 Hub URL 칸에 채워 드립니다.</p></div>
+        </div>
+      </section>
+
+      <section aria-labelledby="recent-h">
+        <h2 id="recent-h" data-i18n="recentTitle">최근 게시물</h2>
+        <p class="sec-note" data-i18n="recentNote">최근에 올라간 홍보 게시물입니다.</p>
+        <article class="post-card">
+          <h3 data-i18n="recentPostTitle">Seedream 5.5 출시 및 40% 할인 홍보 배너 업로드 완료</h3>
+          <p class="post-meta" data-i18n="recentPostMeta">2026-11-13 · 차하나 PD 공유 · 필요하면 배너 원본 소스나 추가 자료를 요청할 수 있습니다.</p>
+          <div class="post-links">
+            <div><span class="pl-label">Instagram</span><a href="https://www.instagram.com/p/DfnvzDClgKb/" target="_blank" rel="noopener">https://www.instagram.com/p/DfnvzDClgKb/</a></div>
+            <div><span class="pl-label">X</span><a href="https://x.com/xconda_ai/status/2120671882332500455" target="_blank" rel="noopener">https://x.com/xconda_ai/status/2120671882332500455</a></div>
+          </div>
+          <p class="post-meta" style="margin:12px 0 0;" data-i18n="recentXNote">X 게시물은 한국 X 계정 @xconda_ai(사용 중)에서 게시됐습니다.</p>
+        </article>
+      </section>
+
+      <section aria-labelledby="ch-h">
+        <h2 id="ch-h" data-i18n="chTitle">채널표</h2>
+        <p class="sec-note" data-i18n="chNote">UTM 규칙 v1.0 §4 조합표 기준, 채널 12개입니다. 구글 검색 광고는 처리 방식이 결정되기 전까지 넣지 않습니다.</p>
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr><th scope="col" data-i18n="thChannel">채널</th><th scope="col">utm_source</th><th scope="col">utm_medium</th><th scope="col" data-i18n="thNotes">비고</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="ch-name" data-i18n="ch1">Instagram (피드 · 릴스 · 스토리 · 프로필)</td><td class="src">instagram</td><td class="med">social</td><td class="note"></td></tr>
+              <tr><td class="ch-name" data-i18n="ch2">YouTube 영상 설명란</td><td class="src">youtube</td><td class="med">video</td><td class="note">GA4 Organic Video</td></tr>
+              <tr><td class="ch-name" data-i18n="ch3">YouTube 커뮤니티 탭</td><td class="src">youtube</td><td class="med">social</td><td class="note"></td></tr>
+              <tr><td class="ch-name" data-i18n="ch4">Facebook (페이지 · 그룹)</td><td class="src">facebook</td><td class="med">social</td><td class="note"></td></tr>
+              <tr><td class="ch-name">X</td><td class="src">x</td><td class="med">social</td><td class="note" data-i18n="noteTwitter">twitter 금지</td></tr>
+              <tr><td class="ch-name">Threads</td><td class="src">threads</td><td class="med">social</td><td class="note"></td></tr>
+              <tr><td class="ch-name">LinkedIn</td><td class="src">linkedin</td><td class="med">social</td><td class="note"></td></tr>
+              <tr><td class="ch-name">Reddit</td><td class="src">reddit</td><td class="med">community</td><td class="note" data-i18n="noteReddit">커스텀 채널 그룹 확인 필요</td></tr>
+              <tr><td class="ch-name" data-i18n="chNewsletter">뉴스레터</td><td class="src">newsletter</td><td class="med">email</td><td class="note" data-i18n="noteNewsletter">발송 도구 이름 쓰지 않음</td></tr>
+              <tr><td class="ch-name" data-i18n="chIgAds">Instagram 광고</td><td class="src">instagram</td><td class="med">paid</td><td class="note"></td></tr>
+              <tr><td class="ch-name" data-i18n="chFbAds">Facebook 광고</td><td class="src">facebook</td><td class="med">paid</td><td class="note"></td></tr>
+              <tr><td class="ch-name" data-i18n="chYtAds">YouTube 광고</td><td class="src">youtube</td><td class="med">paid</td><td class="note">GA4 Paid Video</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section aria-labelledby="cal-h">
+        <h2 id="cal-h" data-i18n="calTitle">콘텐츠 캘린더 — 2026년 11월</h2>
+        <p class="sec-note" data-i18n="calNote">예정 게시물 1건이 있습니다. 게시 후 대장 Log에 같은 채널 · content로 기록하면 최종 링크와 검사 결과가 자동으로 채워지고, 상태가 '게시됨'인데 대장에 없으면 빨간색으로 표시됩니다.</p>
+        <p class="sec-note" data-i18n="monthViewNote" style="margin-top:-8px;">월간 보기 — B1에 월의 1일을 입력하면 달력을 월간 그리드로 볼 수 있습니다.</p>
+
+        <div class="cal-grid" role="grid" aria-label="2026년 11월 달력" data-i18n-aria="calAria">
+          <div class="cal-dow" data-i18n="dowMon">월</div><div class="cal-dow" data-i18n="dowTue">화</div><div class="cal-dow" data-i18n="dowWed">수</div><div class="cal-dow" data-i18n="dowThu">목</div><div class="cal-dow" data-i18n="dowFri">금</div><div class="cal-dow" data-i18n="dowSat">토</div><div class="cal-dow" data-i18n="dowSun">일</div>
+
+          <div class="cal-cell out"><span class="d">10/26</span></div>
+          <div class="cal-cell out"><span class="d">10/27</span></div>
+          <div class="cal-cell out"><span class="d">10/28</span></div>
+          <div class="cal-cell out"><span class="d">10/29</span></div>
+          <div class="cal-cell out"><span class="d">10/30</span></div>
+          <div class="cal-cell out"><span class="d">10/31</span></div>
+          <div class="cal-cell"><span class="d">11/1</span></div>
+
+          <div class="cal-cell"><span class="d">2</span></div>
+          <div class="cal-cell"><span class="d">3</span></div>
+          <div class="cal-cell"><span class="d">4</span></div>
+          <div class="cal-cell"><span class="d">5</span></div>
+          <div class="cal-cell"><span class="d">6</span></div>
+          <div class="cal-cell"><span class="d">7</span></div>
+          <div class="cal-cell"><span class="d">8</span></div>
+
+          <div class="cal-cell"><span class="d">9</span></div>
+          <div class="cal-cell"><span class="d">10</span></div>
+          <div class="cal-cell"><span class="d">11</span></div>
+          <div class="cal-cell"><span class="d">12</span></div>
+          <div class="cal-cell"><span class="d">13</span></div>
+          <div class="cal-cell"><span class="d">14</span></div>
+          <div class="cal-cell has"><span class="d">15</span><p class="cal-event"><span class="team">[mhw]</span> <span data-i18n="calEventTopic">FLEXBOARD 컷 일관성 릴스 #1</span></p></div>
+
+          <div class="cal-cell"><span class="d">16</span></div>
+          <div class="cal-cell"><span class="d">17</span></div>
+          <div class="cal-cell"><span class="d">18</span></div>
+          <div class="cal-cell"><span class="d">19</span></div>
+          <div class="cal-cell"><span class="d">20</span></div>
+          <div class="cal-cell"><span class="d">21</span></div>
+          <div class="cal-cell"><span class="d">22</span></div>
+
+          <div class="cal-cell"><span class="d">23</span></div>
+          <div class="cal-cell"><span class="d">24</span></div>
+          <div class="cal-cell"><span class="d">25</span></div>
+          <div class="cal-cell"><span class="d">26</span></div>
+          <div class="cal-cell"><span class="d">27</span></div>
+          <div class="cal-cell"><span class="d">28</span></div>
+          <div class="cal-cell"><span class="d">29</span></div>
+
+          <div class="cal-cell"><span class="d">30</span></div>
+          <div class="cal-cell out"><span class="d">12/1</span></div>
+          <div class="cal-cell out"><span class="d">12/2</span></div>
+          <div class="cal-cell out"><span class="d">12/3</span></div>
+          <div class="cal-cell out"><span class="d">12/4</span></div>
+          <div class="cal-cell out"><span class="d">12/5</span></div>
+          <div class="cal-cell out"><span class="d">12/6</span></div>
+        </div>
+
+        <article class="sched-card">
+          <h3 data-i18n="schedTitle">예정 게시물 — 2026-11-15 · Instagram</h3>
+          <p class="sched-topic" data-i18n="schedTopic">FLEXBOARD 컷 일관성 릴스 #1 / FLEXBOARD shot-consistency reel #1</p>
+          <div class="kv">
+            <div><span data-i18n="labelTeam">팀</span>mhw</div>
+            <div><span data-i18n="labelOwner">담당</span>(MHW)</div>
+            <div><span data-i18n="labelCampaign">캠페인</span><span class="mono" style="display:inline;color:inherit;font-size:13.5px;">flexboard_202611</span></div>
+            <div><span>content</span><span class="mono" style="display:inline;color:inherit;font-size:13.5px;">mhw_reel01</span></div>
+            <div><span data-i18n="labelStatus2">상태</span><span data-i18n="statusScheduled" style="color:inherit;font-size:14px;">예약 Scheduled</span></div>
+            <div><span data-i18n="labelCheck">대장 검사</span><b style="color:var(--ok);">OK</b></div>
+          </div>
+          <p class="link-row"><b data-i18n="labelFinalLink">최종 링크 (대장)</b><br /><span class="mono">https://www.xconda.ai/?utm_source=instagram&amp;utm_medium=social&amp;utm_campaign=flexboard_202611&amp;utm_content=mhw_reel01</span></p>
+        </article>
+      </section>
+
+      <section aria-labelledby="log-h">
+        <h2 id="log-h" data-i18n="logTitle">대장 Log</h2>
+        <p class="sec-note" data-i18n="logNote">게시한 링크를 한 줄씩 기록하는 곳입니다.</p>
+        <article class="log-card">
+          <div class="log-head">
+            <span class="date">2026-11-15</span>
+            <span>Instagram</span>
+            <span class="badge badge-sample" data-i18n="badgeExample">예시 — 형식 안내용</span>
+            <span class="badge badge-ok" data-i18n="badgeCheckOk">검사 OK</span>
+          </div>
+          <div class="kv">
+            <div><span data-i18n="labelCampaign2">캠페인</span><span class="mono" style="display:inline;color:inherit;font-size:13.5px;">flexboard_202611</span></div>
+            <div><span>content</span><span class="mono" style="display:inline;color:inherit;font-size:13.5px;">mhw_reel01</span></div>
+            <div><span data-i18n="labelLanding2">도착 URL</span><span class="mono" style="display:inline;color:inherit;font-size:13.5px;">https://www.xconda.ai/</span></div>
+          </div>
+          <div class="final-link">
+            <span class="url" id="finalLink">https://www.xconda.ai/?utm_source=instagram&amp;utm_medium=social&amp;utm_campaign=flexboard_202611&amp;utm_content=mhw_reel01</span>
+            <button type="button" class="copy-btn" id="copyBtn" data-i18n="copyBtn">최종 링크 복사</button>
+          </div>
+          <p class="empty-note" data-i18n="emptyNote">대장 기록은 예시 1건뿐이고, 실제 기록은 아직 없습니다. 이 예시 행은 실제 기록을 시작하면 시트에서 지우는 행입니다.</p>
+        </article>
+      </section>
+
+      <footer>
+        <p data-i18n="footerDate">기준일 2026-11-13 · UTM 규칙 v1.0 (2026-11-13 확정)</p>
+        <p><span data-i18n="footerSheetLabel">원본 시트:</span> <a href="https://docs.google.com/spreadsheets/d/1XKUuIWapeVTnmbXXkqZKfsTAxmcLGahaxJ6EE3TmUWg/edit?gid=1566450535#gid=1566450535" target="_blank" rel="noopener" data-i18n="footerSheetName">XCONDA 마케팅 운영 시트 / Marketing Ops (캘린더 · UTM) — MHW 공유용</a></p>
+      </footer>
+
+    </div>
+
+    <script>
+      (function () {
+        var I18N = {
+          docTitle: { ko: 'XCONDA 마케팅 운영 대시보드', en: 'XCONDA Marketing Ops Dashboard' },
+          subtitleText: { ko: 'MHW 공유용 · UTM 규칙 v1.0 (2026-11-13 확정)', en: 'Shared with MHW · UTM rules v1.0 (confirmed Nov 13, 2026)' },
+          openSheet: { ko: '원본 시트 열기 ↗', en: 'Open source sheet ↗' },
+          statusAria: { ko: '현황 요약', en: 'Summary' },
+          statCampaigns: { ko: '캠페인 <b>2건</b> 확정', en: 'Campaigns <b>2</b> confirmed' },
+          statChannels: { ko: '채널 <b>12개</b>', en: 'Channels <b>12</b>' },
+          statScheduled: { ko: '예정 게시물 <b>1건</b> · 11/15', en: 'Scheduled post <b>1</b> · Nov 15' },
+          statLog: { ko: '대장 기록 <b>1건</b> <span class="tag">예시</span>', en: 'Log entries <b>1</b> <span class="tag">Example</span>' },
+          howtoTitle: { ko: '사용법', en: 'How to use' },
+          howtoNote: { ko: '게시 링크를 만들 때 지키는 7가지 규칙입니다.', en: 'Seven rules to follow when you create a post link.' },
+          how1: { ko: '노란 칸(게시일 · 채널 · 캠페인 · content · 도착 URL)만 입력합니다. 채널과 캠페인은 목록에서 고릅니다.', en: 'Fill in the yellow cells only (post date, channel, campaign, content, landing URL). Pick the channel and campaign from the lists.' },
+          how2: { ko: '최종 링크는 자동으로 만들어집니다. 그대로 복사해 게시물에 붙입니다.', en: 'The final link is built automatically. Copy it into your post as is.' },
+          how3: { ko: '검사 결과가 OK가 아니면, 표시된 문제를 고친 뒤 게시합니다.', en: 'If the check is not OK, fix the issue shown before posting.' },
+          how4: { ko: 'content는 팀_일련번호 형식입니다 (<code>mhw_reel01</code>, <code>cb_post03</code>). 같은 소재를 여러 채널에 올리면 번호는 같게, 채널만 다르게 씁니다. 번호는 재사용하지 않습니다.', en: 'content = team_number (<code>mhw_reel01</code>, <code>cb_post03</code>). The same creative on several channels keeps one number; only the channel changes. Never reuse a number.' },
+          how5: { ko: '도착 URL은 <code>www.xconda.ai</code> 또는 <code>hub.xconda.ai/en/…</code> 중 한 도메인만 씁니다. # 뒤에 UTM을 붙이지 않고, 허브 내부 링크에는 UTM을 쓰지 않습니다.', en: 'Landing URL: one domain only, <code>www.xconda.ai</code> or <code>hub.xconda.ai/en/...</code> No UTM after a #. No UTM on internal Hub links.' },
+          how6: { ko: '개별 게시물은 사전 승인이 필요 없습니다. 큐브베리가 주 1회 대장을 확인합니다.', en: 'Individual posts need no prior approval. Cubeberry reviews this log once a week.' },
+          how7: { ko: '잘못 게시된 링크는 지우지 말고 그대로 두고, 바로 아래 줄에 고친 링크를 새로 적습니다.', en: 'Do not delete a link posted by mistake. Leave it and add the corrected link in a new row below.' },
+          utmTermNote: { ko: '유료 검색 광고(utm_term)는 처리 방식이 정해지면 칸을 추가할 예정입니다.', en: 'A utm_term column for paid search will be added once the approach is decided.' },
+          campTitle: { ko: '캠페인', en: 'Campaigns' },
+          campNote: { ko: '확정된 캠페인 2건입니다. 새 캠페인은 시작 3영업일 전에 요청하고, 형식은 주제_YYYYMM (영문 소문자 · 숫자 · 밑줄만)입니다.', en: 'New campaigns are added here by Cubeberry (request 3 business days before start). Format: topic_YYYYMM (start month), lowercase letters, numbers and underscores only.' },
+          badgeConfirmed: { ko: '확정', en: 'Confirmed' },
+          camp1Purpose: { ko: 'FLEXBOARD 11월 노출 · 가입', en: 'FLEXBOARD November reach & sign-ups' },
+          camp2Purpose: { ko: 'KBS 다큐 사례 확산', en: 'KBS documentary case study' },
+          labelLanding: { ko: '기본 도착 URL', en: 'Default landing URL' },
+          labelIssued: { ko: '발급일', en: 'Issued' },
+          labelStatus: { ko: '상태', en: 'Status' },
+          statusConfirmed: { ko: '확정 / Confirmed', en: 'Confirmed' },
+          docsTitle: { ko: '중요 문서·링크', en: 'Important doc & Link' },
+          docsNote: { ko: '영어 콘텐츠 작업은 1번 워크스페이스에서 시작합니다. 2~4번은 그 안에 있습니다.', en: 'All English content work starts in the workspace in item 1. Items 2–4 are inside it.' },
+          docStartBadge: { ko: '시작점', en: 'Start here' },
+          doc1Desc: { ko: '영어 콘텐츠 작업은 전부 여기에서. 2~4번은 이 워크스페이스 안에 있음.', en: 'All English content work happens here. Items 2–4 are inside this workspace.' },
+          doc2Desc: { ko: "이 페이지의 사실만 사용. 'Live Values' 표에 현재 크레딧 팩 가격·가입 크레딧·프로모션 상태가 있음. 수정 금지 — 큐브베리가 최신으로 유지.", en: "Use only the facts on this page. The 'Live Values' table holds current credit pack prices, sign-up credits and promotion status. Please don't edit it; Cubeberry keeps it up to date." },
+          doc3Desc: { ko: '11월 13일부터 발행하는 모든 링크에 이 규칙 적용.', en: 'Apply these to every link you publish from Nov 13.' },
+          doc4Desc: { ko: '큐브베리 영상 96편(광고·가이드·데모·TV·웹드라마)의 제목·카테고리·언어·해상도·길이·링크 목록. 승인된 영상만 자동으로 추가·삭제됨. 표는 자동 동기화되니 수정 금지. 영상 재게시 전, 특히 클라이언트 작업은 차하나와 먼저 확인할 것.', en: "96 Cubeberry videos (ads, guides, demos, TV, web dramas) with title, category, language, resolution, length and link. Only approved videos are added or removed automatically. The table syncs automatically, so please don't edit it. Check with Hana Cha before reposting any video, especially client work." },
+          doc5Desc: { ko: '캘린더 탭에서 게시물을 계획하고, 발행한 모든 링크를 Log 탭에 기록. 최종 링크와 검사는 자동 생성.', en: 'Plan posts in the Calendar tab and log every published link in the Log tab. The final link and check are built automatically.' },
+          socialTitle: { ko: '공식 소셜 계정', en: 'Official social accounts' },
+          socialNote: { ko: '게시·연결할 때 아래 공식 계정만 사용합니다.', en: 'Use only the official accounts below when posting or linking.' },
+          socialEnTitle: { ko: '영어 계정', en: 'English' },
+          socialKoTitle: { ko: '한국어 계정', en: 'Korean' },
+          socialKoTag: { ko: '큐브베리 운영', en: 'run by Cubeberry' },
+          thSocialChannel: { ko: '채널', en: 'Channel' },
+          thHandle: { ko: '핸들', en: 'Handle' },
+          thLink: { ko: '링크', en: 'Link' },
+          thNotes2: { ko: '비고', en: 'Notes' },
+          thSocialChannel2: { ko: '채널', en: 'Channel' },
+          thHandle2: { ko: '핸들', en: 'Handle' },
+          thLink2: { ko: '링크', en: 'Link' },
+          thNotes3: { ko: '비고', en: 'Notes' },
+          noteXEn: { ko: '미사용 — 오피셜 계정은 쓰지 않음', en: 'Not in use — the official account is not used' },
+          noteXKo: { ko: '사용 중 — 한국 X 계정', en: 'In use — Korean X account' },
+          badgeApprovedPending: { ko: '개설 승인됨 · 계정 생성 전', en: 'Approved · not yet created' },
+          badgeXusPending: { ko: '새로 개설 예정', en: 'To be created' },
+          noteNewChannel: { ko: '계정 생성·권한은 미국 측 관리, 콘텐츠 검토는 큐브베리와 협의', en: 'Account creation and permissions managed by the U.S. side; content reviewed with Cubeberry' },
+          xUsLabel: { ko: '(미국 계정)', en: '(U.S. account)' },
+          noteXUs: { ko: '기존 @Xconda_official과 구분되는 이름으로, 미국 측 관리. 기존 @Xconda_official은 그대로 유지', en: 'A new account under a name distinct from @Xconda_official, managed by the U.S. side. The existing @Xconda_official stays as is' },
+          socialAutoNote: { ko: '[확인 필요] 허브 자동 게시가 @xconda_ai로 연결되는지 확인이 필요합니다.', en: '[Check needed] Confirm whether Hub auto-posting connects to @xconda_ai.' },
+          socialFooterNote: { ko: '이상한 점이 있거나 링크가 안 열리면 이 스레드에 알려주세요.', en: "If anything looks off or a link doesn't open, let us know in this thread." },
+          chTitle: { ko: '채널표', en: 'Channels' },
+          chNote: { ko: 'UTM 규칙 v1.0 §4 조합표 기준, 채널 12개입니다. 구글 검색 광고는 처리 방식이 결정되기 전까지 넣지 않습니다.', en: 'Based on UTM rules v1.0 §4. If you add a channel, extend the Log column B dropdown range (A2:A13). Google search ads are not tagged until the approach is decided.' },
+          thChannel: { ko: '채널', en: 'Channel' },
+          thNotes: { ko: '비고', en: 'Notes' },
+          ch1: { ko: 'Instagram (피드 · 릴스 · 스토리 · 프로필)', en: 'Instagram (Feed·Reels·Stories·Bio)' },
+          ch2: { ko: 'YouTube 영상 설명란', en: 'YouTube Video description' },
+          ch3: { ko: 'YouTube 커뮤니티 탭', en: 'YouTube Community tab' },
+          ch4: { ko: 'Facebook (페이지 · 그룹)', en: 'Facebook (Page·Group)' },
+          noteTwitter: { ko: 'twitter 금지', en: 'Do not use twitter' },
+          noteReddit: { ko: '커스텀 채널 그룹 확인 필요', en: 'Custom channel group to check' },
+          chNewsletter: { ko: '뉴스레터', en: 'Newsletter' },
+          noteNewsletter: { ko: '발송 도구 이름 쓰지 않음', en: 'No tool names' },
+          chIgAds: { ko: 'Instagram 광고', en: 'Instagram Ads' },
+          chFbAds: { ko: 'Facebook 광고', en: 'Facebook Ads' },
+          chYtAds: { ko: 'YouTube 광고', en: 'YouTube Ads' },
+          calTitle: { ko: '콘텐츠 캘린더 — 2026년 11월', en: 'Content Calendar — November 2026' },
+          calNote: { ko: "예정 게시물 1건이 있습니다. 게시 후 대장 Log에 같은 채널 · content로 기록하면 최종 링크와 검사 결과가 자동으로 채워지고, 상태가 '게시됨'인데 대장에 없으면 빨간색으로 표시됩니다.", en: "After posting, log it in the Log tab with the same channel and content; the calendar fills in the final link and check. A 'Posted' row missing from the log turns red." },
+          monthViewNote: { ko: '월간 보기 — B1에 월의 1일을 입력하면 달력을 월간 그리드로 볼 수 있습니다.', en: 'Month view — Enter the 1st of a month in B1 to see the calendar as a month grid.' },
+          calAria: { ko: '2026년 11월 달력', en: 'November 2026 calendar' },
+          dowMon: { ko: '월', en: 'Mon' },
+          dowTue: { ko: '화', en: 'Tue' },
+          dowWed: { ko: '수', en: 'Wed' },
+          dowThu: { ko: '목', en: 'Thu' },
+          dowFri: { ko: '금', en: 'Fri' },
+          dowSat: { ko: '토', en: 'Sat' },
+          dowSun: { ko: '일', en: 'Sun' },
+          calEventTopic: { ko: 'FLEXBOARD 컷 일관성 릴스 #1', en: 'FLEXBOARD shot-consistency reel #1' },
+          schedTitle: { ko: '예정 게시물 — 2026-11-15 · Instagram', en: 'Scheduled post — 2026-11-15 · Instagram' },
+          schedTopic: { ko: 'FLEXBOARD 컷 일관성 릴스 #1 / FLEXBOARD shot-consistency reel #1', en: 'FLEXBOARD shot-consistency reel #1' },
+          labelTeam: { ko: '팀', en: 'Team' },
+          labelOwner: { ko: '담당', en: 'Owner' },
+          labelCampaign: { ko: '캠페인', en: 'Campaign' },
+          labelStatus2: { ko: '상태', en: 'Status' },
+          statusScheduled: { ko: '예약 Scheduled', en: 'Scheduled' },
+          labelCheck: { ko: '대장 검사', en: 'Check' },
+          labelFinalLink: { ko: '최종 링크 (대장)', en: 'Final link' },
+          logTitle: { ko: '대장 Log', en: 'Log' },
+          logNote: { ko: '게시한 링크를 한 줄씩 기록하는 곳입니다.', en: 'One row per posted link.' },
+          badgeExample: { ko: '예시 — 형식 안내용', en: 'Example' },
+          badgeCheckOk: { ko: '검사 OK', en: 'Check OK' },
+          labelCampaign2: { ko: '캠페인', en: 'Campaign' },
+          labelLanding2: { ko: '도착 URL', en: 'Landing URL' },
+          copyBtn: { ko: '최종 링크 복사', en: 'Copy' },
+          emptyNote: { ko: '대장 기록은 예시 1건뿐이고, 실제 기록은 아직 없습니다. 이 예시 행은 실제 기록을 시작하면 시트에서 지우는 행입니다.', en: 'No real entries yet — the row above is a format example.' },
+          footerDate: { ko: '기준일 2026-11-13 · UTM 규칙 v1.0 (2026-11-13 확정)', en: 'As of Nov 13, 2026 · UTM rules v1.0 (confirmed Nov 13, 2026)' },
+          footerSheetLabel: { ko: '원본 시트:', en: 'Source sheet:' },
+          footerSheetName: { ko: 'XCONDA 마케팅 운영 시트 / Marketing Ops (캘린더 · UTM) — MHW 공유용', en: 'XCONDA Marketing Ops (Calendar · UTM) — Shared with MHW' },
+          collabTitle: { ko: 'MHW 협업 현황', en: 'Working with MHW' },
+          collabNote: { ko: 'MHW 팀과의 소통 방식, 30/60/90일 계획 수령 내역, 검토 범위와 역할 분담입니다.', en: 'How we communicate with MHW, the 30/60/90-day plan received, review scope and roles.' },
+          collabCommTitle: { ko: '소통 · 회신 기준', en: 'Communication & response times' },
+          collabCommBody: { ko: 'MHW 팀 공용 이메일로 소통합니다. 회신은 24시간 이내가 원칙이고, 상황에 따라 24~48시간이 걸릴 수 있습니다. 이메일은 한국어와 영어를 함께 씁니다 — 해외 팀원이 번역하는 과정에서 내용이 잘못 전달되는 것을 막기 위해서입니다.', en: 'We communicate through the MHW shared team email. The standard goal is a reply within 24 hours; depending on workload it may take 24–48 hours. Emails are written in both Korean and English so international team members do not lose meaning in translation.' },
+          collabDocsTitle: { ko: 'MHW 30/60/90일 계획 5종 수령 (2026-11-13)', en: 'MHW 30/60/90-day plan — 5 documents received (Nov 13, 2026)' },
+          collabDoc1: { ko: 'XCONDA SEO 30/60/90일 계획 (엑셀)', en: 'XCONDA SEO 30/60/90-Day Plan (Excel)' },
+          collabDoc2: { ko: 'XCONDA 검증 결과 (엑셀)', en: 'XCONDA Verification Findings (Excel)' },
+          collabDoc3: { ko: 'XCONDA 미국 SEO 및 지리 전략 (PPT)', en: 'XCONDA U.S. SEO & GEO Strategy (PPT)' },
+          collabDoc4: { ko: 'XCONDA 소셜 미디어 감사 및 성장 계획 (PPT)', en: 'XCONDA Social Media Audit & Growth Plan (PPT)' },
+          collabDoc5: { ko: '큐브베리 브랜드북 (PDF, 2026-11-11 업데이트)', en: 'Cubeberry Brand Book (PDF, updated Nov 11, 2026)' },
+          collabVerifyTitle: { ko: 'MHW 검토 범위 — "Requests for MHW Verification" 10개 항목', en: 'MHW review scope — 10 "Requests for MHW Verification" items' },
+          collabVerifyBody: { ko: '허브 기술 태그 · 미국 AI 검색 가시성 · 경쟁사 인용 출처 · 디렉토리 등록 · 리다이렉트 · 미국 허브 접근성 · 영문 콘텐츠 품질 · 미국 키워드 우선순위 · 회사 정체성 · 허브 URL 구조', en: 'Hub technical tags · U.S. AI search visibility · Competitor citation sources · Directory listings · Redirects · U.S. Hub accessibility · English content quality · U.S. keyword priorities · Company entity · Hub URL structure' },
+          collabRolesTitle: { ko: '역할 분담', en: 'Roles' },
+          collabRoleCb: { ko: '큐브베리 — 원본 제품 정보 제공, 기술 SEO 기반·자동화·허브 인프라 운영, 승인된 글 검토 후 hub.xconda.ai/en 게시', en: 'Cubeberry — original product information, technical SEO foundation, automation and Hub operations; reviews approved articles and publishes them on hub.xconda.ai/en' },
+          collabRoleMhw: { ko: 'MHW — 미국 시장용 영문 글·영상 제작, 미국 검색 의도·키워드·경쟁사 조사, 승인 콘텐츠 재배포, 영어 현지화·참여·경쟁 모니터링, 주간·월간 보고', en: 'MHW — English articles and videos for the U.S. market, U.S. search intent, keyword and competitor research, redistribution of approved content, localization, engagement, competitor monitoring, weekly and monthly reports' },
+          accessTitle: { ko: '권한·워크플로 결정', en: 'Access & workflow decisions' },
+          accessNote: { ko: '차하나 PD가 2026-11-13에 MHW에 안내한 내용입니다. 미결 항목은 날짜를 약속하지 않고 정리되는 대로 공유합니다.', en: 'As shared with MHW by PD Hana Cha on Nov 13, 2026. Open items carry no promised date; they will be shared once settled.' },
+          accessNotion: { ko: 'jlee@mhwdigital.ai를 게스트로 초대합니다. 글 흐름은 Draft → In Review → 승인/수정 → 게시이며, 차하나 PD가 검토합니다.', en: 'jlee@mhwdigital.ai is invited as a guest. Article flow: Draft → In Review → approval/revision → published, reviewed by PD Hana Cha.' },
+          accessHubKey: { ko: '허브 게시', en: 'Hub publishing' },
+          accessHub: { ko: '승인된 글은 hub.xconda.ai/en에 고유 주소로 게시되고 사이트맵에 포함됩니다.', en: 'Approved articles are published at their own URLs on hub.xconda.ai/en and included in the sitemap.' },
+          accessSocialKey: { ko: '소셜 접근', en: 'Social access' },
+          accessSocial: { ko: '계정은 큐브베리 소유이며, MHW는 역할 권한으로 접근합니다 (YouTube Editor, Meta 비즈니스, X는 추후 안내).', en: 'Accounts are owned by Cubeberry; MHW accesses them by role (YouTube Editor, Meta Business; X to be announced).' },
+          accessPlanBKey: { ko: '접근 권한 (Plan B)', en: 'Access (Plan B)' },
+          accessPlanB: { ko: "MHW는 담당자 부재에 대비해 계정마다 약 3명(팀 공용 이메일 + 실무 담당자)의 권한을 요청했습니다. 플랫폼별 담당자 이름·이메일을 받으면 그 명단으로 YouTube·Meta 초대와 GSC·GA4 권한을 진행합니다. 기존 'jlee@mhwdigital.ai 한 계정' 안은 이 명단으로 대체됩니다.", en: "MHW asked for access for about 3 people per account (shared team email plus working-level staff) as a backup. Once we receive the per-platform names and emails, YouTube and Meta invites and GSC/GA4 access will be set up for that list. This replaces the earlier 'one account, jlee@mhwdigital.ai' plan." },
+          accessOpsKey: { ko: '운영 방식', en: 'Operating model' },
+          accessOps: { ko: 'MHW가 글로벌 SNS 운영 총괄과 초기 1~2개월 주 1회 사전 승인 후 업로드 방식을 제안했고, 차하나 PD는 "내부에서 상의한 뒤 답변드리겠습니다"라고 답했습니다. 차하나 PD의 2026-11-13 답변은 "영문 게시물은 사전 승인 없이 올리시면 됩니다"였지만, MHW의 주 1회 사전 승인 제안은 아직 미결입니다.', en: "MHW proposed running global social channels end-to-end, with weekly pre-approval uploads for the first 1–2 months. PD Cha replied that she will answer after internal discussion. Her Nov 13, 2026 reply said English posts need no prior approval, but MHW's weekly pre-approval proposal is still open." },
+          badgePending: { ko: '미결', en: 'Open' },
+          accessAnalyticsKey: { ko: '분석 (GSC·GA4)', en: 'Analytics (GSC · GA4)' },
+          accessAnalytics: { ko: 'GSC·GA4 권한은 MHW 명단으로 진행합니다. 리포트 양식과 KPI는 30/60/90일 계획에 MHW가 제안합니다.', en: 'GSC and GA4 access will be granted to the MHW list. Report format and KPIs are for MHW to propose in the 30/60/90-day plan.' },
+          accessFactKey: { ko: '팩트시트', en: 'Fact sheet' },
+          accessFact: { ko: 'Notion 팩트시트(Live Values)가 기준이며, 창구는 차하나 PD입니다.', en: 'The Notion Fact Sheet (Live Values) is the source of truth; the point of contact is PD Hana Cha.' },
+          accessCaseKey: { ko: '사례', en: 'Case studies' },
+          accessCase: { ko: 'KBS 다큐부터 영문 사례를 준비 중입니다.', en: 'English case studies are in preparation, starting with the KBS documentary.' },
+          accessPriceKey: { ko: '가격', en: 'Pricing' },
+          accessPrice: { ko: '팩트시트가 기준입니다. 구독 요금제는 발표 전이고, Stripe는 일시 중지 중입니다 — 사용자에게 안내하지 마세요.', en: 'The Fact Sheet is the source of truth. Subscription plans are not announced yet, and Stripe is temporarily suspended — do not tell users about Stripe.' },
+          linkRulesTitle: { ko: '링크 기준', en: 'Link rules' },
+          linkRulesNote: { ko: '허브 글과 SNS·커뮤니티 글에서 링크를 거는 기준입니다 (차하나 PD, 2026-11-13).', en: 'How to link from Hub articles and social/community posts (PD Hana Cha, Nov 13, 2026).' },
+          linkRule1: { ko: '허브 글 안의 제품·가격·가입 링크는 www.xconda.ai로 겁니다. 허브 글끼리의 링크는 자유롭게 겁니다.', en: 'In Hub articles, product, pricing and sign-up links go to www.xconda.ai. Links between Hub articles are free.' },
+          linkRule2: { ko: 'SNS·커뮤니티 글은 www 또는 해당 허브 글에 UTM을 붙여 링크합니다.', en: 'In social and community posts, link to www or the relevant Hub article, with UTM parameters.' },
+          linkRule3: { ko: '게시된 허브 글 주소는 Notion의 Hub URL 칸에 채워 드립니다.', en: 'Published Hub article URLs are filled into the Hub URL field in Notion.' },
+          recentTitle: { ko: '최근 게시물', en: 'Recent posts' },
+          recentNote: { ko: '최근에 올라간 홍보 게시물입니다.', en: 'The latest promotional posts.' },
+          recentPostTitle: { ko: 'Seedream 5.5 출시 및 40% 할인 홍보 배너 업로드 완료', en: 'Seedream 5.5 launch & 40% discount promo banner posted' },
+          recentPostMeta: { ko: '2026-11-13 · 차하나 PD 공유 · 필요하면 배너 원본 소스나 추가 자료를 요청할 수 있습니다.', en: 'Nov 13, 2026 · Shared by PD Hana Cha · Ask if you need the banner source files or more materials.' },
+          recentXNote: { ko: 'X 게시물은 한국 X 계정 @xconda_ai(사용 중)에서 게시됐습니다.', en: 'The X post was published from the Korean X account @xconda_ai (in use).' }
+        };
+        var COPY_MSG = {
+          ko: { label: '최종 링크 복사', ok: '복사됨 ✓', fail: '복사 실패 — 길게 눌러 복사하세요' },
+          en: { label: 'Copy', ok: 'Copied ✓', fail: 'Copy failed — press and hold to copy' }
+        };
+        var STORAGE_KEY = 'xconda-mkt-lang';
+        var currentLang = 'ko';
+        try { var saved = localStorage.getItem(STORAGE_KEY); if (saved === 'en' || saved === 'ko') currentLang = saved; } catch (e) {}
+        var btnKo = document.getElementById('langKo');
+        var btnEn = document.getElementById('langEn');
+        var copyBtn = document.getElementById('copyBtn');
+        function applyLang(lang) {
+          currentLang = lang;
+          document.documentElement.lang = lang === 'en' ? 'en' : 'ko';
+          document.title = I18N.docTitle[lang];
+          var els = document.querySelectorAll('[data-i18n]');
+          for (var i = 0; i < els.length; i++) {
+            var key = els[i].getAttribute('data-i18n');
+            if (I18N[key]) els[i].innerHTML = I18N[key][lang];
+          }
+          var ariaEls = document.querySelectorAll('[data-i18n-aria]');
+          for (var j = 0; j < ariaEls.length; j++) {
+            var akey = ariaEls[j].getAttribute('data-i18n-aria');
+            if (I18N[akey]) ariaEls[j].setAttribute('aria-label', I18N[akey][lang]);
+          }
+          btnKo.setAttribute('aria-pressed', lang === 'ko' ? 'true' : 'false');
+          btnEn.setAttribute('aria-pressed', lang === 'en' ? 'true' : 'false');
+          try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+        }
+        btnKo.addEventListener('click', function () { applyLang('ko'); });
+        btnEn.addEventListener('click', function () { applyLang('en'); });
+        applyLang(currentLang);
+
+        var urlEl = document.getElementById('finalLink');
+        var timer = null;
+        copyBtn.addEventListener('click', function () {
+          var text = urlEl.textContent.trim();
+          function done(ok) {
+            copyBtn.textContent = ok ? COPY_MSG[currentLang].ok : COPY_MSG[currentLang].fail;
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(function () { copyBtn.textContent = COPY_MSG[currentLang].label; }, 2200);
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () { done(true); }, function () { fallback(); });
+          } else { fallback(); }
+          function fallback() {
+            var ta = document.createElement('textarea');
+            ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            var ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+            document.body.removeChild(ta); done(ok);
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
