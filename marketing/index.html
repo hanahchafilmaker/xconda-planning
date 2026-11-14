@@ -181,6 +181,13 @@
       .kv div { word-break: break-all; }
       .link-row { margin-top: 14px; font-size: 13.5px; word-break: break-all; background: var(--panel-2); border-radius: 8px; padding: 10px 12px; }
 
+      /* Google Calendar embed */
+      .gcal-wrap { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+      .gcal-wrap iframe { display: block; width: 100%; height: 600px; border: 0; }
+      @media (max-width: 640px) {
+        .gcal-wrap iframe { height: 480px; }
+      }
+
       /* Log */
       .log-card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
       .log-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -270,6 +277,35 @@
       .form-result .r-msg { font-weight: 700; margin: 0 0 4px; }
       .form-result .r-meta { margin: 2px 0; }
       .form-result .final-link { background: var(--panel); color: var(--text); margin-top: 10px; }
+      /* Delete mode */
+      .lookup-btn {
+        border: 1px solid var(--accent); background: var(--accent-soft); color: var(--accent-strong);
+        font: inherit; font-size: 15px; font-weight: 800; border-radius: 8px; padding: 11px 24px; cursor: pointer; min-height: 46px;
+      }
+      .lookup-btn:disabled { opacity: 0.55; cursor: wait; }
+      .lookup-btn:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+      .lookup-box { display: none; margin-top: 16px; border: 1px solid var(--line); border-radius: 10px; padding: 16px; background: var(--panel); }
+      .lookup-box.show { display: block; }
+      .lookup-box h3 { margin: 0 0 10px; font-size: 16px; }
+      .lookup-list { display: grid; gap: 7px; margin: 0 0 14px; }
+      .lookup-list div { display: grid; grid-template-columns: 110px 1fr; gap: 10px; font-size: 14px; }
+      .lookup-list dt { color: var(--muted); font-weight: 700; }
+      .lookup-list dd { margin: 0; word-break: break-all; }
+      .danger-btn {
+        border: 0; background: var(--err); color: #fff; font: inherit; font-size: 15px; font-weight: 800;
+        border-radius: 8px; padding: 11px 24px; cursor: pointer; min-height: 46px;
+      }
+      .danger-btn:disabled { opacity: 0.55; cursor: wait; }
+      .danger-btn:focus-visible { outline: 2px solid var(--err); outline-offset: 2px; }
+      .ghost-btn {
+        border: 1px solid var(--line); background: var(--panel); color: var(--text);
+        font: inherit; font-size: 15px; font-weight: 700; border-radius: 8px; padding: 11px 20px; cursor: pointer; min-height: 46px;
+      }
+      .ghost-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .confirm-box { display: none; margin-top: 14px; background: var(--err-soft); color: var(--err); border-radius: 8px; padding: 14px 16px; }
+      .confirm-box.show { display: block; }
+      .confirm-box p { margin: 0 0 12px; font-weight: 700; font-size: 14.5px; }
+      .confirm-row { display: flex; gap: 10px; flex-wrap: wrap; }
       @media (max-width: 640px) {
         .field-grid { grid-template-columns: 1fr; }
         .mode-tabs button { flex: 1 1 100%; }
@@ -634,6 +670,14 @@
         </article>
       </section>
 
+      <section aria-labelledby="gcal-h">
+        <h2 id="gcal-h" data-i18n="gcalTitle">캘린더</h2>
+        <p class="sec-note" data-i18n="gcalNote">캘린더는 구글 계정으로 로그인한 팀원에게 보입니다. (XCONDA 공용 캘린더 — MHW와 공유됨)</p>
+        <div class="gcal-wrap">
+          <iframe src="https://calendar.google.com/calendar/embed?src=7049e01655e7c893b7685a6c0b493fe7224186f9feab77908a284726fb7ce03d%40group.calendar.google.com&amp;ctz=Asia%2FSeoul" title="XCONDA Calendar" loading="lazy"></iframe>
+        </div>
+      </section>
+
       <section aria-labelledby="entry-h">
         <h2 id="entry-h" data-i18n="formTitle">게시물 입력</h2>
         <p class="sec-note" data-i18n="formNote2">시트를 열지 않고 여기서 바로 입력합니다.</p>
@@ -644,9 +688,12 @@
             <button type="button" role="tab" id="tabLog" aria-selected="true" data-i18n="modeLog">게시 기록 추가</button>
             <button type="button" role="tab" id="tabCal" aria-selected="false" data-i18n="modeCal">예정 추가</button>
             <button type="button" role="tab" id="tabUpdate" aria-selected="false" data-i18n="modeUpdate">수정</button>
+            <button type="button" role="tab" id="tabDelete" aria-selected="false" data-i18n="modeDelete">삭제</button>
           </div>
 
           <p class="update-hint" id="updateHint" data-i18n="formUpdateHint">수정 모드: 채널과 content로 기존 항목을 찾습니다. 바꿀 칸만 채우고 나머지는 비워 두세요. 도착 URL은 대장 항목에, 주제·상태는 캘린더 항목에 적용됩니다.</p>
+
+          <p class="update-hint" id="deleteHint" data-i18n="formDeleteHint">삭제 모드: 삭제할 대상(대장 Log 또는 캘린더)을 고르고 채널과 content로 항목을 먼저 찾아보세요. 삭제는 시트에서 값만 비우는 방식이라 수식은 그대로 유지됩니다.</p>
 
           <form id="entryForm" novalidate>
             <div class="field-grid">
@@ -655,19 +702,26 @@
                 <input type="password" id="fCode" autocomplete="off" />
                 <p class="field-err" id="err-code"></p>
               </div>
-              <div class="field">
+              <div class="field" id="groupTarget" style="display:none;">
+                <label for="fTarget"><span data-i18n="labelDeleteTarget">삭제 대상</span> <span class="req" aria-hidden="true">*</span></label>
+                <select id="fTarget">
+                  <option value="log" data-i18n="targetLogOpt">대장 Log</option>
+                  <option value="cal" data-i18n="targetCalOpt">캘린더</option>
+                </select>
+              </div>
+              <div class="field" id="groupDate">
                 <label for="fDate"><span data-i18n="labelDate">날짜</span> <span class="req req-add" aria-hidden="true">*</span></label>
                 <input type="date" id="fDate" />
                 <p class="field-err" id="err-date"></p>
               </div>
-              <div class="field">
+              <div class="field" id="groupChannel">
                 <label for="fChannel"><span data-i18n="labelChannel">채널</span> <span class="req" aria-hidden="true">*</span></label>
                 <select id="fChannel">
                   <option value="" data-i18n="selectChannel">채널 선택</option>
                 </select>
                 <p class="field-err" id="err-channel"></p>
               </div>
-              <div class="field">
+              <div class="field" id="groupCampaign">
                 <label for="fCampaign"><span data-i18n="labelCampaign">캠페인</span> <span class="req req-add" aria-hidden="true">*</span></label>
                 <select id="fCampaign">
                   <option value="" data-i18n="selectCampaign">캠페인 선택</option>
@@ -707,12 +761,30 @@
               </div>
             </div>
 
+            <div id="deleteTools" style="display:none;">
+              <div class="submit-row">
+                <button type="button" class="lookup-btn" id="lookupBtn" data-i18n="lookupBtn">찾아보기</button>
+              </div>
+              <div class="lookup-box" id="lookupBox">
+                <h3 data-i18n="lookupFoundTitle">찾은 항목</h3>
+                <dl class="lookup-list" id="lookupList"></dl>
+                <button type="button" class="danger-btn" id="deleteBtn" data-i18n="deleteBtn">삭제하기</button>
+                <div class="confirm-box" id="confirmBox">
+                  <p data-i18n="deleteConfirmText">정말 삭제할까요? 이 항목이 시트에서 지워집니다.</p>
+                  <div class="confirm-row">
+                    <button type="button" class="danger-btn" id="confirmDeleteBtn" data-i18n="deleteConfirmBtn">삭제 확인</button>
+                    <button type="button" class="ghost-btn" id="cancelDeleteBtn" data-i18n="deleteCancelBtn">취소</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="preview-box" id="previewBox">
               <span class="pl-label" data-i18n="formPreviewLabel">최종 링크 미리보기</span>
               <span class="purl empty" id="previewUrl" data-i18n="formPreviewEmpty">채널·캠페인·content·도착 URL을 입력하면 최종 링크가 여기에 표시됩니다.</span>
             </div>
 
-            <div class="submit-row">
+            <div class="submit-row" id="submitRow">
               <button type="submit" class="submit-btn" id="submitBtn" data-i18n="submitAdd">시트에 저장</button>
             </div>
           </form>
@@ -829,6 +901,8 @@
           calTitle: { ko: '콘텐츠 캘린더 — 2026년 11월', en: 'Content Calendar — November 2026' },
           calNote: { ko: "예정 게시물 1건이 있습니다. 게시 후 대장 Log에 같은 채널 · content로 기록하면 최종 링크와 검사 결과가 자동으로 채워지고, 상태가 '게시됨'인데 대장에 없으면 빨간색으로 표시됩니다.", en: "After posting, log it in the Log tab with the same channel and content; the calendar fills in the final link and check. A 'Posted' row missing from the log turns red." },
           monthViewNote: { ko: '월간 보기 — B1에 월의 1일을 입력하면 달력을 월간 그리드로 볼 수 있습니다.', en: 'Month view — Enter the 1st of a month in B1 to see the calendar as a month grid.' },
+          gcalTitle: { ko: '캘린더', en: 'Calendar' },
+          gcalNote: { ko: '캘린더는 구글 계정으로 로그인한 팀원에게 보입니다. (XCONDA 공용 캘린더 — MHW와 공유됨)', en: 'The calendar is visible to team members signed in to Google. (Shared XCONDA calendar with MHW)' },
           calAria: { ko: '2026년 11월 달력', en: 'November 2026 calendar' },
           dowMon: { ko: '월', en: 'Mon' },
           dowTue: { ko: '화', en: 'Tue' },
@@ -903,13 +977,24 @@
           recentPostTitle: { ko: 'Seedream 5.5 출시 및 40% 할인 홍보 배너 업로드 완료', en: 'Seedream 5.5 launch & 40% discount promo banner posted' },
           recentPostMeta: { ko: '2026-11-13 · 차하나 PD 공유 · 필요하면 배너 원본 소스나 추가 자료를 요청할 수 있습니다.', en: 'Nov 13, 2026 · Shared by PD Hana Cha · Ask if you need the banner source files or more materials.' },
           recentXNote: { ko: 'X 게시물은 한국 X 계정 @xconda_ai(사용 중)에서 게시됐습니다.', en: 'The X post was published from the Korean X account @xconda_ai (in use).' },
-          formTitle: { ko: '게시물 입력', en: 'Add / edit posts' },
+          formTitle: { ko: '게시물 입력', en: 'Add / edit / delete posts' },
           formNote2: { ko: '시트를 열지 않고 여기서 바로 입력합니다.', en: 'Enter posts here, without opening the sheet.' },
           formNotice: { ko: '입력한 내용은 시트에 바로 저장됩니다. 대시보드 화면은 스냅샷이라 새로 입력한 내용이 보이는 건 다음 갱신 때입니다.', en: 'What you enter is saved to the sheet right away. This dashboard is a snapshot, so new entries appear here at the next refresh.' },
           modeLog: { ko: '게시 기록 추가', en: 'Add post log' },
           modeCal: { ko: '예정 추가', en: 'Add schedule' },
           modeUpdate: { ko: '수정', en: 'Edit' },
+          modeDelete: { ko: '삭제', en: 'Delete' },
           formUpdateHint: { ko: '수정 모드: 채널과 content로 기존 항목을 찾습니다. 바꿀 칸만 채우고 나머지는 비워 두세요. 도착 URL은 대장 항목에, 주제·상태는 캘린더 항목에 적용됩니다.', en: 'Edit mode: the existing entry is found by channel + content. Fill in only the fields you want to change and leave the rest blank. Landing URL applies to the Log entry; topic and status apply to the Calendar entry.' },
+          formDeleteHint: { ko: '삭제 모드: 삭제할 대상(대장 Log 또는 캘린더)을 고르고 채널과 content로 항목을 먼저 찾아보세요. 삭제는 시트에서 값만 비우는 방식이라 수식은 그대로 유지됩니다.', en: 'Delete mode: choose the target (Post log or Calendar), then find the entry by channel + content first. Deleting only clears the values in the sheet, so all formulas stay intact.' },
+          labelDeleteTarget: { ko: '삭제 대상', en: 'Delete from' },
+          targetLogOpt: { ko: '대장 Log', en: 'Post log (Log)' },
+          targetCalOpt: { ko: '캘린더', en: 'Calendar' },
+          lookupBtn: { ko: '찾아보기', en: 'Find entry' },
+          lookupFoundTitle: { ko: '찾은 항목', en: 'Entry found' },
+          deleteBtn: { ko: '삭제하기', en: 'Delete this entry' },
+          deleteConfirmText: { ko: '정말 삭제할까요? 이 항목이 시트에서 지워집니다.', en: 'Really delete this entry? It will be removed from the sheet.' },
+          deleteConfirmBtn: { ko: '삭제 확인', en: 'Yes, delete it' },
+          deleteCancelBtn: { ko: '취소', en: 'Cancel' },
           labelCode: { ko: '팀 코드', en: 'Team code' },
           codeHint: { ko: 'MHW와 공유한 팀 코드를 입력하세요.', en: 'Enter the team code shared with you.' },
           labelDate: { ko: '날짜', en: 'Date' },
@@ -956,7 +1041,8 @@
           btnKo.setAttribute('aria-pressed', lang === 'ko' ? 'true' : 'false');
           btnEn.setAttribute('aria-pressed', lang === 'en' ? 'true' : 'false');
           var sb = document.getElementById('submitBtn');
-          if (sb && !sb.disabled) sb.textContent = I18N[formMode === 'update' ? 'submitUpdate' : 'submitAdd'][lang];
+          if (sb && !sb.disabled && formMode !== 'delete') sb.textContent = I18N[formMode === 'update' ? 'submitUpdate' : 'submitAdd'][lang];
+          if (typeof renderLookup === 'function' && deleteFound) renderLookup();
           if (typeof updatePreview === 'function') updatePreview();
           try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
         }
@@ -1014,7 +1100,16 @@
             failPrefix: '저장에 실패했습니다 — ', networkFail: '네트워크 오류로 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.',
             partialPrefix: '일부만 처리됐습니다 — ',
             copyLabel: '최종 링크 복사', copied: '복사됨 ✓', copyFail: '복사 실패 — 길게 눌러 복사하세요',
-            saving: '저장 중…'
+            saving: '저장 중…',
+            lookingUp: '찾는 중…', deleting: '삭제 중…',
+            notFound: '찾을 수 없습니다. 대상·채널·content가 시트의 항목과 같은지 확인해 주세요.',
+            lookupFailPrefix: '조회에 실패했습니다 — ',
+            deletedLog: '삭제됐습니다 — 대장 Log 항목이 시트에서 지워졌습니다.',
+            deletedCal: '삭제됐습니다 — 캘린더 항목이 시트에서 지워졌습니다.',
+            deletedTitle: '삭제된 항목',
+            deleteFailPrefix: '삭제에 실패했습니다 — ',
+            lblTarget: '대상', lblDate: '날짜', lblChannel: '채널', lblCampaign: '캠페인', lblLanding: '도착 URL',
+            lblTopic: '주제', lblStatus: '상태', lblTeam: '팀', lblOwner: '담당', lblCheck: '검사 결과', lblFinalLink: '최종 링크'
           },
           en: {
             errCode: 'Enter the team code.', errDate: 'Pick a date.', errChannel: 'Select a channel.', errCampaign: 'Select a campaign.',
@@ -1027,7 +1122,16 @@
             failPrefix: 'Could not save — ', networkFail: 'Network error — nothing was saved. Please try again shortly.',
             partialPrefix: 'Only partly done — ',
             copyLabel: 'Copy final link', copied: 'Copied ✓', copyFail: 'Copy failed — press and hold to copy',
-            saving: 'Saving…'
+            saving: 'Saving…',
+            lookingUp: 'Searching…', deleting: 'Deleting…',
+            notFound: 'Not found. Check that the target, channel and content match an entry in the sheet.',
+            lookupFailPrefix: 'Lookup failed — ',
+            deletedLog: 'Deleted — the Log entry was removed from the sheet.',
+            deletedCal: 'Deleted — the Calendar entry was removed from the sheet.',
+            deletedTitle: 'Deleted entry',
+            deleteFailPrefix: 'Could not delete — ',
+            lblTarget: 'Target', lblDate: 'Date', lblChannel: 'Channel', lblCampaign: 'Campaign', lblLanding: 'Landing URL',
+            lblTopic: 'Topic', lblStatus: 'Status', lblTeam: 'Team', lblOwner: 'Owner', lblCheck: 'Check', lblFinalLink: 'Final link'
           }
         };
         function fm() { return FORM_MSG[currentLang]; }
@@ -1035,7 +1139,10 @@
         var fCode = el('fCode'), fDate = el('fDate'), fChannel = el('fChannel'), fCampaign = el('fCampaign'),
             fContent = el('fContent'), fLanding = el('fLanding'), fTeam = el('fTeam'), fOwner = el('fOwner'),
             fTopic = el('fTopic'), fStatus = el('fStatus'), submitBtn = el('submitBtn'),
-            resultBox = el('formResult'), previewUrl = el('previewUrl');
+            resultBox = el('formResult'), previewUrl = el('previewUrl'),
+            fTarget = el('fTarget'), lookupBtn = el('lookupBtn'), deleteBtn = el('deleteBtn'),
+            confirmDeleteBtn = el('confirmDeleteBtn'), cancelDeleteBtn = el('cancelDeleteBtn');
+        var deleteFound = null, deleteBusy = false;
 
         for (var ci = 0; ci < CHANNELS.length; ci++) {
           var opt = document.createElement('option');
@@ -1057,14 +1164,22 @@
           el('tabLog').setAttribute('aria-selected', mode === 'log_add' ? 'true' : 'false');
           el('tabCal').setAttribute('aria-selected', mode === 'cal_add' ? 'true' : 'false');
           el('tabUpdate').setAttribute('aria-selected', mode === 'update' ? 'true' : 'false');
-          var isLog = mode === 'log_add', isCal = mode === 'cal_add', isUpd = mode === 'update';
+          el('tabDelete').setAttribute('aria-selected', mode === 'delete' ? 'true' : 'false');
+          var isLog = mode === 'log_add', isCal = mode === 'cal_add', isUpd = mode === 'update', isDel = mode === 'delete';
+          el('groupTarget').style.display = isDel ? '' : 'none';
+          el('groupDate').style.display = isDel ? 'none' : '';
+          el('groupCampaign').style.display = isDel ? 'none' : '';
           el('groupLanding').style.display = (isLog || isUpd) ? '' : 'none';
           el('groupTeam').style.display = isCal ? '' : 'none';
           el('groupOwner').style.display = isCal ? '' : 'none';
           el('groupTopic').style.display = (isCal || isUpd) ? '' : 'none';
           el('groupStatus').style.display = (isCal || isUpd) ? '' : 'none';
-          el('previewBox').style.display = isCal ? 'none' : '';
+          el('previewBox').style.display = (isCal || isDel) ? 'none' : '';
+          el('deleteTools').style.display = isDel ? '' : 'none';
+          el('submitRow').style.display = isDel ? 'none' : '';
           el('updateHint').className = 'update-hint' + (isUpd ? ' show' : '');
+          el('deleteHint').className = 'update-hint' + (isDel ? ' show' : '');
+          clearDeleteFound();
           var stFirst = fStatus.options[0];
           if (isUpd) {
             if (!stFirst || stFirst.value !== '') {
@@ -1078,16 +1193,17 @@
             if (!fStatus.value) fStatus.value = '예약 Scheduled';
           }
           var reqAdd = document.querySelectorAll('.req-add');
-          for (var i = 0; i < reqAdd.length; i++) reqAdd[i].style.display = isUpd ? 'none' : '';
+          for (var i = 0; i < reqAdd.length; i++) reqAdd[i].style.display = (isUpd || isDel) ? 'none' : '';
           var reqLog = document.querySelectorAll('.req-log');
-          for (var j = 0; j < reqLog.length; j++) reqLog[j].style.display = isUpd ? 'none' : '';
-          if (isUpd) { fDate.value = ''; } else if (!fDate.value) { fDate.value = todayStr(); }
-          submitBtn.textContent = I18N[isUpd ? 'submitUpdate' : 'submitAdd'][currentLang];
+          for (var j = 0; j < reqLog.length; j++) reqLog[j].style.display = (isUpd || isDel) ? 'none' : '';
+          if (isUpd) { fDate.value = ''; } else if (!isDel && !fDate.value) { fDate.value = todayStr(); }
+          if (!isDel) submitBtn.textContent = I18N[isUpd ? 'submitUpdate' : 'submitAdd'][currentLang];
           clearErrors(); hideResult(); updatePreview();
         }
         el('tabLog').addEventListener('click', function () { setMode('log_add'); });
         el('tabCal').addEventListener('click', function () { setMode('cal_add'); });
         el('tabUpdate').addEventListener('click', function () { setMode('update'); });
+        el('tabDelete').addEventListener('click', function () { setMode('delete'); });
 
         function buildFinalLink() {
           var meta = channelMeta();
@@ -1202,8 +1318,155 @@
         }
         function checkIsBad(resp) { return resp.check && resp.check !== 'OK'; }
 
+        /* ---------- Delete mode (lookup -> confirm -> delete) ---------- */
+        function clearDeleteFound() {
+          deleteFound = null;
+          var box = el('lookupBox'); if (box) box.className = 'lookup-box';
+          var cb = el('confirmBox'); if (cb) cb.className = 'confirm-box';
+          var list = el('lookupList'); if (list) list.innerHTML = '';
+        }
+        function pickField(src, keys) {
+          for (var i = 0; i < keys.length; i++) {
+            var v = src[keys[i]];
+            if (v !== undefined && v !== null && String(v).trim() !== '') return String(v);
+          }
+          return '';
+        }
+        function normalizeLookup(resp) {
+          if (!resp || !resp.ok) return null;
+          if (resp.found === false) return null;
+          var src = resp.entry || resp.item || resp.record || resp.data || resp;
+          var entry = {
+            target: fTarget.value,
+            row: pickField(src, ['row', 'rowNumber', 'line']),
+            date: pickField(src, ['date', 'postDate']),
+            channel: pickField(src, ['channel']) || fChannel.value,
+            campaign: pickField(src, ['campaign', 'utm_campaign']),
+            content: pickField(src, ['content', 'utm_content']) || fContent.value.trim(),
+            landing: pickField(src, ['landing', 'landingUrl', 'landingURL', 'url']),
+            finalLink: pickField(src, ['finalLink', 'final_link', 'finalUrl', 'link']),
+            check: pickField(src, ['check', 'checkResult']),
+            topic: pickField(src, ['topic', 'title']),
+            status: pickField(src, ['status']),
+            team: pickField(src, ['team']),
+            owner: pickField(src, ['owner'])
+          };
+          var hasData = entry.row || entry.date || entry.campaign || entry.landing || entry.finalLink || entry.topic || entry.status || entry.check;
+          return hasData ? entry : null;
+        }
+        function renderLookup() {
+          var list = el('lookupList');
+          list.innerHTML = '';
+          if (!deleteFound) { el('lookupBox').className = 'lookup-box'; return; }
+          var m = fm();
+          var rows = [
+            [m.lblTarget, deleteFound.target === 'log' ? I18N.targetLogOpt[currentLang] : I18N.targetCalOpt[currentLang]],
+            [m.rowLabel, deleteFound.row],
+            [m.lblDate, deleteFound.date],
+            [m.lblChannel, deleteFound.channel],
+            [m.lblCampaign, deleteFound.campaign],
+            ['content', deleteFound.content],
+            [m.lblLanding, deleteFound.landing],
+            [m.lblTopic, deleteFound.topic],
+            [m.lblStatus, deleteFound.status],
+            [m.lblTeam, deleteFound.team],
+            [m.lblOwner, deleteFound.owner],
+            [m.lblCheck, deleteFound.check],
+            [m.lblFinalLink, deleteFound.finalLink]
+          ];
+          rows.forEach(function (r) {
+            if (!r[1]) return;
+            var wrap = document.createElement('div');
+            var dt = document.createElement('dt'); dt.textContent = r[0];
+            var dd = document.createElement('dd'); dd.textContent = r[1];
+            wrap.appendChild(dt); wrap.appendChild(dd); list.appendChild(wrap);
+          });
+          el('lookupBox').className = 'lookup-box show';
+        }
+        function validateDelete() {
+          var ok = true, m = fm();
+          ok = fieldError(fCode, 'err-code', fCode.value.trim() ? '' : m.errCode) && ok;
+          ok = fieldError(fChannel, 'err-channel', fChannel.value ? '' : m.errChannel) && ok;
+          ok = fieldError(fContent, 'err-content', validateContentVal(fContent.value.trim())) && ok;
+          return ok;
+        }
+        function deletePayload(action) {
+          var p = basePayload(action);
+          p.target = fTarget.value; p.kind = fTarget.value; p.sheet = fTarget.value;
+          if (deleteFound && deleteFound.row) p.row = deleteFound.row;
+          return p;
+        }
+        function setDeleteButtonsBusy(busy, labelKey) {
+          deleteBusy = busy;
+          lookupBtn.disabled = busy; deleteBtn.disabled = busy; confirmDeleteBtn.disabled = busy;
+          if (labelKey) lookupBtn.textContent = fm()[labelKey];
+          else lookupBtn.textContent = I18N.lookupBtn[currentLang];
+        }
+        function doLookup() {
+          if (deleteBusy) return;
+          hideResult(); clearDeleteFound();
+          if (!validateDelete()) return;
+          setDeleteButtonsBusy(true, 'lookingUp');
+          post(deletePayload('lookup')).then(function (resp) {
+            setDeleteButtonsBusy(false, null);
+            if (resp && resp.ok) {
+              var entry = normalizeLookup(resp);
+              if (entry) { deleteFound = entry; renderLookup(); }
+              else showResult('error', fm().notFound, []);
+            } else {
+              var err = (resp && resp.error) ? String(resp.error) : '';
+              if (/찾을 수 없|not found|no matching|없습니다/i.test(err)) showResult('error', fm().notFound, []);
+              else showResult('error', fm().lookupFailPrefix + err, []);
+            }
+          }, function () { setDeleteButtonsBusy(false, null); showResult('error', fm().networkFail, []); });
+        }
+        function doDelete() {
+          if (deleteBusy || !deleteFound) return;
+          var target = deleteFound.target;
+          var snapshot = deleteFound;
+          setDeleteButtonsBusy(true, null);
+          confirmDeleteBtn.textContent = fm().deleting;
+          post(deletePayload(target === 'log' ? 'log_delete' : 'cal_delete')).then(function (resp) {
+            setDeleteButtonsBusy(false, null);
+            confirmDeleteBtn.textContent = I18N.deleteConfirmBtn[currentLang];
+            if (resp && resp.ok) {
+              var m = fm();
+              var parts = [];
+              var metaRows = [
+                [m.lblTarget, target === 'log' ? I18N.targetLogOpt[currentLang] : I18N.targetCalOpt[currentLang]],
+                [m.rowLabel, snapshot.row], [m.lblDate, snapshot.date], [m.lblChannel, snapshot.channel],
+                [m.lblCampaign, snapshot.campaign], ['content', snapshot.content],
+                [m.lblTopic, snapshot.topic], [m.lblStatus, snapshot.status]
+              ];
+              metaRows.forEach(function (r) { if (r[1]) parts.push({ type: 'meta', text: r[0] + ': ' + r[1] }); });
+              var link = snapshot.finalLink || (resp && (resp.finalLink || resp.final_link)) || '';
+              if (link) parts.push({ type: 'link', url: link });
+              clearDeleteFound();
+              showResult('success', target === 'log' ? m.deletedLog : m.deletedCal, parts);
+            } else {
+              showResult('error', fm().deleteFailPrefix + ((resp && resp.error) || ''), []);
+            }
+          }, function () {
+            setDeleteButtonsBusy(false, null);
+            confirmDeleteBtn.textContent = I18N.deleteConfirmBtn[currentLang];
+            showResult('error', fm().networkFail, []);
+          });
+        }
+        lookupBtn.addEventListener('click', doLookup);
+        deleteBtn.addEventListener('click', function () {
+          if (!deleteFound || deleteBusy) return;
+          el('confirmBox').className = 'confirm-box show';
+          confirmDeleteBtn.focus();
+        });
+        cancelDeleteBtn.addEventListener('click', function () { el('confirmBox').className = 'confirm-box'; });
+        confirmDeleteBtn.addEventListener('click', doDelete);
+        fTarget.addEventListener('change', function () { clearDeleteFound(); hideResult(); });
+        fChannel.addEventListener('change', function () { if (formMode === 'delete') clearDeleteFound(); });
+        fContent.addEventListener('input', function () { if (formMode === 'delete') clearDeleteFound(); });
+
         el('entryForm').addEventListener('submit', function (ev) {
           ev.preventDefault();
+          if (formMode === 'delete') { doLookup(); return; }
           hideResult();
           if (!validate()) return;
           var m = fm();
