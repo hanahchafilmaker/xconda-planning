@@ -241,6 +241,63 @@
 
       html[lang="en"] .camp dl div { grid-template-columns: 158px 1fr; }
 
+      /* Approval queue */
+      .queue-wrap { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+      .queue-toolbar { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 6px; }
+      .queue-count { font-size: 14px; color: var(--muted); font-weight: 700; }
+      .queue-notice { display: none; margin-top: 12px; background: var(--warn-soft); color: var(--warn); border-radius: 8px; padding: 12px 14px; font-size: 14.5px; font-weight: 600; }
+      .queue-notice.show { display: block; }
+      .queue-notice.error { background: var(--err-soft); color: var(--err); }
+      .queue-result { display: none; margin-top: 12px; border-radius: 8px; padding: 12px 14px; font-size: 14.5px; font-weight: 700; }
+      .queue-result.show { display: block; }
+      .queue-result.success { background: var(--ok-soft); color: var(--ok); }
+      .queue-result.warn { background: var(--warn-soft); color: var(--warn); }
+      .queue-result.error { background: var(--err-soft); color: var(--err); }
+      .queue-locked { display: none; background: var(--warn-soft); color: var(--warn); border-radius: 8px; padding: 14px 16px; margin-top: 12px; }
+      .queue-locked.show { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+      .queue-locked p { margin: 0; font-size: 14.5px; }
+      .queue-locked strong { display: block; font-size: 15px; }
+      .queue-list { display: grid; gap: 12px; margin-top: 12px; }
+      .queue-list:empty { margin-top: 0; }
+      .queue-card { border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; background: var(--panel); }
+      .queue-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+      .queue-title { font-size: 16.5px; font-weight: 700; line-height: 1.4; margin: 0; word-break: break-word; }
+      .queue-notion { font-size: 14px; margin: 0 0 12px; word-break: break-all; }
+      .queue-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+      .queue-approve-btn {
+        border: 0; background: var(--accent); color: #1c1c1e; font: inherit; font-size: 14.5px; font-weight: 800;
+        border-radius: 8px; padding: 9px 20px; cursor: pointer; min-height: 42px;
+      }
+      .queue-approve-btn:disabled { opacity: 0.55; cursor: wait; }
+      .queue-approve-btn:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+      .queue-changes-btn {
+        border: 1px solid var(--line); background: var(--panel); color: var(--text);
+        font: inherit; font-size: 14.5px; font-weight: 700; border-radius: 8px; padding: 9px 20px; cursor: pointer; min-height: 42px;
+      }
+      .queue-changes-btn:disabled { opacity: 0.55; cursor: wait; }
+      .queue-changes-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .queue-memo-box { display: none; margin-top: 14px; background: var(--panel-2); border-radius: 8px; padding: 12px 14px; }
+      .queue-memo-box.show { display: block; }
+      .queue-memo-box label { display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 5px; }
+      .queue-memo-box input {
+        width: 100%; font: inherit; font-size: 14.5px; color: var(--text);
+        background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; min-height: 42px;
+      }
+      .queue-memo-box input:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: var(--accent); }
+      .queue-memo-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+      .queue-empty { display: none; margin: 14px 0 0; border: 1px dashed var(--line); border-radius: 8px; padding: 14px; color: var(--muted); font-size: 14.5px; text-align: center; }
+      .queue-empty.show { display: block; }
+      /* Publish queue (approved · awaiting publish) */
+      .publish-hub-box { margin-top: 14px; background: var(--panel-2); border-radius: 8px; padding: 12px 14px; }
+      .publish-hub-box label { display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 5px; }
+      .publish-hub-box input {
+        width: 100%; font: inherit; font-size: 14.5px; color: var(--text);
+        background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; min-height: 42px;
+      }
+      .publish-hub-box input:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: var(--accent); }
+      .publish-hub-box input[aria-invalid="true"] { border-color: var(--err); }
+      .publish-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+
       /* Entry form */
       .form-card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
       .form-notice { background: var(--accent-soft); color: var(--accent-strong); border-radius: 8px; padding: 10px 14px; font-size: 14px; font-weight: 600; margin: 0 0 16px; }
@@ -678,6 +735,44 @@
         </article>
       </section>
 
+      <section aria-labelledby="approval-h">
+        <h2 id="approval-h" data-i18n="approvalTitle">승인 대기</h2>
+        <p class="sec-note" data-i18n="approvalNote">시트 「승인 대기 Approval」 탭에 등록된 항목입니다. MHW는 노션에서 글을 쓰고, 큐브베리가 여기서 승인합니다. 대기 항목은 나서영이 시트에 직접 추가합니다.</p>
+        <div class="queue-wrap" id="queueWrap">
+          <div class="queue-toolbar">
+            <span class="queue-count" id="queueCount"></span>
+            <button type="button" class="lookup-btn" id="queueRefreshBtn" data-i18n="approvalRefresh">목록 새로고침</button>
+          </div>
+          <div class="queue-notice" id="queueNotice" role="status" aria-live="polite"></div>
+          <div class="queue-result" id="queueResult" role="status" aria-live="polite"></div>
+          <div class="queue-locked" id="queueLocked">
+            <p><strong data-i18n="approvalNeedCodeTitle">팀 코드를 입력하면 승인 대기 목록을 볼 수 있습니다</strong><span data-i18n="approvalNeedCodeDesc">지금은 보기 전용이라 목록이 표시되지 않습니다. 코드를 입력하면 대기 항목이 열립니다.</span></p>
+            <button type="button" class="lookup-btn" id="queueUnlockBtn" data-i18n="approvalUnlockBtn">팀 코드 입력</button>
+          </div>
+          <div class="queue-list" id="queueList"></div>
+          <p class="queue-empty" id="queueEmpty" data-i18n="approvalEmpty">승인 대기 중인 항목이 없습니다</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="publish-h">
+        <h2 id="publish-h" data-i18n="publishTitle">승인됨 · 게시 대기</h2>
+        <p class="sec-note" data-i18n="publishNote">승인이 끝난 항목입니다. 허브에 게시한 뒤 Hub URL을 넣고 [게시 완료]를 누르면 노션 상태가 Published로 바뀌고 이 목록에서 사라집니다.</p>
+        <div class="queue-wrap" id="publishWrap">
+          <div class="queue-toolbar">
+            <span class="queue-count" id="publishCount"></span>
+            <button type="button" class="lookup-btn" id="publishRefreshBtn" data-i18n="publishRefresh">목록 새로고침</button>
+          </div>
+          <div class="queue-notice" id="publishNotice" role="status" aria-live="polite"></div>
+          <div class="queue-result" id="publishResult" role="status" aria-live="polite"></div>
+          <div class="queue-locked" id="publishLocked">
+            <p><strong data-i18n="publishNeedCodeTitle">팀 코드를 입력하면 게시 대기 목록을 볼 수 있습니다</strong><span data-i18n="publishNeedCodeDesc">지금은 보기 전용이라 목록이 표시되지 않습니다. 코드를 입력하면 승인된 항목이 열립니다.</span></p>
+            <button type="button" class="lookup-btn" id="publishUnlockBtn" data-i18n="publishUnlockBtn">팀 코드 입력</button>
+          </div>
+          <div class="queue-list" id="publishList"></div>
+          <p class="queue-empty" id="publishEmpty" data-i18n="publishEmpty">게시 대기 중인 승인 항목이 없습니다</p>
+        </div>
+      </section>
+
       <section aria-labelledby="entry-h">
         <h2 id="entry-h" data-i18n="formTitle">게시물 입력</h2>
         <p class="sec-note" data-i18n="formNote2">시트를 열지 않고 여기서 바로 입력합니다.</p>
@@ -1032,7 +1127,21 @@
           submitAdd: { ko: '시트에 저장', en: 'Save to sheet' },
           submitUpdate: { ko: '수정 저장', en: 'Save changes' },
           calImportBtn: { ko: '캘린더에서 가져오기', en: 'Import from calendar' },
-          calImportNote: { ko: '캘린더에서 직접 만든 일정은 주제·날짜만 가져오고, 채널·캠페인·content는 폼에서 채워야 합니다.', en: 'Events created directly in the calendar import with topic and date only; fill in channel, campaign and content in the form.' }
+          calImportNote: { ko: '캘린더에서 직접 만든 일정은 주제·날짜만 가져오고, 채널·캠페인·content는 폼에서 채워야 합니다.', en: 'Events created directly in the calendar import with topic and date only; fill in channel, campaign and content in the form.' },
+          approvalTitle: { ko: '승인 대기', en: 'Approval queue' },
+          approvalNote: { ko: '시트 「승인 대기 Approval」 탭에 등록된 항목입니다. MHW는 노션에서 글을 쓰고, 큐브베리가 여기서 승인합니다. 대기 항목은 나서영이 시트에 직접 추가합니다.', en: 'Items registered in the sheet’s “Approval” tab. MHW writes in Notion; Cubeberry approves here. Queue items are added directly to the sheet by Seo-yeong Na.' },
+          approvalRefresh: { ko: '목록 새로고침', en: 'Refresh list' },
+          approvalEmpty: { ko: '승인 대기 중인 항목이 없습니다', en: 'No items awaiting approval' },
+          approvalNeedCodeTitle: { ko: '팀 코드를 입력하면 승인 대기 목록을 볼 수 있습니다', en: 'Enter the team code to view the approval queue' },
+          approvalNeedCodeDesc: { ko: '지금은 보기 전용이라 목록이 표시되지 않습니다. 코드를 입력하면 대기 항목이 열립니다.', en: 'You are in view-only mode, so the list is hidden. Enter the code to open the pending items.' },
+          approvalUnlockBtn: { ko: '팀 코드 입력', en: 'Enter team code' },
+          publishTitle: { ko: '승인됨 · 게시 대기', en: 'Approved · Awaiting publish' },
+          publishNote: { ko: '승인이 끝난 항목입니다. 허브에 게시한 뒤 Hub URL을 넣고 [게시 완료]를 누르면 노션 상태가 Published로 바뀌고 이 목록에서 사라집니다.', en: 'Approved items ready to publish. After posting to the Hub, enter the Hub URL and press “Mark as published” — the Notion status becomes Published and the item leaves this list.' },
+          publishRefresh: { ko: '목록 새로고침', en: 'Refresh list' },
+          publishEmpty: { ko: '게시 대기 중인 승인 항목이 없습니다', en: 'No approved items awaiting publish' },
+          publishNeedCodeTitle: { ko: '팀 코드를 입력하면 게시 대기 목록을 볼 수 있습니다', en: 'Enter the team code to view the publish list' },
+          publishNeedCodeDesc: { ko: '지금은 보기 전용이라 목록이 표시되지 않습니다. 코드를 입력하면 승인된 항목이 열립니다.', en: 'You are in view-only mode, so the list is hidden. Enter the code to open the approved items.' },
+          publishUnlockBtn: { ko: '팀 코드 입력', en: 'Enter team code' }
         };
         var COPY_MSG = {
           ko: { label: '최종 링크 복사', ok: '복사됨 ✓', fail: '복사 실패 — 길게 눌러 복사하세요' },
@@ -1065,6 +1174,12 @@
           if (sb && !sb.disabled && formMode !== 'delete') sb.textContent = I18N[formMode === 'update' ? 'submitUpdate' : 'submitAdd'][lang];
           if (typeof renderLookup === 'function' && deleteFound) renderLookup();
           if (typeof renderCalImportResult === 'function') renderCalImportResult();
+          if (typeof renderQueue === 'function') renderQueue();
+          if (typeof renderQueueNotice === 'function') renderQueueNotice();
+          if (typeof renderQueueResult === 'function') renderQueueResult();
+          if (typeof renderPublish === 'function') renderPublish();
+          if (typeof renderPublishNotice === 'function') renderPublishNotice();
+          if (typeof renderPublishResult === 'function') renderPublishResult();
           if (typeof updatePreview === 'function') updatePreview();
           try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
         }
@@ -1376,6 +1491,8 @@
           var controls = document.querySelectorAll('#entryForm input, #entryForm select, #entryForm button, .mode-tabs button');
           for (var i = 0; i < controls.length; i++) { controls[i].disabled = locked; }
           if (!locked) { var sb = el('submitBtn'); if (sb) sb.disabled = false; }
+          if (typeof renderQueue === 'function') renderQueue();
+          if (typeof renderPublish === 'function') renderPublish();
         }
         function initGate() {
           var submit = el('gateSubmit'), viewOnly = el('gateViewOnly'), unlock = el('unlockBtn'), input = el('gateCode');
@@ -1384,6 +1501,8 @@
             var err = el('gateErr');
             if (!v) { if (err) { err.textContent = fm().gateEmpty; err.className = 'field-err show'; } if (input) input.focus(); return; }
             setTeamCode(v); closeGate();
+            if (typeof loadQueue === 'function') loadQueue();
+            if (typeof loadPublish === 'function') loadPublish();
           });
           if (input) input.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); if (submit) submit.click(); } });
           if (viewOnly) viewOnly.addEventListener('click', function () { closeGate(); updateLockUI(); var h = el('entry-h'); if (h) h.scrollIntoView(); });
@@ -1718,8 +1837,560 @@
           arm();
         })();
 
+        /* ---------- Approval queue (queue_list / queue_approve / queue_request_changes) ---------- */
+        var QUEUE_MSG = {
+          ko: {
+            count: function (n) { return '승인 대기 ' + n + '건'; },
+            loading: '불러오는 중…',
+            pendingBadge: '대기',
+            lblChannel: '채널', lblRequested: '요청일', lblStatus: '상태', lblMemo: '메모',
+            notionLink: '노션에서 보기 ↗',
+            noTitle: '(제목 없음)',
+            approveBtn: '승인', requestBtn: '수정 요청',
+            memoLabel: '수정 요청 메모', memoPlaceholder: '수정이 필요한 내용을 적어주세요',
+            memoSend: '수정 요청 보내기', memoCancel: '취소',
+            memoRequired: '메모를 입력해 주세요.',
+            processing: '처리 중…',
+            approvedMsg: function (t) { return '승인했습니다 — ' + t; },
+            changesMsg: function (t) { return '수정 요청을 보냈습니다 — ' + t; },
+            scriptNeeded: '스크립트 업데이트가 필요합니다 — 승인 대기 기능(queue_list · queue_approve · queue_request_changes)이 아직 배포되지 않았습니다. Apps Script에 새 코드를 붙여넣고 재배포한 뒤 목록을 새로고침해 주세요.',
+            loadFailPrefix: '목록을 불러오지 못했습니다 — ',
+            actionFailPrefix: '처리에 실패했습니다 — '
+          },
+          en: {
+            count: function (n) { return n + ' awaiting approval'; },
+            loading: 'Loading…',
+            pendingBadge: 'Pending',
+            lblChannel: 'Channel', lblRequested: 'Requested', lblStatus: 'Status', lblMemo: 'Note',
+            notionLink: 'View in Notion ↗',
+            noTitle: '(No title)',
+            approveBtn: 'Approve', requestBtn: 'Request changes',
+            memoLabel: 'What needs to change', memoPlaceholder: 'Describe what needs to change',
+            memoSend: 'Send request', memoCancel: 'Cancel',
+            memoRequired: 'Please enter a note.',
+            processing: 'Processing…',
+            approvedMsg: function (t) { return 'Approved — ' + t; },
+            changesMsg: function (t) { return 'Changes requested — ' + t; },
+            scriptNeeded: 'Script update needed — the approval queue actions (queue_list · queue_approve · queue_request_changes) are not deployed yet. Paste the new code into Apps Script, redeploy, then refresh the list.',
+            loadFailPrefix: 'Could not load the list — ',
+            actionFailPrefix: 'Could not complete — '
+          }
+        };
+        function qm() { return QUEUE_MSG[currentLang]; }
+        var queueItems = [], queueBusy = false, queueLoaded = false, queueLoading = false;
+        var lastQueueNotice = null, lastQueueResult = null, openMemoKey = null;
+
+        function queueKey(item) { return item.row !== '' && item.row !== null && item.row !== undefined ? 'row:' + item.row : 'idx:' + item.index; }
+        function isPendingStatus(s) {
+          if (s === null || s === undefined || String(s).trim() === '') return true;
+          var t = String(s).toLowerCase();
+          return t.indexOf('대기') !== -1 || t.indexOf('pending') !== -1 || t.indexOf('waiting') !== -1;
+        }
+        function fmtQueueDate(v) {
+          var s = String(v || '');
+          var m = s.match(/^\d{4}-\d{2}-\d{2}[T ]/);
+          return m ? s.slice(0, 10) : s;
+        }
+        function normalizeQueueItem(src, idx) {
+          if (!src || typeof src !== 'object') return null;
+          return {
+            index: idx,
+            row: pickField(src, ['row', 'rowNumber', 'rowNum', 'line']),
+            title: pickField(src, ['title', 'subject', 'name', 'topic']),
+            notionUrl: pickField(src, ['notionUrl', 'notionURL', 'notion_url', 'notionLink', 'notion', 'url', 'link', 'href']),
+            channel: pickField(src, ['channel']),
+            requestedAt: pickField(src, ['requestedAt', 'requestDate', 'requested', 'request_date', 'date', 'createdAt']),
+            status: pickField(src, ['status', 'state']),
+            memo: pickField(src, ['memo', 'note', 'notes', 'comment']),
+            hubUrl: pickField(src, ['hubUrl', 'hub_url', 'hubURL', 'hubLink'])
+          };
+        }
+        function extractQueueItems(resp) {
+          var raw = null;
+          if (Array.isArray(resp)) raw = resp;
+          else if (resp && typeof resp === 'object') {
+            var keys = ['items', 'queue', 'list', 'entries', 'rows', 'data', 'results'];
+            for (var i = 0; i < keys.length; i++) {
+              if (Array.isArray(resp[keys[i]])) { raw = resp[keys[i]]; break; }
+            }
+          }
+          if (!raw) return [];
+          var out = [];
+          for (var j = 0; j < raw.length; j++) {
+            var it = normalizeQueueItem(raw[j], j);
+            if (it && isPendingStatus(it.status)) out.push(it);
+          }
+          return out;
+        }
+        function isQueueScriptError(resp) {
+          var e = String((resp && resp.error) || '').toLowerCase();
+          return e.indexOf('unknown') !== -1 || e.indexOf('invalid action') !== -1 || e.indexOf('queue') !== -1 ||
+            e.indexOf('not implemented') !== -1 || e.indexOf('unsupported') !== -1 || e.indexOf('script') !== -1;
+        }
+        function renderQueueNotice() {
+          var box = el('queueNotice'); if (!box) return;
+          if (typeof QUEUE_MSG === 'undefined' || !lastQueueNotice) { box.className = 'queue-notice'; box.textContent = ''; return; }
+          var m = qm();
+          if (lastQueueNotice.type === 'script') {
+            box.className = 'queue-notice show';
+            box.textContent = m.scriptNeeded + (lastQueueNotice.detail ? ' (' + lastQueueNotice.detail + ')' : '');
+          } else if (lastQueueNotice.type === 'auth') {
+            box.className = 'queue-notice show error';
+            box.textContent = fm().authWrong;
+          } else {
+            box.className = 'queue-notice show error';
+            box.textContent = m.loadFailPrefix + (lastQueueNotice.detail || '');
+          }
+        }
+        function renderQueueResult() {
+          var box = el('queueResult'); if (!box) return;
+          if (typeof QUEUE_MSG === 'undefined' || !lastQueueResult) { box.className = 'queue-result'; box.textContent = ''; return; }
+          var m = qm();
+          if (lastQueueResult.type === 'approved') { box.className = 'queue-result show success'; box.textContent = m.approvedMsg(lastQueueResult.title); }
+          else if (lastQueueResult.type === 'changes') { box.className = 'queue-result show success'; box.textContent = m.changesMsg(lastQueueResult.title); }
+          else { box.className = 'queue-result show error'; box.textContent = lastQueueResult.text || ''; }
+        }
+        function showQueueResult(state) { lastQueueResult = state; renderQueueResult(); }
+        function hideQueueResult() { lastQueueResult = null; renderQueueResult(); }
+
+        function renderQueue() {
+          var list = el('queueList'); if (!list) return;
+          if (typeof QUEUE_MSG === 'undefined') return;
+          var m = qm();
+          var lockedBox = el('queueLocked');
+          var emptyBox = el('queueEmpty');
+          var countEl = el('queueCount');
+          var refreshBtn = el('queueRefreshBtn');
+          var locked = !getTeamCode();
+          if (lockedBox) lockedBox.className = 'queue-locked' + (locked ? ' show' : '');
+          if (refreshBtn) refreshBtn.disabled = locked || queueBusy || queueLoading;
+          list.innerHTML = '';
+          if (locked) {
+            if (countEl) countEl.textContent = '';
+            if (emptyBox) emptyBox.className = 'queue-empty';
+            return;
+          }
+          var items = queueItems || [];
+          if (countEl) countEl.textContent = queueLoading ? m.loading : (queueLoaded ? m.count(items.length) : '');
+          if (emptyBox) emptyBox.className = 'queue-empty' + (!queueLoading && queueLoaded && items.length === 0 ? ' show' : '');
+          items.forEach(function (item) { list.appendChild(buildQueueCard(item, m)); });
+        }
+        function buildQueueCard(item, m) {
+          var card = document.createElement('article');
+          card.className = 'queue-card';
+          var head = document.createElement('div'); head.className = 'queue-head';
+          var title = document.createElement('p'); title.className = 'queue-title';
+          title.textContent = item.title || m.noTitle;
+          var badge = document.createElement('span'); badge.className = 'badge badge-pending';
+          badge.textContent = item.status || m.pendingBadge;
+          head.appendChild(title); head.appendChild(badge); card.appendChild(head);
+
+          if (item.notionUrl && /^https?:\/\//i.test(item.notionUrl)) {
+            var np = document.createElement('p'); np.className = 'queue-notion';
+            var a = document.createElement('a');
+            a.href = item.notionUrl; a.target = '_blank'; a.rel = 'noopener';
+            a.textContent = m.notionLink;
+            np.appendChild(a); card.appendChild(np);
+          }
+          var kv = document.createElement('div'); kv.className = 'kv';
+          var rows = [
+            [m.lblChannel, item.channel],
+            [m.lblRequested, fmtQueueDate(item.requestedAt)],
+            [m.lblStatus, item.status],
+            [m.lblMemo, item.memo]
+          ];
+          rows.forEach(function (r) {
+            if (!r[1]) return;
+            var d = document.createElement('div');
+            var s = document.createElement('span'); s.textContent = r[0];
+            d.appendChild(s); d.appendChild(document.createTextNode(r[1]));
+            kv.appendChild(d);
+          });
+          if (kv.childNodes.length) card.appendChild(kv);
+
+          var actions = document.createElement('div'); actions.className = 'queue-actions';
+          var approveBtn = document.createElement('button');
+          approveBtn.type = 'button'; approveBtn.className = 'queue-approve-btn';
+          approveBtn.textContent = queueBusy ? m.processing : m.approveBtn;
+          approveBtn.disabled = queueBusy;
+          approveBtn.addEventListener('click', function () { doQueueApprove(item); });
+          var changesBtn = document.createElement('button');
+          changesBtn.type = 'button'; changesBtn.className = 'queue-changes-btn';
+          changesBtn.textContent = m.requestBtn;
+          changesBtn.disabled = queueBusy;
+          actions.appendChild(approveBtn); actions.appendChild(changesBtn); card.appendChild(actions);
+
+          var memoBox = document.createElement('div');
+          memoBox.className = 'queue-memo-box' + (openMemoKey === queueKey(item) ? ' show' : '');
+          var memoId = 'queueMemo-' + (item.row !== '' && item.row !== null && item.row !== undefined ? item.row : item.index);
+          var lab = document.createElement('label'); lab.setAttribute('for', memoId); lab.textContent = m.memoLabel;
+          var input = document.createElement('input');
+          input.type = 'text'; input.id = memoId; input.placeholder = m.memoPlaceholder;
+          input.setAttribute('autocomplete', 'off');
+          var err = document.createElement('p'); err.className = 'field-err';
+          var row = document.createElement('div'); row.className = 'queue-memo-row';
+          var sendBtn = document.createElement('button');
+          sendBtn.type = 'button'; sendBtn.className = 'queue-approve-btn';
+          sendBtn.textContent = queueBusy ? m.processing : m.memoSend;
+          sendBtn.disabled = queueBusy;
+          var cancelBtn = document.createElement('button');
+          cancelBtn.type = 'button'; cancelBtn.className = 'queue-changes-btn';
+          cancelBtn.textContent = m.memoCancel;
+          row.appendChild(sendBtn); row.appendChild(cancelBtn);
+          memoBox.appendChild(lab); memoBox.appendChild(input); memoBox.appendChild(err); memoBox.appendChild(row);
+          card.appendChild(memoBox);
+
+          changesBtn.addEventListener('click', function () {
+            openMemoKey = (openMemoKey === queueKey(item)) ? null : queueKey(item);
+            renderQueue();
+            if (openMemoKey === queueKey(item)) {
+              var inp = el(memoId); if (inp) inp.focus();
+            }
+          });
+          cancelBtn.addEventListener('click', function () { openMemoKey = null; renderQueue(); });
+          sendBtn.addEventListener('click', function () { doQueueRequestChanges(item, input, err); });
+          input.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); sendBtn.click(); } });
+          return card;
+        }
+        function queueActionPayload(action, item) {
+          var p = { action: action, code: getTeamCode() };
+          if (item) {
+            p.row = item.row; p.rowNumber = item.row; p.rowNum = item.row; p.index = item.index;
+          }
+          return p;
+        }
+        function loadQueue(preserveResult) {
+          if (queueLoading) return;
+          if (!preserveResult) hideQueueResult();
+          if (!getTeamCode()) { queueItems = []; queueLoaded = false; renderQueue(); return; }
+          queueLoading = true; renderQueue();
+          post({ action: 'queue_list', code: getTeamCode() }).then(function (resp) {
+            queueLoading = false;
+            if (resp && resp.ok) {
+              queueItems = extractQueueItems(resp);
+              if (typeof extractPublishItems === 'function') {
+                publishItems = extractPublishItems(resp);
+                publishLoaded = true;
+                lastPublishNotice = null; renderPublishNotice(); renderPublish();
+              }
+              queueLoaded = true;
+              lastQueueNotice = null; renderQueueNotice();
+            } else if (handleAuthError(resp)) {
+              queueItems = []; queueLoaded = false;
+              lastQueueNotice = { type: 'auth' }; renderQueueNotice();
+            } else {
+              queueLoaded = false;
+              lastQueueNotice = { type: 'script', detail: (resp && resp.error) ? String(resp.error) : '' };
+              renderQueueNotice();
+            }
+            renderQueue();
+          }, function () {
+            queueLoading = false; queueLoaded = false;
+            lastQueueNotice = { type: 'script', detail: '' };
+            renderQueueNotice(); renderQueue();
+          });
+        }
+        function finishQueueAction(item, kind, resp) {
+          queueBusy = false;
+          if (resp && resp.ok) {
+            openMemoKey = null;
+            showQueueResult({ type: kind, title: item.title || qm().noTitle });
+            loadQueue(true);
+          } else if (handleAuthError(resp)) {
+            showQueueResult({ type: 'error', text: fm().authWrong });
+            renderQueue();
+          } else if (isQueueScriptError(resp) || !resp) {
+            lastQueueNotice = { type: 'script', detail: (resp && resp.error) ? String(resp.error) : '' };
+            renderQueueNotice();
+            showQueueResult({ type: 'error', text: qm().scriptNeeded });
+            renderQueue();
+          } else {
+            showQueueResult({ type: 'error', text: qm().actionFailPrefix + String(resp.error || '') });
+            renderQueue();
+          }
+        }
+        function doQueueApprove(item) {
+          if (queueBusy) return;
+          if (!getTeamCode()) { openGate(false); return; }
+          queueBusy = true; hideQueueResult(); renderQueue();
+          post(queueActionPayload('queue_approve', item)).then(function (resp) {
+            finishQueueAction(item, 'approved', resp);
+          }, function () { finishQueueAction(item, 'approved', null); });
+        }
+        function doQueueRequestChanges(item, input, errEl) {
+          if (queueBusy) return;
+          if (!getTeamCode()) { openGate(false); return; }
+          var memo = input ? input.value.trim() : '';
+          if (!memo) {
+            if (errEl) { errEl.textContent = qm().memoRequired; errEl.className = 'field-err show'; }
+            if (input) input.focus();
+            return;
+          }
+          if (errEl) { errEl.textContent = ''; errEl.className = 'field-err'; }
+          queueBusy = true; hideQueueResult(); renderQueue();
+          var p = queueActionPayload('queue_request_changes', item);
+          p.memo = memo; p.note = memo; p.comment = memo;
+          post(p).then(function (resp) {
+            finishQueueAction(item, 'changes', resp);
+          }, function () { finishQueueAction(item, 'changes', null); });
+        }
+        /* ---------- Publish queue (queue_list filtered to Approved + queue_publish) ---------- */
+        var PUBLISH_MSG = {
+          ko: {
+            count: function (n) { return '게시 대기 ' + n + '건'; },
+            loading: '불러오는 중…',
+            lblChannel: '채널', lblRequested: '요청일', lblStatus: '상태', lblMemo: '메모',
+            notionLink: '노션에서 보기 ↗',
+            noTitle: '(제목 없음)',
+            hubLabel: 'Hub URL',
+            hubPlaceholder: 'https://hub.xconda.ai/en/post/...',
+            publishBtn: '게시 완료',
+            processing: '처리 중…',
+            hubRequired: 'Hub URL을 입력해 주세요.',
+            hubInvalid: 'Hub URL은 http:// 또는 https://로 시작해야 합니다.',
+            publishedMsg: function (t) { return '게시 완료했습니다 — ' + t; },
+            scriptNeeded: '스크립트 업데이트가 필요합니다 — 게시 기능(queue_publish)이 아직 배포되지 않았습니다. Apps Script에 v7 코드를 붙여넣고 재배포한 뒤 목록을 새로고침해 주세요.',
+            loadFailPrefix: '목록을 불러오지 못했습니다 — ',
+            actionFailPrefix: '게시 처리에 실패했습니다 — '
+          },
+          en: {
+            count: function (n) { return n + ' awaiting publish'; },
+            loading: 'Loading…',
+            lblChannel: 'Channel', lblRequested: 'Requested', lblStatus: 'Status', lblMemo: 'Note',
+            notionLink: 'View in Notion ↗',
+            noTitle: '(No title)',
+            hubLabel: 'Hub URL',
+            hubPlaceholder: 'https://hub.xconda.ai/en/post/...',
+            publishBtn: 'Mark as published',
+            processing: 'Processing…',
+            hubRequired: 'Please enter the Hub URL.',
+            hubInvalid: 'The Hub URL must start with http:// or https://.',
+            publishedMsg: function (t) { return 'Published — ' + t; },
+            scriptNeeded: 'Script update needed — the publish action (queue_publish) is not deployed yet. Paste the v7 code into Apps Script, redeploy, then refresh the list.',
+            loadFailPrefix: 'Could not load the list — ',
+            actionFailPrefix: 'Could not publish — '
+          }
+        };
+        function pm() { return PUBLISH_MSG[currentLang]; }
+        var publishItems = [], publishBusy = false, publishLoaded = false, publishLoading = false;
+        var lastPublishNotice = null, lastPublishResult = null;
+        var publishHubValues = {};
+        function isApprovedStatus(s) {
+          if (s === null || s === undefined || String(s).trim() === '') return false;
+          var t = String(s).toLowerCase();
+          if (t.indexOf('published') !== -1 || t.indexOf('게시') !== -1) return false;
+          return t.indexOf('approved') !== -1 || t.indexOf('승인') !== -1;
+        }
+        function extractPublishItems(resp) {
+          var raw = null;
+          if (Array.isArray(resp)) raw = resp;
+          else if (resp && typeof resp === 'object') {
+            var keys = ['items', 'queue', 'list', 'entries', 'rows', 'data', 'results'];
+            for (var i = 0; i < keys.length; i++) {
+              if (Array.isArray(resp[keys[i]])) { raw = resp[keys[i]]; break; }
+            }
+          }
+          if (!raw) return [];
+          var out = [];
+          for (var j = 0; j < raw.length; j++) {
+            var it = normalizeQueueItem(raw[j], j);
+            if (it && isApprovedStatus(it.status)) out.push(it);
+          }
+          return out;
+        }
+        function renderPublishNotice() {
+          var box = el('publishNotice'); if (!box) return;
+          if (typeof PUBLISH_MSG === 'undefined' || !lastPublishNotice) { box.className = 'queue-notice'; box.textContent = ''; return; }
+          var m = pm();
+          if (lastPublishNotice.type === 'script') {
+            box.className = 'queue-notice show';
+            box.textContent = m.scriptNeeded + (lastPublishNotice.detail ? ' (' + lastPublishNotice.detail + ')' : '');
+          } else if (lastPublishNotice.type === 'auth') {
+            box.className = 'queue-notice show error';
+            box.textContent = fm().authWrong;
+          } else {
+            box.className = 'queue-notice show error';
+            box.textContent = m.loadFailPrefix + (lastPublishNotice.detail || '');
+          }
+        }
+        function renderPublishResult() {
+          var box = el('publishResult'); if (!box) return;
+          if (typeof PUBLISH_MSG === 'undefined' || !lastPublishResult) { box.className = 'queue-result'; box.textContent = ''; return; }
+          var m = pm();
+          if (lastPublishResult.type === 'published') { box.className = 'queue-result show success'; box.textContent = m.publishedMsg(lastPublishResult.title); }
+          else { box.className = 'queue-result show error'; box.textContent = lastPublishResult.text || ''; }
+        }
+        function showPublishResult(state) { lastPublishResult = state; renderPublishResult(); }
+        function hidePublishResult() { lastPublishResult = null; renderPublishResult(); }
+        function renderPublish() {
+          var list = el('publishList'); if (!list) return;
+          if (typeof PUBLISH_MSG === 'undefined') return;
+          var m = pm();
+          var lockedBox = el('publishLocked');
+          var emptyBox = el('publishEmpty');
+          var countEl = el('publishCount');
+          var refreshBtn = el('publishRefreshBtn');
+          var locked = !getTeamCode();
+          if (lockedBox) lockedBox.className = 'queue-locked' + (locked ? ' show' : '');
+          if (refreshBtn) refreshBtn.disabled = locked || publishBusy || publishLoading;
+          list.innerHTML = '';
+          if (locked) {
+            if (countEl) countEl.textContent = '';
+            if (emptyBox) emptyBox.className = 'queue-empty';
+            return;
+          }
+          var items = publishItems || [];
+          if (countEl) countEl.textContent = publishLoading ? m.loading : (publishLoaded ? m.count(items.length) : '');
+          if (emptyBox) emptyBox.className = 'queue-empty' + (!publishLoading && publishLoaded && items.length === 0 ? ' show' : '');
+          items.forEach(function (item) { list.appendChild(buildPublishCard(item, m)); });
+        }
+        function buildPublishCard(item, m) {
+          var card = document.createElement('article');
+          card.className = 'queue-card';
+          var head = document.createElement('div'); head.className = 'queue-head';
+          var title = document.createElement('p'); title.className = 'queue-title';
+          title.textContent = item.title || m.noTitle;
+          var badge = document.createElement('span'); badge.className = 'badge badge-ok';
+          badge.textContent = item.status;
+          head.appendChild(title); head.appendChild(badge); card.appendChild(head);
+          if (item.notionUrl && /^https?:\/\//i.test(item.notionUrl)) {
+            var np = document.createElement('p'); np.className = 'queue-notion';
+            var a = document.createElement('a');
+            a.href = item.notionUrl; a.target = '_blank'; a.rel = 'noopener';
+            a.textContent = m.notionLink;
+            np.appendChild(a); card.appendChild(np);
+          }
+          var kv = document.createElement('div'); kv.className = 'kv';
+          var rows = [
+            [m.lblChannel, item.channel],
+            [m.lblRequested, fmtQueueDate(item.requestedAt)],
+            [m.lblStatus, item.status],
+            [m.lblMemo, item.memo]
+          ];
+          rows.forEach(function (r) {
+            if (!r[1]) return;
+            var d = document.createElement('div');
+            var s = document.createElement('span'); s.textContent = r[0];
+            d.appendChild(s); d.appendChild(document.createTextNode(r[1]));
+            kv.appendChild(d);
+          });
+          if (kv.childNodes.length) card.appendChild(kv);
+          var key = queueKey(item);
+          var hubBox = document.createElement('div'); hubBox.className = 'publish-hub-box';
+          var hubId = 'publishHub-' + (item.row !== '' && item.row !== null && item.row !== undefined ? item.row : item.index);
+          var lab = document.createElement('label'); lab.setAttribute('for', hubId); lab.textContent = m.hubLabel;
+          var input = document.createElement('input');
+          input.type = 'text'; input.id = hubId; input.placeholder = m.hubPlaceholder;
+          input.setAttribute('autocomplete', 'off'); input.setAttribute('autocapitalize', 'none'); input.setAttribute('spellcheck', 'false');
+          input.value = (publishHubValues[key] !== undefined ? publishHubValues[key] : (item.hubUrl || ''));
+          input.disabled = publishBusy;
+          var err = document.createElement('p'); err.className = 'field-err';
+          var actions = document.createElement('div'); actions.className = 'publish-actions';
+          var pubBtn = document.createElement('button');
+          pubBtn.type = 'button'; pubBtn.className = 'queue-approve-btn';
+          pubBtn.textContent = publishBusy ? m.processing : m.publishBtn;
+          pubBtn.disabled = publishBusy;
+          actions.appendChild(pubBtn);
+          hubBox.appendChild(lab); hubBox.appendChild(input); hubBox.appendChild(err); hubBox.appendChild(actions);
+          card.appendChild(hubBox);
+          input.addEventListener('input', function () {
+            publishHubValues[key] = input.value;
+            err.textContent = ''; err.className = 'field-err'; input.removeAttribute('aria-invalid');
+          });
+          input.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); pubBtn.click(); } });
+          pubBtn.addEventListener('click', function () { doQueuePublish(item, input, err); });
+          return card;
+        }
+        function loadPublish(preserveResult) {
+          if (publishLoading) return;
+          if (!preserveResult) hidePublishResult();
+          if (!getTeamCode()) { publishItems = []; publishLoaded = false; renderPublish(); return; }
+          publishLoading = true; renderPublish();
+          post({ action: 'queue_list', code: getTeamCode() }).then(function (resp) {
+            publishLoading = false;
+            if (resp && resp.ok) {
+              publishItems = extractPublishItems(resp);
+              queueItems = extractQueueItems(resp);
+              queueLoaded = true;
+              publishLoaded = true;
+              lastPublishNotice = null; renderPublishNotice();
+              lastQueueNotice = null; renderQueueNotice();
+            } else if (handleAuthError(resp)) {
+              publishItems = []; publishLoaded = false;
+              lastPublishNotice = { type: 'auth' }; renderPublishNotice();
+            } else {
+              publishLoaded = false;
+              lastPublishNotice = { type: 'script', detail: (resp && resp.error) ? String(resp.error) : '' };
+              renderPublishNotice();
+            }
+            renderPublish(); renderQueue();
+          }, function () {
+            publishLoading = false; publishLoaded = false;
+            lastPublishNotice = { type: 'script', detail: '' };
+            renderPublishNotice(); renderPublish();
+          });
+        }
+        function finishQueuePublish(item, resp) {
+          publishBusy = false;
+          if (resp && resp.ok) {
+            delete publishHubValues[queueKey(item)];
+            showPublishResult({ type: 'published', title: item.title || pm().noTitle });
+            loadQueue(true);
+            loadPublish(true);
+          } else if (handleAuthError(resp)) {
+            showPublishResult({ type: 'error', text: fm().authWrong });
+            renderPublish();
+          } else if (isQueueScriptError(resp) || !resp) {
+            lastPublishNotice = { type: 'script', detail: (resp && resp.error) ? String(resp.error) : '' };
+            renderPublishNotice();
+            showPublishResult({ type: 'error', text: pm().scriptNeeded });
+            renderPublish();
+          } else {
+            showPublishResult({ type: 'error', text: pm().actionFailPrefix + String(resp.error || '') });
+            renderPublish();
+          }
+        }
+        function doQueuePublish(item, input, errEl) {
+          if (publishBusy) return;
+          if (!getTeamCode()) { openGate(false); return; }
+          var hubUrl = input ? input.value.trim() : '';
+          publishHubValues[queueKey(item)] = hubUrl;
+          function showHubError(msg) {
+            if (errEl) { errEl.textContent = msg; errEl.className = 'field-err show'; }
+            if (input) { input.setAttribute('aria-invalid', 'true'); input.focus(); }
+          }
+          if (!hubUrl) { showHubError(pm().hubRequired); return; }
+          if (!/^https?:\/\//i.test(hubUrl)) { showHubError(pm().hubInvalid); return; }
+          if (errEl) { errEl.textContent = ''; errEl.className = 'field-err'; }
+          if (input) input.removeAttribute('aria-invalid');
+          publishBusy = true; hidePublishResult(); renderPublish();
+          var payload = { action: 'queue_publish', code: getTeamCode(), row: item.row, hubUrl: hubUrl };
+          post(payload).then(function (resp) {
+            finishQueuePublish(item, resp);
+          }, function () { finishQueuePublish(item, null); });
+        }
+        function initPublish() {
+          var refreshBtn = el('publishRefreshBtn');
+          if (refreshBtn) refreshBtn.addEventListener('click', function () { hidePublishResult(); loadPublish(); });
+          var unlockBtn = el('publishUnlockBtn');
+          if (unlockBtn) unlockBtn.addEventListener('click', function () { openGate(false); });
+          renderPublish();
+          if (getTeamCode()) loadPublish();
+        }
+
+        function initQueue() {
+          var refreshBtn = el('queueRefreshBtn');
+          if (refreshBtn) refreshBtn.addEventListener('click', function () { hideQueueResult(); loadQueue(); });
+          var unlockBtn = el('queueUnlockBtn');
+          if (unlockBtn) unlockBtn.addEventListener('click', function () { openGate(false); });
+          renderQueue();
+          if (getTeamCode()) loadQueue();
+        }
+
         setMode('log_add');
         initGate();
+        initQueue();
+        initPublish();
       })();
     </script>
   </body>
