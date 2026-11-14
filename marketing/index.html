@@ -182,6 +182,15 @@
       .link-row { margin-top: 14px; font-size: 13.5px; word-break: break-all; background: var(--panel-2); border-radius: 8px; padding: 10px 12px; }
 
       /* Google Calendar embed */
+      .gcal-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+      .gcal-open {
+        display: inline-flex; align-items: center; text-decoration: none; cursor: pointer; font: inherit;
+        border: 1px solid var(--accent); background: var(--accent-soft); color: var(--accent-strong);
+        font-weight: 700; font-size: 14px; border-radius: 8px; padding: 8px 16px; min-height: 40px;
+      }
+      .gcal-open:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .gcal-fallback { display: none; margin-top: 12px; background: var(--warn-soft); color: var(--warn); border-radius: 8px; padding: 10px 14px; font-size: 14px; font-weight: 600; }
+      .gcal-fallback.show { display: block; }
       .gcal-wrap { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
       .gcal-wrap iframe { display: block; width: 100%; height: 600px; border: 0; }
       @media (max-width: 640px) {
@@ -397,7 +406,7 @@
           <a href="https://docs.google.com/spreadsheets/d/1XKUuIWapeVTnmbXXkqZKfsTAxmcLGahaxJ6EE3TmUWg/edit?gid=1566450535#gid=1566450535" target="_blank" rel="noopener" data-i18n="openSheet">원본 시트 열기 ↗</a>
         </p>
         <div class="statusline" aria-label="현황 요약" data-i18n-aria="statusAria">
-          <span class="stat" data-i18n="statCampaigns">캠페인 <b>2건</b> 확정</span>
+          <span class="stat" data-i18n="statCampaigns">캠페인 <b>3건</b> 확정</span>
           <span class="stat" data-i18n="statChannels">채널 <b>12개</b></span>
           <span class="stat" data-i18n="statScheduled">예정 게시물 <b>1건</b> · 11/15</span>
           <span class="stat" data-i18n="statLog">대장 기록 <b>1건</b> <span class="tag">예시</span></span>
@@ -421,7 +430,7 @@
 
       <section aria-labelledby="camp-h">
         <h2 id="camp-h" data-i18n="campTitle">캠페인</h2>
-        <p class="sec-note" data-i18n="campNote">확정된 캠페인 2건입니다. 새 캠페인은 시작 3영업일 전에 요청하고, 형식은 주제_YYYYMM (영문 소문자 · 숫자 · 밑줄만)입니다.</p>
+        <p class="sec-note" data-i18n="campNote">확정된 캠페인 3건입니다. 새 캠페인은 시작 3영업일 전에 요청하고, 형식은 주제_YYYYMM (영문 소문자 · 숫자 · 밑줄만)입니다.</p>
         <div class="campaigns">
           <article class="camp">
             <div class="camp-head"><span class="camp-name">flexboard_202611</span><span class="badge badge-ok" data-i18n="badgeConfirmed">확정</span></div>
@@ -438,6 +447,15 @@
             <dl>
               <div><dt data-i18n="labelLanding">기본 도착 URL</dt><dd class="mono">https://hub.xconda.ai/en/post/kbs-documentary-seongmul-xconda/</dd></div>
               <div><dt data-i18n="labelIssued">발급일</dt><dd>2026-11-09</dd></div>
+              <div><dt data-i18n="labelStatus">상태</dt><dd data-i18n="statusConfirmed">확정 / Confirmed</dd></div>
+            </dl>
+          </article>
+          <article class="camp">
+            <div class="camp-head"><span class="camp-name">hub_cta_202611</span><span class="badge badge-ok" data-i18n="badgeConfirmed">확정</span></div>
+            <p class="camp-purpose" data-i18n="camp3Purpose">허브 글 하단 CTA → www 가입</p>
+            <dl>
+              <div><dt data-i18n="labelLanding">기본 도착 URL</dt><dd class="mono">https://www.xconda.ai/</dd></div>
+              <div><dt data-i18n="labelIssued">발급일</dt><dd>2026-11-14</dd></div>
               <div><dt data-i18n="labelStatus">상태</dt><dd data-i18n="statusConfirmed">확정 / Confirmed</dd></div>
             </dl>
           </article>
@@ -639,9 +657,25 @@
       <section aria-labelledby="gcal-h">
         <h2 id="gcal-h" data-i18n="gcalTitle">캘린더</h2>
         <p class="sec-note" data-i18n="gcalNote">공개 캘린더입니다 — 로그인하지 않아도 누구나 일정을 볼 수 있습니다. (XCONDA 공용 캘린더 — MHW와 공유됨)</p>
-        <div class="gcal-wrap">
-          <iframe src="https://calendar.google.com/calendar/embed?src=7049e01655e7c893b7685a6c0b493fe7224186f9feab77908a284726fb7ce03d%40group.calendar.google.com&amp;ctz=Asia%2FSeoul" title="XCONDA Calendar" loading="lazy"></iframe>
+        <div class="gcal-actions">
+          <a class="gcal-open" href="https://calendar.google.com/calendar/embed?src=7049e01655e7c893b7685a6c0b493fe7224186f9feab77908a284726fb7ce03d%40group.calendar.google.com&amp;ctz=Asia%2FSeoul" target="_blank" rel="noopener" data-i18n="gcalOpen">Google 캘린더에서 열기 ↗</a>
+          <button type="button" class="gcal-open" id="gcalReload" data-i18n="gcalReload">캘린더 다시 불러오기</button>
         </div>
+        <div class="gcal-wrap">
+          <iframe id="gcalFrame" src="https://calendar.google.com/calendar/embed?src=7049e01655e7c893b7685a6c0b493fe7224186f9feab77908a284726fb7ce03d%40group.calendar.google.com&amp;ctz=Asia%2FSeoul" title="XCONDA Calendar"></iframe>
+        </div>
+        <p class="gcal-fallback" id="gcalFallback" data-i18n="gcalFallback">캘린더가 비어 보이면 앱 안 브라우저가 외부 캘린더 표시를 막은 경우입니다. 위의 "Google 캘린더에서 열기" 버튼으로 직접 열면 일정을 볼 수 있습니다.</p>
+        <article class="sched-card">
+          <h3 data-i18n="schedTitle">예정 게시물 — 2026-11-15 · Instagram</h3>
+          <p class="sched-topic" data-i18n="schedTopic">FLEXBOARD 컷 일관성 릴스 #1 / FLEXBOARD shot-consistency reel #1</p>
+          <div class="kv">
+            <div><span data-i18n="labelDate">날짜</span>2026-11-15</div>
+            <div><span data-i18n="labelChannel">채널</span>Instagram</div>
+            <div><span data-i18n="labelCampaign2">캠페인</span><span class="mono" style="display:inline;color:inherit;font-size:13.5px;">flexboard_202611</span></div>
+            <div><span>content</span><span class="mono" style="display:inline;color:inherit;font-size:13.5px;">mhw_reel01</span></div>
+            <div><span data-i18n="labelStatus2">상태</span><span data-i18n="statusScheduled">예약 Scheduled</span></div>
+          </div>
+        </article>
       </section>
 
       <section aria-labelledby="entry-h">
@@ -693,6 +727,7 @@
                   <option value="" data-i18n="selectCampaign">캠페인 선택</option>
                   <option value="flexboard_202611">flexboard_202611</option>
                   <option value="case_kbs_202611">case_kbs_202611</option>
+                  <option value="hub_cta_202611">hub_cta_202611</option>
                 </select>
                 <p class="field-err" id="err-campaign"></p>
               </div>
@@ -802,7 +837,7 @@
           subtitleText: { ko: 'MHW 공유용 · UTM 규칙 v1.0 (2026-11-13 확정)', en: 'Shared with MHW · UTM rules v1.0 (confirmed Nov 13, 2026)' },
           openSheet: { ko: '원본 시트 열기 ↗', en: 'Open source sheet ↗' },
           statusAria: { ko: '현황 요약', en: 'Summary' },
-          statCampaigns: { ko: '캠페인 <b>2건</b> 확정', en: 'Campaigns <b>2</b> confirmed' },
+          statCampaigns: { ko: '캠페인 <b>3건</b> 확정', en: 'Campaigns <b>3</b> confirmed' },
           statChannels: { ko: '채널 <b>12개</b>', en: 'Channels <b>12</b>' },
           statScheduled: { ko: '예정 게시물 <b>1건</b> · 11/15', en: 'Scheduled post <b>1</b> · Nov 15' },
           statLog: { ko: '대장 기록 <b>1건</b> <span class="tag">예시</span>', en: 'Log entries <b>1</b> <span class="tag">Example</span>' },
@@ -817,10 +852,11 @@
           how7: { ko: '잘못 게시된 링크는 지우지 말고 그대로 두고, 바로 아래 줄에 고친 링크를 새로 적습니다.', en: 'Do not delete a link posted by mistake. Leave it and add the corrected link in a new row below.' },
           utmTermNote: { ko: '유료 검색 광고(utm_term)는 처리 방식이 정해지면 칸을 추가할 예정입니다.', en: 'A utm_term column for paid search will be added once the approach is decided.' },
           campTitle: { ko: '캠페인', en: 'Campaigns' },
-          campNote: { ko: '확정된 캠페인 2건입니다. 새 캠페인은 시작 3영업일 전에 요청하고, 형식은 주제_YYYYMM (영문 소문자 · 숫자 · 밑줄만)입니다.', en: 'New campaigns are added here by Cubeberry (request 3 business days before start). Format: topic_YYYYMM (start month), lowercase letters, numbers and underscores only.' },
+          campNote: { ko: '확정된 캠페인 3건입니다. 새 캠페인은 시작 3영업일 전에 요청하고, 형식은 주제_YYYYMM (영문 소문자 · 숫자 · 밑줄만)입니다.', en: 'New campaigns are added here by Cubeberry (request 3 business days before start). Format: topic_YYYYMM (start month), lowercase letters, numbers and underscores only.' },
           badgeConfirmed: { ko: '확정', en: 'Confirmed' },
           camp1Purpose: { ko: 'FLEXBOARD 11월 노출 · 가입', en: 'FLEXBOARD November reach & sign-ups' },
           camp2Purpose: { ko: 'KBS 다큐 사례 확산', en: 'KBS documentary case study' },
+          camp3Purpose: { ko: '허브 글 하단 CTA → www 가입', en: 'Hub post CTA → www sign-ups' },
           labelLanding: { ko: '기본 도착 URL', en: 'Default landing URL' },
           labelIssued: { ko: '발급일', en: 'Issued' },
           labelStatus: { ko: '상태', en: 'Status' },
@@ -875,6 +911,9 @@
           monthViewNote: { ko: '월간 보기 — B1에 월의 1일을 입력하면 달력을 월간 그리드로 볼 수 있습니다.', en: 'Month view — Enter the 1st of a month in B1 to see the calendar as a month grid.' },
           gcalTitle: { ko: '캘린더', en: 'Calendar' },
           gcalNote: { ko: '공개 캘린더입니다 — 로그인하지 않아도 누구나 일정을 볼 수 있습니다. (XCONDA 공용 캘린더 — MHW와 공유됨)', en: 'This calendar is public — anyone can view it without signing in. (Shared XCONDA calendar with MHW)' },
+          gcalOpen: { ko: 'Google 캘린더에서 열기 ↗', en: 'Open in Google Calendar ↗' },
+          gcalReload: { ko: '캘린더 다시 불러오기', en: 'Reload calendar' },
+          gcalFallback: { ko: '캘린더가 비어 보이면 앱 안 브라우저가 외부 캘린더 표시를 막은 경우입니다. 위의 "Google 캘린더에서 열기" 버튼으로 직접 열면 일정을 볼 수 있습니다.', en: 'If the calendar looks empty, the in-app browser is blocking the embedded calendar. Use the "Open in Google Calendar" button above to view the events directly.' },
           calAria: { ko: '2026년 11월 달력', en: 'November 2026 calendar' },
           dowMon: { ko: '월', en: 'Mon' },
           dowTue: { ko: '화', en: 'Tue' },
@@ -1650,6 +1689,34 @@
           });
         }
         if (calImportBtn) calImportBtn.addEventListener('click', doCalImport);
+
+        /* ---------- Google Calendar embed: load check + reload ---------- */
+        (function () {
+          var frame = el('gcalFrame');
+          if (!frame) return;
+          var fallback = el('gcalFallback');
+          var loaded = false, timer = null;
+          function arm() {
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(function () {
+              if (!loaded && fallback) fallback.className = 'gcal-fallback show';
+            }, 6000);
+          }
+          frame.addEventListener('load', function () {
+            loaded = true;
+            if (timer) clearTimeout(timer);
+            if (fallback) fallback.className = 'gcal-fallback';
+          });
+          var reloadBtn = el('gcalReload');
+          if (reloadBtn) reloadBtn.addEventListener('click', function () {
+            loaded = false;
+            if (fallback) fallback.className = 'gcal-fallback';
+            var src = frame.getAttribute('src');
+            frame.setAttribute('src', 'about:blank');
+            setTimeout(function () { frame.setAttribute('src', src); arm(); }, 60);
+          });
+          arm();
+        })();
 
         setMode('log_add');
         initGate();
