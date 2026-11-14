@@ -342,9 +342,39 @@
       @media (prefers-reduced-motion: reduce) {
         .copy-btn:active { transform: none; }
       }
+      /* Team code gate (once per tab session) */
+      .gate-overlay { position: fixed; inset: 0; z-index: 60; background: rgba(10,10,12,0.62); display: none; align-items: center; justify-content: center; padding: 20px; }
+      .gate-overlay.show { display: flex; }
+      .gate-card { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 14px; padding: 24px; width: 100%; max-width: 430px; box-shadow: 0 18px 50px rgba(0,0,0,0.35); }
+      .gate-card h2 { margin: 0 0 8px; font-size: 21px; }
+      .gate-card p { margin: 0 0 14px; color: var(--muted); font-size: 14.5px; }
+      .gate-card label { display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 5px; }
+      .gate-card input { width: 100%; font: inherit; font-size: 15px; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-height: 44px; }
+      .gate-card input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+      .gate-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+      .gate-note { margin-top: 14px !important; font-size: 13px !important; }
+      .form-locked { display: none; background: var(--warn-soft); color: var(--warn); border-radius: 8px; padding: 14px 16px; margin: 0 0 16px; }
+      .form-locked.show { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+      .form-locked p { margin: 0; font-size: 14.5px; }
+      .form-locked strong { display: block; font-size: 15px; }
+      .form-card.is-locked .mode-tabs, .form-card.is-locked #entryForm { opacity: 0.45; }
     </style>
   </head>
   <body>
+    <div class="gate-overlay" id="teamGate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+      <div class="gate-card">
+        <h2 id="gateTitle" data-i18n="gateTitle">팀 코드를 입력하세요</h2>
+        <p data-i18n="gateDesc">게시·수정·삭제를 하려면 팀 코드가 필요합니다. 이 탭을 여는 동안 한 번만 입력하면 됩니다.</p>
+        <label for="gateCode"><span data-i18n="labelCode">팀 코드</span><span class="hint" style="display:block;font-weight:400;color:var(--muted);font-size:12.5px;margin-top:2px;" data-i18n="codeHint">MHW와 공유한 팀 코드를 입력하세요.</span></label>
+        <input type="password" id="gateCode" autocomplete="off" />
+        <p class="field-err" id="gateErr"></p>
+        <div class="gate-actions">
+          <button type="button" class="submit-btn" id="gateSubmit" data-i18n="gateSubmit">확인하고 시작하기</button>
+          <button type="button" class="ghost-btn" id="gateViewOnly" data-i18n="gateViewOnly">보기만 하기</button>
+        </div>
+        <p class="gate-note" data-i18n="gateNote">탭을 닫으면 입력한 코드는 사라지고, 다음에 열 때 다시 한 번 묻습니다.</p>
+      </div>
+    </div>
     <div class="wrap">
 
       <header class="top">
@@ -672,7 +702,7 @@
 
       <section aria-labelledby="gcal-h">
         <h2 id="gcal-h" data-i18n="gcalTitle">캘린더</h2>
-        <p class="sec-note" data-i18n="gcalNote">캘린더는 구글 계정으로 로그인한 팀원에게 보입니다. (XCONDA 공용 캘린더 — MHW와 공유됨)</p>
+        <p class="sec-note" data-i18n="gcalNote">공개 캘린더입니다 — 로그인하지 않아도 누구나 일정을 볼 수 있습니다. (XCONDA 공용 캘린더 — MHW와 공유됨)</p>
         <div class="gcal-wrap">
           <iframe src="https://calendar.google.com/calendar/embed?src=7049e01655e7c893b7685a6c0b493fe7224186f9feab77908a284726fb7ce03d%40group.calendar.google.com&amp;ctz=Asia%2FSeoul" title="XCONDA Calendar" loading="lazy"></iframe>
         </div>
@@ -681,8 +711,13 @@
       <section aria-labelledby="entry-h">
         <h2 id="entry-h" data-i18n="formTitle">게시물 입력</h2>
         <p class="sec-note" data-i18n="formNote2">시트를 열지 않고 여기서 바로 입력합니다.</p>
-        <div class="form-card">
+        <div class="form-card" id="formCard">
           <p class="form-notice" data-i18n="formNotice">입력한 내용은 시트에 바로 저장됩니다. 대시보드 화면은 스냅샷이라 새로 입력한 내용이 보이는 건 다음 갱신 때입니다.</p>
+
+          <div class="form-locked" id="formLocked">
+            <p><strong data-i18n="lockedTitle">팀 코드를 입력하면 게시할 수 있습니다</strong><span data-i18n="lockedDesc">지금은 보기 전용입니다. 코드를 입력하면 입력 폼이 열립니다.</span></p>
+            <button type="button" class="lookup-btn" id="unlockBtn" data-i18n="unlockBtn">팀 코드 입력</button>
+          </div>
 
           <div class="mode-tabs" role="tablist" aria-label="Input mode">
             <button type="button" role="tab" id="tabLog" aria-selected="true" data-i18n="modeLog">게시 기록 추가</button>
@@ -697,11 +732,6 @@
 
           <form id="entryForm" novalidate>
             <div class="field-grid">
-              <div class="field full">
-                <label for="fCode"><span data-i18n="labelCode">팀 코드</span> <span class="req" aria-hidden="true">*</span><span class="hint" data-i18n="codeHint">MHW와 공유한 팀 코드를 입력하세요.</span></label>
-                <input type="password" id="fCode" autocomplete="off" />
-                <p class="field-err" id="err-code"></p>
-              </div>
               <div class="field" id="groupTarget" style="display:none;">
                 <label for="fTarget"><span data-i18n="labelDeleteTarget">삭제 대상</span> <span class="req" aria-hidden="true">*</span></label>
                 <select id="fTarget">
@@ -902,7 +932,7 @@
           calNote: { ko: "예정 게시물 1건이 있습니다. 게시 후 대장 Log에 같은 채널 · content로 기록하면 최종 링크와 검사 결과가 자동으로 채워지고, 상태가 '게시됨'인데 대장에 없으면 빨간색으로 표시됩니다.", en: "After posting, log it in the Log tab with the same channel and content; the calendar fills in the final link and check. A 'Posted' row missing from the log turns red." },
           monthViewNote: { ko: '월간 보기 — B1에 월의 1일을 입력하면 달력을 월간 그리드로 볼 수 있습니다.', en: 'Month view — Enter the 1st of a month in B1 to see the calendar as a month grid.' },
           gcalTitle: { ko: '캘린더', en: 'Calendar' },
-          gcalNote: { ko: '캘린더는 구글 계정으로 로그인한 팀원에게 보입니다. (XCONDA 공용 캘린더 — MHW와 공유됨)', en: 'The calendar is visible to team members signed in to Google. (Shared XCONDA calendar with MHW)' },
+          gcalNote: { ko: '공개 캘린더입니다 — 로그인하지 않아도 누구나 일정을 볼 수 있습니다. (XCONDA 공용 캘린더 — MHW와 공유됨)', en: 'This calendar is public — anyone can view it without signing in. (Shared XCONDA calendar with MHW)' },
           calAria: { ko: '2026년 11월 달력', en: 'November 2026 calendar' },
           dowMon: { ko: '월', en: 'Mon' },
           dowTue: { ko: '화', en: 'Tue' },
@@ -997,6 +1027,14 @@
           deleteCancelBtn: { ko: '취소', en: 'Cancel' },
           labelCode: { ko: '팀 코드', en: 'Team code' },
           codeHint: { ko: 'MHW와 공유한 팀 코드를 입력하세요.', en: 'Enter the team code shared with you.' },
+          gateTitle: { ko: '팀 코드를 입력하세요', en: 'Enter the team code' },
+          gateDesc: { ko: '게시·수정·삭제를 하려면 팀 코드가 필요합니다. 이 탭을 여는 동안 한 번만 입력하면 됩니다.', en: 'You need the team code to add, edit or delete posts. Enter it once — it lasts while this tab stays open.' },
+          gateSubmit: { ko: '확인하고 시작하기', en: 'Confirm and start' },
+          gateViewOnly: { ko: '보기만 하기', en: 'View only' },
+          gateNote: { ko: '탭을 닫으면 입력한 코드는 사라지고, 다음에 열 때 다시 한 번 묻습니다.', en: 'Closing the tab clears the code, so you will be asked once again next time.' },
+          lockedTitle: { ko: '팀 코드를 입력하면 게시할 수 있습니다', en: 'Enter the team code to post' },
+          lockedDesc: { ko: '지금은 보기 전용입니다. 코드를 입력하면 입력 폼이 열립니다.', en: 'You are in view-only mode. Enter the code to unlock the entry form.' },
+          unlockBtn: { ko: '팀 코드 입력', en: 'Enter team code' },
           labelDate: { ko: '날짜', en: 'Date' },
           labelChannel: { ko: '채널', en: 'Channel' },
           labelCampaign: { ko: '캠페인', en: 'Campaign' },
@@ -1090,7 +1128,7 @@
         ];
         var FORM_MSG = {
           ko: {
-            errCode: '팀 코드를 입력하세요.', errDate: '날짜를 선택하세요.', errChannel: '채널을 선택하세요.', errCampaign: '캠페인을 선택하세요.',
+            errCode: '팀 코드를 입력하세요.', gateEmpty: '팀 코드를 입력하세요.', authWrong: '팀 코드가 맞지 않습니다. 다시 입력해 주세요.', errDate: '날짜를 선택하세요.', errChannel: '채널을 선택하세요.', errCampaign: '캠페인을 선택하세요.',
             errContentReq: 'content를 입력하세요.', errContentFmt: 'content는 mhw_ 또는 cb_로 시작하고 소문자·숫자·밑줄만 써야 합니다 (공백·하이픈 불가).',
             errLandingReq: '도착 URL을 입력하세요.', errLandingFmt: '도착 URL은 https://로 시작해야 하고 #를 포함할 수 없습니다.',
             errNoChange: '바꿀 내용을 하나 이상 입력하세요 (날짜·캠페인·도착 URL·주제·상태 중).',
@@ -1112,7 +1150,7 @@
             lblTopic: '주제', lblStatus: '상태', lblTeam: '팀', lblOwner: '담당', lblCheck: '검사 결과', lblFinalLink: '최종 링크'
           },
           en: {
-            errCode: 'Enter the team code.', errDate: 'Pick a date.', errChannel: 'Select a channel.', errCampaign: 'Select a campaign.',
+            errCode: 'Enter the team code.', gateEmpty: 'Enter the team code.', authWrong: 'The team code does not match. Please enter it again.', errDate: 'Pick a date.', errChannel: 'Select a channel.', errCampaign: 'Select a campaign.',
             errContentReq: 'Enter content.', errContentFmt: 'content must start with mhw_ or cb_ and use lowercase letters, numbers and underscores only (no spaces or hyphens).',
             errLandingReq: 'Enter the landing URL.', errLandingFmt: 'The landing URL must start with https:// and must not contain #.',
             errNoChange: 'Fill in at least one field to change (date, campaign, landing URL, topic or status).',
@@ -1136,7 +1174,7 @@
         };
         function fm() { return FORM_MSG[currentLang]; }
         function el(id) { return document.getElementById(id); }
-        var fCode = el('fCode'), fDate = el('fDate'), fChannel = el('fChannel'), fCampaign = el('fCampaign'),
+        var fDate = el('fDate'), fChannel = el('fChannel'), fCampaign = el('fCampaign'),
             fContent = el('fContent'), fLanding = el('fLanding'), fTeam = el('fTeam'), fOwner = el('fOwner'),
             fTopic = el('fTopic'), fStatus = el('fStatus'), submitBtn = el('submitBtn'),
             resultBox = el('formResult'), previewUrl = el('previewUrl'),
@@ -1231,7 +1269,7 @@
           e.textContent = ''; e.className = 'field-err'; input.removeAttribute('aria-invalid'); return true;
         }
         function clearErrors() {
-          fieldError(fCode, 'err-code', ''); fieldError(fDate, 'err-date', ''); fieldError(fChannel, 'err-channel', '');
+          fieldError(fDate, 'err-date', ''); fieldError(fChannel, 'err-channel', '');
           fieldError(fCampaign, 'err-campaign', ''); fieldError(fContent, 'err-content', ''); fieldError(fLanding, 'err-landing', '');
         }
         function validateContentVal(v) {
@@ -1246,7 +1284,7 @@
         }
         function validate() {
           var ok = true, m = fm();
-          ok = fieldError(fCode, 'err-code', fCode.value.trim() ? '' : m.errCode) && ok;
+          if (!getTeamCode()) { openGate(false); showResult('error', m.errCode, []); return false; }
           ok = fieldError(fChannel, 'err-channel', fChannel.value ? '' : m.errChannel) && ok;
           ok = fieldError(fContent, 'err-content', validateContentVal(fContent.value.trim())) && ok;
           if (formMode === 'log_add') {
@@ -1307,7 +1345,61 @@
           }).then(function (r) { return r.json(); });
         }
         function basePayload(action) {
-          return { action: action, code: fCode.value.trim(), channel: fChannel.value, content: fContent.value.trim() };
+          return { action: action, code: getTeamCode(), channel: fChannel.value, content: fContent.value.trim() };
+        }
+        /* ---------- Team code gate (sessionStorage, once per tab) ---------- */
+        var TEAMCODE_KEY = 'xconda-mkt-teamcode';
+        var teamCode = '';
+        try { teamCode = sessionStorage.getItem(TEAMCODE_KEY) || ''; } catch (e) { teamCode = ''; }
+        function getTeamCode() { return teamCode; }
+        function setTeamCode(code) {
+          teamCode = code || '';
+          try { if (teamCode) sessionStorage.setItem(TEAMCODE_KEY, teamCode); else sessionStorage.removeItem(TEAMCODE_KEY); } catch (e) {}
+          updateLockUI();
+        }
+        function isAuthError(resp) {
+          if (!resp || resp.ok) return false;
+          var e = String(resp.error || '');
+          return e.indexOf('팀 코드가 맞지 않습니다') !== -1 || e.indexOf('팀 코드가 맞지') !== -1 || /team code/i.test(e);
+        }
+        function handleAuthError(resp) {
+          if (!isAuthError(resp)) return false;
+          setTeamCode('');
+          openGate(true);
+          return true;
+        }
+        function openGate(authExpired) {
+          var gate = el('teamGate'); if (!gate) return;
+          gate.className = 'gate-overlay show';
+          var err = el('gateErr');
+          if (err) {
+            if (authExpired) { err.textContent = fm().authWrong; err.className = 'field-err show'; }
+            else { err.textContent = ''; err.className = 'field-err'; }
+          }
+          var input = el('gateCode'); if (input) { input.value = ''; setTimeout(function () { input.focus(); }, 30); }
+        }
+        function closeGate() { var gate = el('teamGate'); if (gate) gate.className = 'gate-overlay'; }
+        function updateLockUI() {
+          var locked = !teamCode;
+          var banner = el('formLocked'); if (banner) banner.className = 'form-locked' + (locked ? ' show' : '');
+          var card = el('formCard'); if (card) card.className = 'form-card' + (locked ? ' is-locked' : '');
+          var controls = document.querySelectorAll('#entryForm input, #entryForm select, #entryForm button, .mode-tabs button');
+          for (var i = 0; i < controls.length; i++) { controls[i].disabled = locked; }
+          if (!locked) { var sb = el('submitBtn'); if (sb) sb.disabled = false; }
+        }
+        function initGate() {
+          var submit = el('gateSubmit'), viewOnly = el('gateViewOnly'), unlock = el('unlockBtn'), input = el('gateCode');
+          if (submit) submit.addEventListener('click', function () {
+            var v = input ? input.value.trim() : '';
+            var err = el('gateErr');
+            if (!v) { if (err) { err.textContent = fm().gateEmpty; err.className = 'field-err show'; } if (input) input.focus(); return; }
+            setTeamCode(v); closeGate();
+          });
+          if (input) input.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); if (submit) submit.click(); } });
+          if (viewOnly) viewOnly.addEventListener('click', function () { closeGate(); updateLockUI(); var h = el('entry-h'); if (h) h.scrollIntoView(); });
+          if (unlock) unlock.addEventListener('click', function () { openGate(false); });
+          updateLockUI();
+          if (!teamCode) openGate(false); else closeGate();
         }
         function resultParts(resp) {
           var parts = [], m = fm();
@@ -1385,7 +1477,7 @@
         }
         function validateDelete() {
           var ok = true, m = fm();
-          ok = fieldError(fCode, 'err-code', fCode.value.trim() ? '' : m.errCode) && ok;
+          if (!getTeamCode()) { openGate(false); showResult('error', m.errCode, []); return false; }
           ok = fieldError(fChannel, 'err-channel', fChannel.value ? '' : m.errChannel) && ok;
           ok = fieldError(fContent, 'err-content', validateContentVal(fContent.value.trim())) && ok;
           return ok;
@@ -1415,7 +1507,8 @@
               else showResult('error', fm().notFound, []);
             } else {
               var err = (resp && resp.error) ? String(resp.error) : '';
-              if (/찾을 수 없|not found|no matching|없습니다/i.test(err)) showResult('error', fm().notFound, []);
+              if (handleAuthError(resp)) showResult('error', fm().authWrong, []);
+              else if (/찾을 수 없|not found|no matching|없습니다/i.test(err)) showResult('error', fm().notFound, []);
               else showResult('error', fm().lookupFailPrefix + err, []);
             }
           }, function () { setDeleteButtonsBusy(false, null); showResult('error', fm().networkFail, []); });
@@ -1444,7 +1537,8 @@
               clearDeleteFound();
               showResult('success', target === 'log' ? m.deletedLog : m.deletedCal, parts);
             } else {
-              showResult('error', fm().deleteFailPrefix + ((resp && resp.error) || ''), []);
+              if (handleAuthError(resp)) showResult('error', fm().authWrong, []);
+              else showResult('error', fm().deleteFailPrefix + ((resp && resp.error) || ''), []);
             }
           }, function () {
             setDeleteButtonsBusy(false, null);
@@ -1479,6 +1573,7 @@
             post(p1).then(function (resp) {
               finish();
               if (resp.ok) showResult(checkIsBad(resp) ? 'warn' : 'success', checkIsBad(resp) ? m.successLog + ' ' + m.checkWarn : m.successLog, resultParts(resp));
+              else if (handleAuthError(resp)) showResult('error', m.authWrong, []);
               else showResult('error', m.failPrefix + (resp.error || ''), []);
             }, function () { finish(); showResult('error', m.networkFail, []); });
           } else if (formMode === 'cal_add') {
@@ -1489,6 +1584,7 @@
             post(p2).then(function (resp) {
               finish();
               if (resp.ok) showResult('success', m.successCal, resultParts(resp));
+              else if (handleAuthError(resp)) showResult('error', m.authWrong, []);
               else showResult('error', m.failPrefix + (resp.error || ''), []);
             }, function () { finish(); showResult('error', m.networkFail, []); });
           } else {
@@ -1513,6 +1609,9 @@
             }
             Promise.all(jobs).then(function (results) {
               finish();
+              var authResp = null;
+              results.forEach(function (r) { if (!authResp && r.resp && isAuthError(r.resp)) authResp = r.resp; });
+              if (authResp) { handleAuthError(authResp); showResult('error', m.authWrong, []); return; }
               var msgs = [], parts = [], failed = [], anyOk = false, anyBadCheck = false;
               results.forEach(function (r) {
                 if (r.resp && r.resp.ok) {
@@ -1532,6 +1631,7 @@
         });
 
         setMode('log_add');
+        initGate();
       })();
     </script>
   </body>
