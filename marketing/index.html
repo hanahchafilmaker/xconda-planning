@@ -342,6 +342,14 @@
       @media (prefers-reduced-motion: reduce) {
         .copy-btn:active { transform: none; }
       }
+      /* Calendar import */
+      .cal-import { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 16px; }
+      .cal-import-note { margin: 8px 0 0; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+      .cal-import-result { display: none; margin-top: 12px; border-radius: 8px; padding: 12px 14px; font-size: 14.5px; font-weight: 700; }
+      .cal-import-result.show { display: block; }
+      .cal-import-result.success { background: var(--ok-soft); color: var(--ok); }
+      .cal-import-result.warn { background: var(--warn-soft); color: var(--warn); }
+      .cal-import-result.error { background: var(--err-soft); color: var(--err); }
       /* Team code gate (once per tab session) */
       .gate-overlay { position: fixed; inset: 0; z-index: 60; background: rgba(10,10,12,0.62); display: none; align-items: center; justify-content: center; padding: 20px; }
       .gate-overlay.show { display: flex; }
@@ -819,6 +827,12 @@
             </div>
           </form>
 
+          <div class="cal-import">
+            <button type="button" class="lookup-btn" id="calImportBtn" data-i18n="calImportBtn">캘린더에서 가져오기</button>
+            <p class="cal-import-note" data-i18n="calImportNote">캘린더에서 직접 만든 일정은 주제·날짜만 가져오고, 채널·캠페인·content는 폼에서 채워야 합니다.</p>
+            <div class="cal-import-result" id="calImportResult" role="status" aria-live="polite"></div>
+          </div>
+
           <div class="form-result" id="formResult" role="status" aria-live="polite"></div>
         </div>
       </section>
@@ -1049,7 +1063,9 @@
           formPreviewLabel: { ko: '최종 링크 미리보기', en: 'Final link preview' },
           formPreviewEmpty: { ko: '채널·캠페인·content·도착 URL을 입력하면 최종 링크가 여기에 표시됩니다.', en: 'Fill in channel, campaign, content and landing URL to preview the final link.' },
           submitAdd: { ko: '시트에 저장', en: 'Save to sheet' },
-          submitUpdate: { ko: '수정 저장', en: 'Save changes' }
+          submitUpdate: { ko: '수정 저장', en: 'Save changes' },
+          calImportBtn: { ko: '캘린더에서 가져오기', en: 'Import from calendar' },
+          calImportNote: { ko: '캘린더에서 직접 만든 일정은 주제·날짜만 가져오고, 채널·캠페인·content는 폼에서 채워야 합니다.', en: 'Events created directly in the calendar import with topic and date only; fill in channel, campaign and content in the form.' }
         };
         var COPY_MSG = {
           ko: { label: '최종 링크 복사', ok: '복사됨 ✓', fail: '복사 실패 — 길게 눌러 복사하세요' },
@@ -1081,6 +1097,7 @@
           var sb = document.getElementById('submitBtn');
           if (sb && !sb.disabled && formMode !== 'delete') sb.textContent = I18N[formMode === 'update' ? 'submitUpdate' : 'submitAdd'][lang];
           if (typeof renderLookup === 'function' && deleteFound) renderLookup();
+          if (typeof renderCalImportResult === 'function') renderCalImportResult();
           if (typeof updatePreview === 'function') updatePreview();
           try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
         }
@@ -1147,7 +1164,10 @@
             deletedTitle: '삭제된 항목',
             deleteFailPrefix: '삭제에 실패했습니다 — ',
             lblTarget: '대상', lblDate: '날짜', lblChannel: '채널', lblCampaign: '캠페인', lblLanding: '도착 URL',
-            lblTopic: '주제', lblStatus: '상태', lblTeam: '팀', lblOwner: '담당', lblCheck: '검사 결과', lblFinalLink: '최종 링크'
+            lblTopic: '주제', lblStatus: '상태', lblTeam: '팀', lblOwner: '담당', lblCheck: '검사 결과', lblFinalLink: '최종 링크',
+            importing: '가져오는 중…',
+            importResult: function (a, b, c) { return a + '건 가져옴 · ' + b + '건 이미 있음 · ' + c + '건 실패'; },
+            importFailPrefix: '가져오기에 실패했습니다 — '
           },
           en: {
             errCode: 'Enter the team code.', gateEmpty: 'Enter the team code.', authWrong: 'The team code does not match. Please enter it again.', errDate: 'Pick a date.', errChannel: 'Select a channel.', errCampaign: 'Select a campaign.',
@@ -1169,7 +1189,10 @@
             deletedTitle: 'Deleted entry',
             deleteFailPrefix: 'Could not delete — ',
             lblTarget: 'Target', lblDate: 'Date', lblChannel: 'Channel', lblCampaign: 'Campaign', lblLanding: 'Landing URL',
-            lblTopic: 'Topic', lblStatus: 'Status', lblTeam: 'Team', lblOwner: 'Owner', lblCheck: 'Check', lblFinalLink: 'Final link'
+            lblTopic: 'Topic', lblStatus: 'Status', lblTeam: 'Team', lblOwner: 'Owner', lblCheck: 'Check', lblFinalLink: 'Final link',
+            importing: 'Importing…',
+            importResult: function (a, b, c) { return a + ' imported · ' + b + ' already in sheet · ' + c + ' failed'; },
+            importFailPrefix: 'Import failed — '
           }
         };
         function fm() { return FORM_MSG[currentLang]; }
@@ -1629,6 +1652,76 @@
             });
           }
         });
+
+        /* ---------- Import events created directly in Google Calendar (cal_import) ---------- */
+        var calImportBtn = el('calImportBtn'), calImportResult = el('calImportResult'), calImportBusy = false;
+        var lastCalImportState = null;
+        function showCalImportResult(kind, msg) {
+          if (!calImportResult) return;
+          calImportResult.className = 'cal-import-result show ' + kind;
+          calImportResult.textContent = msg;
+        }
+        function renderCalImportResult() {
+          if (!lastCalImportState) return;
+          var s = lastCalImportState, m = fm();
+          if (s.type === 'counts') showCalImportResult(s.counts.failed > 0 ? 'warn' : 'success', m.importResult(s.counts.imported, s.counts.skipped, s.counts.failed));
+          else if (s.type === 'auth') showCalImportResult('error', m.authWrong);
+          else if (s.type === 'fail') showCalImportResult('error', m.importFailPrefix + (s.detail || ''));
+          else if (s.type === 'network') showCalImportResult('error', m.networkFail);
+        }
+        function hideCalImportResult() {
+          lastCalImportState = null;
+          if (!calImportResult) return;
+          calImportResult.className = 'cal-import-result';
+          calImportResult.textContent = '';
+        }
+        function pickCount(src, keys) {
+          if (!src || typeof src !== 'object') return null;
+          for (var i = 0; i < keys.length; i++) {
+            var v = src[keys[i]];
+            if (v !== undefined && v !== null && v !== '' && !isNaN(Number(v))) return Number(v);
+          }
+          return null;
+        }
+        function importCounts(resp) {
+          var srcs = [resp, resp && resp.result, resp && resp.data, resp && resp.counts];
+          var imported = null, skipped = null, failed = null;
+          for (var i = 0; i < srcs.length; i++) {
+            if (imported === null) imported = pickCount(srcs[i], ['imported', 'added', 'created', 'importedCount', 'addedCount', 'newCount', 'count']);
+            if (skipped === null) skipped = pickCount(srcs[i], ['skipped', 'already', 'existing', 'duplicates', 'duplicate', 'skippedCount', 'alreadyCount', 'existingCount']);
+            if (failed === null) failed = pickCount(srcs[i], ['failed', 'failures', 'errors', 'failedCount', 'errorCount', 'failureCount']);
+          }
+          return { imported: imported || 0, skipped: skipped || 0, failed: failed || 0 };
+        }
+        function doCalImport() {
+          if (calImportBusy) return;
+          if (!getTeamCode()) { openGate(false); return; }
+          calImportBusy = true;
+          calImportBtn.disabled = true;
+          var origLabel = calImportBtn.textContent;
+          calImportBtn.textContent = fm().importing;
+          hideCalImportResult();
+          post({ action: 'cal_import', code: getTeamCode() }).then(function (resp) {
+            calImportBusy = false;
+            calImportBtn.disabled = false;
+            calImportBtn.textContent = I18N.calImportBtn[currentLang];
+            if (resp && resp.ok) {
+              var c = importCounts(resp);
+              lastCalImportState = { type: 'counts', counts: c };
+              renderCalImportResult();
+            } else {
+              if (handleAuthError(resp)) { lastCalImportState = { type: 'auth' }; renderCalImportResult(); }
+              else { lastCalImportState = { type: 'fail', detail: (resp && resp.error) || '' }; renderCalImportResult(); }
+            }
+          }, function () {
+            calImportBusy = false;
+            calImportBtn.disabled = false;
+            calImportBtn.textContent = I18N.calImportBtn[currentLang];
+            lastCalImportState = { type: 'network' };
+            renderCalImportResult();
+          });
+        }
+        if (calImportBtn) calImportBtn.addEventListener('click', doCalImport);
 
         setMode('log_add');
         initGate();
