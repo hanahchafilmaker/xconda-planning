@@ -122,14 +122,12 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
 <!-- 2. 지금 급한 것 -->
 <section id="blockers">
   <div class="sec-head"><span class="no">01</span><h2>지금 급한 것</h2></div>
-  <p class="sec-sub">월요일을 기다리지 않는 패스트트랙 8건, 11/18 운영 배포를 막는 블로커 4건, 이번 주 일정이에요.</p>
+  <p class="sec-sub">월요일을 기다리지 않는 패스트트랙 6건, 11/18 운영 배포를 막는 블로커 4건, 이번 주 일정이에요.</p>
   <div class="fastbox">
-    <div class="fastbox-head"><b>패스트트랙 — 즉시 착수 8건</b><span>신규 AI 모델 · 비상사태 · 오류 대응 · 결제 · 보안</span></div>
+    <div class="fastbox-head"><b>패스트트랙 — 즉시 착수 6건</b><span>신규 AI 모델 · 비상사태 · 오류 대응 · 결제 · 보안</span></div>
     <ul class="fastlist">
       <li><b>T-06</b> 결제 PortOne V2</li>
       <li><b>T-07</b> 턴 / Kling 연동</li>
-      <li><b>T-14</b> 핵심 결제 보안 수정 (최우선)</li>
-      <li><b>T-25</b> test.xconda.ai 차단</li>
       <li><b>T-44</b> Seedream 5.5 UI 반영</li>
       <li><b>T-47</b> MiniMax H3 UID·GID + $100 크레딧</li>
       <li><b>T-48</b> MiniMax H3 테스트 장면 5개</li>
@@ -176,10 +174,11 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
 </section>
 
 <!-- 전체 보기 -->
-<details class="fold bigfold" id="allFold"><summary>전체 보기 — 태스크 107건 · WBS 상세 · 트랙별 현황 · 점검 · 링크 ▾</summary><div class="fold-body">
+<details class="fold bigfold" id="allFold"><summary>전체 보기 — 태스크 90건 · WBS 상세 · 트랙별 현황 · 점검 · 링크 ▾</summary><div class="fold-body">
 <!-- 4. 태스크 보드 -->
 <section id="tasks">
-  <h3 style="font-size:19px;margin:4px 0 6px;font-weight:900">전체 태스크 — T-01~T-107</h3>
+  <h3 style="font-size:19px;margin:4px 0 6px;font-weight:900">전체 태스크 — T-01~T-107 중 90건</h3>
+  <p class="sec-sub">보안 대응 태스크 17건(T-10~T-26)은 공개본에서 뺐어요. 내부 시트에서 확인하세요.</p>
   <p class="sec-sub">그룹 제목을 눌러 펼치세요. 행의 「상세」를 누르면 출처와 원문이 보여요. 담당은 직접 골라 지정하세요 — 고른 담당은 이 브라우저에 저장돼요.</p>
   <div class="ttoolbar">
     <div class="viewbar" role="group" aria-label="뷰 전환">
@@ -188,14 +187,14 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
       <button class="vbtn on" data-view="all">전체 보기 <span class="cnt" id="cntAll"></span></button>
     </div>
     <div class="ffilters">
-      <select id="trackFilter" aria-label="트랙 필터"><option value="all">트랙 전체</option><option value="블로킹보드">블로킹보드</option><option value="결제·턴">결제·턴</option><option value="스트라이프 사고">스트라이프 사고</option><option value="SEO·GEO">SEO·GEO</option><option value="MiniMax·Seedream">MiniMax·Seedream</option><option value="UI개편">UI개편</option><option value="워크스페이스·MCP">워크스페이스·MCP</option><option value="가이드">가이드</option><option value="기타">기타</option></select>
+      <select id="trackFilter" aria-label="트랙 필터"><option value="all">트랙 전체</option><option value="블로킹보드">블로킹보드</option><option value="결제·턴">결제·턴</option><option value="SEO·GEO">SEO·GEO</option><option value="MiniMax·Seedream">MiniMax·Seedream</option><option value="UI개편">UI개편</option><option value="워크스페이스·MCP">워크스페이스·MCP</option><option value="가이드">가이드</option><option value="기타">기타</option></select>
       <select id="statusFilter" aria-label="상태 필터"><option value="all">상태 전체</option><option value="doing">진행 중</option><option value="todo">미착수</option><option value="check">확인 필요·미결</option><option value="done">완료</option><option value="other">보류·중단 등</option></select>
       <select id="ownerFilter" aria-label="담당 필터"><option value="all">담당 전체</option><option value="미지정">미지정만</option></select>
     </div>
     <p class="tcount" id="tcount" role="status"></p>
   </div>
   <div id="tgroups"><div class="tgroup" data-group="fast">
-  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">패스트트랙 — 즉시 착수</span><span class="gmeta">8건 · 월요일을 기다리지 않는 8건이에요. 신규 AI 모델·결제·보안 건입니다.</span><span class="chev" aria-hidden="true">▾</span></button>
+  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">패스트트랙 — 즉시 착수</span><span class="gmeta">6건 · 월요일을 기다리지 않는 6건이에요. 신규 AI 모델·결제·보안 건입니다.</span><span class="chev" aria-hidden="true">▾</span></button>
   <div class="group-body"><article class="tcard" data-id="T-06" data-cat="개발" data-track="결제·턴" data-scat="doing" data-status="진행 중">
   <div class="tmain">
     <div class="tleft"><div class="tidrow"><span class="tid">T-06</span><span class="chip fast">즉시 착수</span><span class="chip track">결제·턴</span><span class="chip cat">개발</span></div>
@@ -215,26 +214,6 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
     <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
   </div>
   <div class="tdetail" hidden><p class="tfull">턴/Kling (v0.3 TRN-REQ-01~06 + TRN-TAB 정의됨, TC-TRN-001~004 존재 — TRN-REQ-04/06은 TC 0·범위 제외, Kling 4.0·3.0 Pro·3.0 4K·OMNI·Image O1) — 공수·기한은 여전히 [확인 필요] (4탭 TRN/KLING 11행 기한 공란), 지연 불가</p><p class="tsrc">출처 · 운영 시트 4_결제 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 결제·턴</p></div>
-</article>
-<article class="tcard" data-id="T-14" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-14</span><span class="chip fast">즉시 착수</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
-    <h3 class="ttitle">핵심 결제 보안 수정 (최우선)</h3></div>
-    <div class="tchips"><span class="chip due">기한 · 즉시 착수 (패스트트랙: 결제·보안)</span><span class="chip status st-doing">진행 중</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-14" aria-label="T-14 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">핵심 결제 보안 수정 (최우선) — 운영 서버 테스트 결제 크레딧 적립 완전 차단, 결제 확인 API 직접 적립 방지, test·test2 외부 악용 및 운영 DB 영향 경로 차단, Stripe 웹훅 서명 비밀 교체·노출 비밀값 정리, 중복·우회 핵심 보안 테스트</p><p class="tsrc">출처 · 대표 검토 결과 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-25" data-cat="개발" data-track="스트라이프 사고" data-scat="todo" data-status="미착수">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-25</span><span class="chip fast">즉시 착수</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
-    <h3 class="ttitle">test.xconda.ai 차단</h3></div>
-    <div class="tchips"><span class="chip due">기한 · 요청 당일 중 (날짜 확인 필요)</span><span class="chip status st-todo">미착수</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-25" aria-label="T-25 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">test.xconda.ai 차단 — 차단 전 access log export (시각·IP·UA·경로·Referer, 사내 보관 + SHA-256) → 전체에 Basic 인증 또는 IP allowlist</p><p class="tsrc">출처 · 차하나 요청 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
 </article>
 <article class="tcard" data-id="T-44" data-cat="개발" data-track="MiniMax·Seedream" data-scat="doing" data-status="진행 중">
   <div class="tmain">
@@ -367,7 +346,7 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
     <label class="owner">담당 <select class="owner-sel" data-task="T-39" aria-label="T-39 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
     <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
   </div>
-  <div class="tdetail" hidden><p class="tfull">팀 의견 (a)~(f) 스레드 댓글 — (a) Stripe 정정 공지 (b) 일정 서면화 (c) 최소 게시 주기 (d) 웹사이트 재구성 (e) 브랜드북 승인 절차 (f) 유료 광고 사전 승인 조건. 없으면 &#x27;의견 없음&#x27;</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+  <div class="tdetail" hidden><p class="tfull">팀 의견 (a)~(f) 스레드 댓글 — (a) 결제 관련 정정 공지 (b) 일정 서면화 (c) 최소 게시 주기 (d) 웹사이트 재구성 (e) 브랜드북 승인 절차 (f) 유료 광고 사전 승인 조건. 없으면 &#x27;의견 없음&#x27;</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
 </article>
 <article class="tcard" data-id="T-40" data-cat="기획" data-track="SEO·GEO" data-scat="todo" data-status="미착수">
   <div class="tmain">
@@ -441,159 +420,6 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
     <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
   </div>
   <div class="tdetail" hidden><p class="tfull">체험판·입문용·전문가용 3분할 vs REQ-GOV-01 단일 UI 충돌 (CR-04) — 대표 승인 전 요구사항·코드 반영 금지</p><p class="tsrc">출처 · 11/01 일정 협의 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 블로킹보드</p></div>
-</article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
-</div>
-<div class="tgroup" data-group="stripe">
-  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">스트라이프 사고 — 나머지</span><span class="gmeta">15건 · 사고 대응 중 이번 주·패스트트랙 외 태스크예요.</span><span class="chev" aria-hidden="true">▾</span></button>
-  <div class="group-body"><article class="tcard" data-id="T-10" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-10</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
-    <h3 class="ttitle">악용 계정 134개 차단 재확인</h3></div>
-    <div class="tchips"><span class="chip due">기한 · 지시 후 12시간 이내</span><span class="chip status st-doing">진행 중</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-10" aria-label="T-10 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">134개 악용 계정 추가 결제·영상 생성 차단 여부 재확인</p><p class="tsrc">출처 · 대표 1차 지시 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-11" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-11</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
-    <h3 class="ttitle">정상 사용자 크레딧 영향 검증</h3></div>
-    <div class="tchips"><span class="chip due">기한 · 지시 후 12시간 이내</span><span class="chip status st-doing">진행 중</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-11" aria-label="T-11 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">정상 사용자 크레딧에 영향이 없는지 검증</p><p class="tsrc">출처 · 대표 1차 지시 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-12" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-12</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
-    <h3 class="ttitle">피해금액 재검증</h3></div>
-    <div class="tchips"><span class="chip due">기한 · 지시 후 24시간 이내</span><span class="chip status st-doing">진행 중</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-12" aria-label="T-12 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">피해금액 재검증 — 의심 계정 크레딧 차감 합계 1,808,429크레딧, 소비자가 5원 기준 약 9,042,145원 (잠정). 실제 외부 AI API 원가는 별도 산정</p><p class="tsrc">출처 · 대표 1차 지시 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-13" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-13</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
-    <h3 class="ttitle">Stripe 테스트 결제 원인 규명</h3></div>
-    <div class="tchips"><span class="chip due">기한 · 지시 후 24시간 이내 (1차 분석)</span><span class="chip status st-doing">진행 중</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-13" aria-label="T-13 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">Stripe 테스트 결제 원인 규명 — 테스트 API 키 유출 여부, 결제·웹훅 검증 로직 점검, 테스트·운영 결제 환경 완전 분리, 우회·중복 적립 방지</p><p class="tsrc">출처 · 대표 1차 지시 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-15" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-15</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
-    <h3 class="ttitle">운영·테스트 GCP 프로젝트 분리</h3></div>
-    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-doing">진행 중</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-15" aria-label="T-15 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">운영·테스트 GCP 프로젝트 분리 (결제 정상화를 지연시키지 않는 방향으로 병행/순차)</p><p class="tsrc">출처 · 대표 검토 결과 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-16" data-cat="개발" data-track="스트라이프 사고" data-scat="todo" data-status="미착수">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-16</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
-    <h3 class="ttitle">test2 서버 중단 검토</h3></div>
-    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-16" aria-label="T-16 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">test2 서버 사용 필요성 확인, 불필요 시 증거 보존 후 중단 검토</p><p class="tsrc">출처 · 대표 검토 결과 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-17" data-cat="개발" data-track="스트라이프 사고" data-scat="todo" data-status="미착수">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-17</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
-    <h3 class="ttitle">실결제 테스트 (내부 계정 소액)</h3></div>
-    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-17" aria-label="T-17 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">실결제 테스트 — 내부 계정 소액 테스트 (핵심 수정 완료 + 운영 영향 확인 후, 대표 승인 후)</p><p class="tsrc">출처 · 대표 검토 결과 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-18" data-cat="공통" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-18</span><span class="chip track">스트라이프 사고</span><span class="chip cat">공통</span></div>
-    <h3 class="ttitle">Stripe 결제 기능 재개 금지</h3></div>
-    <div class="tchips"><span class="chip due">기한 · 보안 검증 완료까지</span><span class="chip status st-doing">진행 중</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-18" aria-label="T-18 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">Stripe 결제 기능 재개 금지 — 보안 검증 완료 전, 대표 승인 없이 재개하지 않음</p><p class="tsrc">출처 · 대표 1차 지시 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-19" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-19</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
-    <h3 class="ttitle">영상 생성 증거 확보 (134개 계정)</h3></div>
-    <div class="tchips"><span class="chip due">기한 · 지시 후 12/36/48시간</span><span class="chip status st-doing">진행 중</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-19" aria-label="T-19 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">영상 생성 증거 확보 (134개 계정) — 생성 이력 전수, 프롬프트 원문·레퍼런스·최종 생성 영상 원본 확보 (URL 만료 전 우선 보존), 계정 UID·작업 ID·생성 일시·모델·차감 크레딧 정리</p><p class="tsrc">출처 · 대표 2차 지시 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-20" data-cat="개발" data-track="스트라이프 사고" data-scat="todo" data-status="미착수">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-20</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
-    <h3 class="ttitle">계정 간 연관성 분석</h3></div>
-    <div class="tchips"><span class="chip due">기한 · 지시 후 48시간 이내</span><span class="chip status st-todo">미착수</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-20" aria-label="T-20 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">계정 간 연관성 분석 — 동일 레퍼런스·유사 프롬프트·캐릭터·영상 반복 여부, IP·접속 시간·기기 정보와 생성 기록 교차 분석, 신원 추적 단서 분류</p><p class="tsrc">출처 · 대표 2차 지시 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-21" data-cat="개발" data-track="스트라이프 사고" data-scat="todo" data-status="미착수">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-21</span><span class="chip track">스트라이프 사고</span><span class="chip cat">개발</span></div>
-    <h3 class="ttitle">악용 계정 생성물 확보</h3></div>
-    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-21" aria-label="T-21 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">악용 계정 생성물 확보 (최종현 요청) — 계정별 생성 영상·이미지(480p·1080p), 프롬프트 원문, 레퍼런스 원본, 모델·설정값. T-19 증거 확보와 겹치므로 통합 관리, 개인·업체를 범인으로 단정하지 않음</p><p class="tsrc">출처 · 슬랙 (최종현) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-22" data-cat="공통" data-track="스트라이프 사고" data-scat="check" data-status="확인 필요">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-22</span><span class="chip track">스트라이프 사고</span><span class="chip cat">공통</span></div>
-    <h3 class="ttitle">악용 계정 삭제 보류 · 증거 보존</h3></div>
-    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-check">확인 필요</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-22" aria-label="T-22 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">악용 계정 삭제 보류 (수사 증거 보존, 로그·IP·결제 기록 보존) — 한편 11/7~8 일반 가입 사용자 4,284건 삭제 완료 (태윤). 두 집합이 별개인지 확인 필요</p><p class="tsrc">출처 · 대표 1차 지시 / 태윤 보고 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-23" data-cat="공통" data-track="스트라이프 사고" data-scat="todo" data-status="미착수">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-23</span><span class="chip track">스트라이프 사고</span><span class="chip cat">공통</span></div>
-    <h3 class="ttitle">최종 사고 분석 보고서 · API 원가</h3></div>
-    <div class="tchips"><span class="chip due">기한 · 지시 후 5영업일 이내</span><span class="chip status st-todo">미착수</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-23" aria-label="T-23 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">최종 사고 분석 보고서 및 실제 API 원가</p><p class="tsrc">출처 · 대표 1차 지시 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-24" data-cat="공통" data-track="스트라이프 사고" data-scat="done" data-status="완료 (모니터링 중)">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-24</span><span class="chip track">스트라이프 사고</span><span class="chip cat">공통</span></div>
-    <h3 class="ttitle">일반 이메일 신규가입 임시 제한</h3></div>
-    <div class="tchips"><span class="chip due">기한 · —</span><span class="chip status st-done">완료 (모니터링 중)</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-24" aria-label="T-24 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">일반 이메일 신규가입 임시 제한 (전화번호 인증 도입 전까지) — 숨김 처리 완료, 당분간 모니터링 후 진행</p><p class="tsrc">출처 · 태윤 보고 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
-</article>
-<article class="tcard" data-id="T-26" data-cat="기획" data-track="스트라이프 사고" data-scat="todo" data-status="미착수">
-  <div class="tmain">
-    <div class="tleft"><div class="tidrow"><span class="tid">T-26</span><span class="chip track">스트라이프 사고</span><span class="chip cat">기획</span></div>
-    <h3 class="ttitle">test 관리자 계정 정리</h3></div>
-    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
-    <label class="owner">담당 <select class="owner-sel" data-task="T-26" aria-label="T-26 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
-    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
-  </div>
-  <div class="tdetail" hidden><p class="tfull">test 관리자 계정 정리 — test 분리 후 admin 받을 직원 메일 지정 (01 계정 제외, 회사·직원 계정만)</p><p class="tsrc">출처 · 태윤 요청 &nbsp;|&nbsp; 구분 · 기획 &nbsp;|&nbsp; 트랙 · 스트라이프 사고</p></div>
 </article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
 </div>
 <div class="tgroup" data-group="seo">
@@ -686,7 +512,7 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
     <label class="owner">담당 <select class="owner-sel" data-task="T-42" aria-label="T-42 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
     <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
   </div>
-  <div class="tdetail" hidden><p class="tfull">MHW 창구 원칙 — Stripe·테스트 서버 질문은 직접 답하지 않고 대표 확인 후 답함. 가격·결제·계정·권한은 대표 확인 후 답함</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
+  <div class="tdetail" hidden><p class="tfull">MHW 창구 원칙 — 결제·테스트 서버 질문은 직접 답하지 않고 대표 확인 후 답함. 가격·결제·계정·권한은 대표 확인 후 답함</p><p class="tsrc">출처 · 대표 지시 11/13 &nbsp;|&nbsp; 구분 · 공통 &nbsp;|&nbsp; 트랙 · SEO·GEO</p></div>
 </article>
 <article class="tcard" data-id="T-43" data-cat="기획" data-track="SEO·GEO" data-scat="done" data-status="완료">
   <div class="tmain">
