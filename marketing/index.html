@@ -21,6 +21,8 @@
         --ok-soft: #dcf2e3;
         --warn: #92400e;
         --warn-soft: #fdeeda;
+        --err: #b3261e;
+        --err-soft: #fdecea;
         --chip: #efefec;
       }
       @media (prefers-color-scheme: dark) {
@@ -38,6 +40,8 @@
           --ok-soft: #123324;
           --warn: #fbbf24;
           --warn-soft: #2b2108;
+          --err: #f2b8b5;
+          --err-soft: #3a1714;
           --chip: #1c1c1f;
         }
       }
@@ -220,6 +224,57 @@
       .badge-pending { background: var(--warn-soft); color: var(--warn); }
 
       html[lang="en"] .camp dl div { grid-template-columns: 158px 1fr; }
+
+      /* Entry form */
+      .form-card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+      .form-notice { background: var(--accent-soft); color: var(--accent-strong); border-radius: 8px; padding: 10px 14px; font-size: 14px; font-weight: 600; margin: 0 0 16px; }
+      .mode-tabs { display: flex; flex-wrap: wrap; gap: 6px; background: var(--panel-2); border-radius: 10px; padding: 5px; margin-bottom: 18px; }
+      .mode-tabs button {
+        flex: 1 1 auto; border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 14.5px; font-weight: 700;
+        padding: 9px 12px; border-radius: 7px; cursor: pointer; min-height: 40px;
+      }
+      .mode-tabs button[aria-selected="true"] { background: var(--panel); color: var(--accent-strong); box-shadow: 0 1px 3px rgba(0,0,0,0.14); }
+      .mode-tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+      .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+      .field { min-width: 0; }
+      .field.full { grid-column: 1 / -1; }
+      .field label { display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 5px; }
+      .field label .req { color: var(--err); }
+      .field .hint { display: block; font-size: 12.5px; font-weight: 400; color: var(--muted); margin-top: 2px; }
+      .field input, .field select {
+        width: 100%; font: inherit; font-size: 14.5px; color: var(--text);
+        background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; min-height: 42px;
+      }
+      .field input:focus, .field select:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: var(--accent); }
+      .field input[aria-invalid="true"], .field select[aria-invalid="true"] { border-color: var(--err); }
+      .field-err { display: none; color: var(--err); font-size: 13px; font-weight: 600; margin: 5px 0 0; }
+      .field-err.show { display: block; }
+      .update-hint { display: none; font-size: 14px; color: var(--muted); background: var(--panel-2); border-radius: 8px; padding: 10px 14px; margin: 0 0 16px; }
+      .update-hint.show { display: block; }
+      .preview-box { margin-top: 18px; background: var(--panel-2); border-radius: 8px; padding: 12px 14px; }
+      .preview-box .pl-label { display: block; color: var(--muted); font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+      .preview-box .purl { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; word-break: break-all; }
+      .preview-box .purl.empty { font-family: inherit; color: var(--muted); font-size: 13.5px; }
+      .submit-row { margin-top: 18px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+      .submit-btn {
+        border: 0; background: var(--accent); color: #1c1c1e; font: inherit; font-size: 15.5px; font-weight: 800;
+        border-radius: 8px; padding: 12px 26px; cursor: pointer; min-height: 46px;
+      }
+      .submit-btn:disabled { opacity: 0.55; cursor: wait; }
+      .submit-btn:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+      .form-result { display: none; margin-top: 16px; border-radius: 8px; padding: 14px 16px; font-size: 14.5px; }
+      .form-result.show { display: block; }
+      .form-result.success { background: var(--ok-soft); color: var(--ok); }
+      .form-result.warn { background: var(--warn-soft); color: var(--warn); }
+      .form-result.error { background: var(--err-soft); color: var(--err); }
+      .form-result .r-msg { font-weight: 700; margin: 0 0 4px; }
+      .form-result .r-meta { margin: 2px 0; }
+      .form-result .final-link { background: var(--panel); color: var(--text); margin-top: 10px; }
+      @media (max-width: 640px) {
+        .field-grid { grid-template-columns: 1fr; }
+        .mode-tabs button { flex: 1 1 100%; }
+      }
+
       footer { margin-top: 48px; border-top: 1px solid var(--line); padding-top: 18px; color: var(--muted); font-size: 14px; }
       footer p { margin: 4px 0; word-break: break-all; }
 
@@ -579,6 +634,93 @@
         </article>
       </section>
 
+      <section aria-labelledby="entry-h">
+        <h2 id="entry-h" data-i18n="formTitle">게시물 입력</h2>
+        <p class="sec-note" data-i18n="formNote2">시트를 열지 않고 여기서 바로 입력합니다.</p>
+        <div class="form-card">
+          <p class="form-notice" data-i18n="formNotice">입력한 내용은 시트에 바로 저장됩니다. 대시보드 화면은 스냅샷이라 새로 입력한 내용이 보이는 건 다음 갱신 때입니다.</p>
+
+          <div class="mode-tabs" role="tablist" aria-label="Input mode">
+            <button type="button" role="tab" id="tabLog" aria-selected="true" data-i18n="modeLog">게시 기록 추가</button>
+            <button type="button" role="tab" id="tabCal" aria-selected="false" data-i18n="modeCal">예정 추가</button>
+            <button type="button" role="tab" id="tabUpdate" aria-selected="false" data-i18n="modeUpdate">수정</button>
+          </div>
+
+          <p class="update-hint" id="updateHint" data-i18n="formUpdateHint">수정 모드: 채널과 content로 기존 항목을 찾습니다. 바꿀 칸만 채우고 나머지는 비워 두세요. 도착 URL은 대장 항목에, 주제·상태는 캘린더 항목에 적용됩니다.</p>
+
+          <form id="entryForm" novalidate>
+            <div class="field-grid">
+              <div class="field full">
+                <label for="fCode"><span data-i18n="labelCode">팀 코드</span> <span class="req" aria-hidden="true">*</span><span class="hint" data-i18n="codeHint">MHW와 공유한 팀 코드를 입력하세요.</span></label>
+                <input type="password" id="fCode" autocomplete="off" />
+                <p class="field-err" id="err-code"></p>
+              </div>
+              <div class="field">
+                <label for="fDate"><span data-i18n="labelDate">날짜</span> <span class="req req-add" aria-hidden="true">*</span></label>
+                <input type="date" id="fDate" />
+                <p class="field-err" id="err-date"></p>
+              </div>
+              <div class="field">
+                <label for="fChannel"><span data-i18n="labelChannel">채널</span> <span class="req" aria-hidden="true">*</span></label>
+                <select id="fChannel">
+                  <option value="" data-i18n="selectChannel">채널 선택</option>
+                </select>
+                <p class="field-err" id="err-channel"></p>
+              </div>
+              <div class="field">
+                <label for="fCampaign"><span data-i18n="labelCampaign">캠페인</span> <span class="req req-add" aria-hidden="true">*</span></label>
+                <select id="fCampaign">
+                  <option value="" data-i18n="selectCampaign">캠페인 선택</option>
+                  <option value="flexboard_202611">flexboard_202611</option>
+                  <option value="case_kbs_202611">case_kbs_202611</option>
+                </select>
+                <p class="field-err" id="err-campaign"></p>
+              </div>
+              <div class="field">
+                <label for="fContent">content <span class="req" aria-hidden="true">*</span><span class="hint" data-i18n="contentHint">mhw_ 또는 cb_로 시작 · 소문자·숫자·밑줄만</span></label>
+                <input type="text" id="fContent" placeholder="mhw_reel02" autocomplete="off" autocapitalize="none" spellcheck="false" />
+                <p class="field-err" id="err-content"></p>
+              </div>
+              <div class="field full" id="groupLanding">
+                <label for="fLanding"><span data-i18n="labelLanding">도착 URL</span> <span class="req req-log" aria-hidden="true">*</span></label>
+                <input type="text" id="fLanding" placeholder="https://www.xconda.ai/" autocomplete="off" autocapitalize="none" spellcheck="false" />
+                <p class="field-err" id="err-landing"></p>
+              </div>
+              <div class="field" id="groupTeam">
+                <label for="fTeam" data-i18n="labelTeam2">팀</label>
+                <input type="text" id="fTeam" value="mhw" autocomplete="off" autocapitalize="none" spellcheck="false" />
+              </div>
+              <div class="field" id="groupOwner">
+                <label for="fOwner" data-i18n="labelOwner2">담당</label>
+                <input type="text" id="fOwner" value="(MHW)" autocomplete="off" spellcheck="false" />
+              </div>
+              <div class="field" id="groupTopic">
+                <label for="fTopic" data-i18n="labelTopic">주제</label>
+                <input type="text" id="fTopic" autocomplete="off" spellcheck="false" />
+              </div>
+              <div class="field" id="groupStatus">
+                <label for="fStatus" data-i18n="labelStatus3">상태</label>
+                <select id="fStatus">
+                  <option value="예약 Scheduled">예약 Scheduled</option>
+                  <option value="게시됨 Posted">게시됨 Posted</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="preview-box" id="previewBox">
+              <span class="pl-label" data-i18n="formPreviewLabel">최종 링크 미리보기</span>
+              <span class="purl empty" id="previewUrl" data-i18n="formPreviewEmpty">채널·캠페인·content·도착 URL을 입력하면 최종 링크가 여기에 표시됩니다.</span>
+            </div>
+
+            <div class="submit-row">
+              <button type="submit" class="submit-btn" id="submitBtn" data-i18n="submitAdd">시트에 저장</button>
+            </div>
+          </form>
+
+          <div class="form-result" id="formResult" role="status" aria-live="polite"></div>
+        </div>
+      </section>
+
       <section aria-labelledby="log-h">
         <h2 id="log-h" data-i18n="logTitle">대장 Log</h2>
         <p class="sec-note" data-i18n="logNote">게시한 링크를 한 줄씩 기록하는 곳입니다.</p>
@@ -760,7 +902,31 @@
           recentNote: { ko: '최근에 올라간 홍보 게시물입니다.', en: 'The latest promotional posts.' },
           recentPostTitle: { ko: 'Seedream 5.5 출시 및 40% 할인 홍보 배너 업로드 완료', en: 'Seedream 5.5 launch & 40% discount promo banner posted' },
           recentPostMeta: { ko: '2026-11-13 · 차하나 PD 공유 · 필요하면 배너 원본 소스나 추가 자료를 요청할 수 있습니다.', en: 'Nov 13, 2026 · Shared by PD Hana Cha · Ask if you need the banner source files or more materials.' },
-          recentXNote: { ko: 'X 게시물은 한국 X 계정 @xconda_ai(사용 중)에서 게시됐습니다.', en: 'The X post was published from the Korean X account @xconda_ai (in use).' }
+          recentXNote: { ko: 'X 게시물은 한국 X 계정 @xconda_ai(사용 중)에서 게시됐습니다.', en: 'The X post was published from the Korean X account @xconda_ai (in use).' },
+          formTitle: { ko: '게시물 입력', en: 'Add / edit posts' },
+          formNote2: { ko: '시트를 열지 않고 여기서 바로 입력합니다.', en: 'Enter posts here, without opening the sheet.' },
+          formNotice: { ko: '입력한 내용은 시트에 바로 저장됩니다. 대시보드 화면은 스냅샷이라 새로 입력한 내용이 보이는 건 다음 갱신 때입니다.', en: 'What you enter is saved to the sheet right away. This dashboard is a snapshot, so new entries appear here at the next refresh.' },
+          modeLog: { ko: '게시 기록 추가', en: 'Add post log' },
+          modeCal: { ko: '예정 추가', en: 'Add schedule' },
+          modeUpdate: { ko: '수정', en: 'Edit' },
+          formUpdateHint: { ko: '수정 모드: 채널과 content로 기존 항목을 찾습니다. 바꿀 칸만 채우고 나머지는 비워 두세요. 도착 URL은 대장 항목에, 주제·상태는 캘린더 항목에 적용됩니다.', en: 'Edit mode: the existing entry is found by channel + content. Fill in only the fields you want to change and leave the rest blank. Landing URL applies to the Log entry; topic and status apply to the Calendar entry.' },
+          labelCode: { ko: '팀 코드', en: 'Team code' },
+          codeHint: { ko: 'MHW와 공유한 팀 코드를 입력하세요.', en: 'Enter the team code shared with you.' },
+          labelDate: { ko: '날짜', en: 'Date' },
+          labelChannel: { ko: '채널', en: 'Channel' },
+          labelCampaign: { ko: '캠페인', en: 'Campaign' },
+          contentHint: { ko: 'mhw_ 또는 cb_로 시작 · 소문자·숫자·밑줄만', en: 'Starts with mhw_ or cb_ · lowercase, numbers and underscores only' },
+          labelLanding: { ko: '도착 URL', en: 'Landing URL' },
+          labelTeam2: { ko: '팀', en: 'Team' },
+          labelOwner2: { ko: '담당', en: 'Owner' },
+          labelTopic: { ko: '주제', en: 'Topic' },
+          labelStatus3: { ko: '상태', en: 'Status' },
+          selectChannel: { ko: '채널 선택', en: 'Select a channel' },
+          selectCampaign: { ko: '캠페인 선택', en: 'Select a campaign' },
+          formPreviewLabel: { ko: '최종 링크 미리보기', en: 'Final link preview' },
+          formPreviewEmpty: { ko: '채널·캠페인·content·도착 URL을 입력하면 최종 링크가 여기에 표시됩니다.', en: 'Fill in channel, campaign, content and landing URL to preview the final link.' },
+          submitAdd: { ko: '시트에 저장', en: 'Save to sheet' },
+          submitUpdate: { ko: '수정 저장', en: 'Save changes' }
         };
         var COPY_MSG = {
           ko: { label: '최종 링크 복사', ok: '복사됨 ✓', fail: '복사 실패 — 길게 눌러 복사하세요' },
@@ -772,6 +938,7 @@
         var btnKo = document.getElementById('langKo');
         var btnEn = document.getElementById('langEn');
         var copyBtn = document.getElementById('copyBtn');
+        var formMode = 'log_add';
         function applyLang(lang) {
           currentLang = lang;
           document.documentElement.lang = lang === 'en' ? 'en' : 'ko';
@@ -788,6 +955,9 @@
           }
           btnKo.setAttribute('aria-pressed', lang === 'ko' ? 'true' : 'false');
           btnEn.setAttribute('aria-pressed', lang === 'en' ? 'true' : 'false');
+          var sb = document.getElementById('submitBtn');
+          if (sb && !sb.disabled) sb.textContent = I18N[formMode === 'update' ? 'submitUpdate' : 'submitAdd'][lang];
+          if (typeof updatePreview === 'function') updatePreview();
           try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
         }
         btnKo.addEventListener('click', function () { applyLang('ko'); });
@@ -815,6 +985,290 @@
             document.body.removeChild(ta); done(ok);
           }
         });
+
+        /* ---------- Entry form (Apps Script web app) ---------- */
+        var ENDPOINT = 'https://script.google.com/macros/s/AKfycbzYoaQ_GLzSPqvgPjIZqWlRzIRVU-RqBYP4GFNQB8wOTqzn1zUMr2us7GfThqAGihCG8A/exec';
+        var CHANNELS = [
+          { name: 'Instagram (피드·릴스·스토리·프로필 / Feed·Reels·Stories·Bio)', src: 'instagram', med: 'social' },
+          { name: 'YouTube 영상 설명란 / Video description', src: 'youtube', med: 'video' },
+          { name: 'YouTube 커뮤니티 탭 / Community tab', src: 'youtube', med: 'social' },
+          { name: 'Facebook (페이지·그룹 / Page·Group)', src: 'facebook', med: 'social' },
+          { name: 'X', src: 'x', med: 'social' },
+          { name: 'Threads', src: 'threads', med: 'social' },
+          { name: 'LinkedIn', src: 'linkedin', med: 'social' },
+          { name: 'Reddit', src: 'reddit', med: 'community' },
+          { name: '뉴스레터 / Newsletter', src: 'newsletter', med: 'email' },
+          { name: 'Instagram 광고 / Ads', src: 'instagram', med: 'paid' },
+          { name: 'Facebook 광고 / Ads', src: 'facebook', med: 'paid' },
+          { name: 'YouTube 광고 / Ads', src: 'youtube', med: 'paid' }
+        ];
+        var FORM_MSG = {
+          ko: {
+            errCode: '팀 코드를 입력하세요.', errDate: '날짜를 선택하세요.', errChannel: '채널을 선택하세요.', errCampaign: '캠페인을 선택하세요.',
+            errContentReq: 'content를 입력하세요.', errContentFmt: 'content는 mhw_ 또는 cb_로 시작하고 소문자·숫자·밑줄만 써야 합니다 (공백·하이픈 불가).',
+            errLandingReq: '도착 URL을 입력하세요.', errLandingFmt: '도착 URL은 https://로 시작해야 하고 #를 포함할 수 없습니다.',
+            errNoChange: '바꿀 내용을 하나 이상 입력하세요 (날짜·캠페인·도착 URL·주제·상태 중).',
+            successLog: '대장 Log에 저장됐습니다.', successCal: '캘린더에 저장됐습니다.',
+            successUpdLog: '대장 항목을 수정했습니다.', successUpdCal: '캘린더 항목을 수정했습니다.',
+            rowLabel: '행', checkLabel: '검사 결과', checkWarn: '검사 결과가 OK가 아닙니다. 시트에서 확인해 주세요.',
+            failPrefix: '저장에 실패했습니다 — ', networkFail: '네트워크 오류로 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+            partialPrefix: '일부만 처리됐습니다 — ',
+            copyLabel: '최종 링크 복사', copied: '복사됨 ✓', copyFail: '복사 실패 — 길게 눌러 복사하세요',
+            saving: '저장 중…'
+          },
+          en: {
+            errCode: 'Enter the team code.', errDate: 'Pick a date.', errChannel: 'Select a channel.', errCampaign: 'Select a campaign.',
+            errContentReq: 'Enter content.', errContentFmt: 'content must start with mhw_ or cb_ and use lowercase letters, numbers and underscores only (no spaces or hyphens).',
+            errLandingReq: 'Enter the landing URL.', errLandingFmt: 'The landing URL must start with https:// and must not contain #.',
+            errNoChange: 'Fill in at least one field to change (date, campaign, landing URL, topic or status).',
+            successLog: 'Saved to the Log.', successCal: 'Saved to the Calendar.',
+            successUpdLog: 'Log entry updated.', successUpdCal: 'Calendar entry updated.',
+            rowLabel: 'Row', checkLabel: 'Check', checkWarn: 'The check result is not OK. Please review it in the sheet.',
+            failPrefix: 'Could not save — ', networkFail: 'Network error — nothing was saved. Please try again shortly.',
+            partialPrefix: 'Only partly done — ',
+            copyLabel: 'Copy final link', copied: 'Copied ✓', copyFail: 'Copy failed — press and hold to copy',
+            saving: 'Saving…'
+          }
+        };
+        function fm() { return FORM_MSG[currentLang]; }
+        function el(id) { return document.getElementById(id); }
+        var fCode = el('fCode'), fDate = el('fDate'), fChannel = el('fChannel'), fCampaign = el('fCampaign'),
+            fContent = el('fContent'), fLanding = el('fLanding'), fTeam = el('fTeam'), fOwner = el('fOwner'),
+            fTopic = el('fTopic'), fStatus = el('fStatus'), submitBtn = el('submitBtn'),
+            resultBox = el('formResult'), previewUrl = el('previewUrl');
+
+        for (var ci = 0; ci < CHANNELS.length; ci++) {
+          var opt = document.createElement('option');
+          opt.value = CHANNELS[ci].name; opt.textContent = CHANNELS[ci].name;
+          fChannel.appendChild(opt);
+        }
+        function channelMeta() {
+          for (var i = 0; i < CHANNELS.length; i++) if (CHANNELS[i].name === fChannel.value) return CHANNELS[i];
+          return null;
+        }
+        function todayStr() {
+          var d = new Date(), p = function (n) { return (n < 10 ? '0' : '') + n; };
+          return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+        }
+        if (!fDate.value) fDate.value = todayStr();
+
+        function setMode(mode) {
+          formMode = mode;
+          el('tabLog').setAttribute('aria-selected', mode === 'log_add' ? 'true' : 'false');
+          el('tabCal').setAttribute('aria-selected', mode === 'cal_add' ? 'true' : 'false');
+          el('tabUpdate').setAttribute('aria-selected', mode === 'update' ? 'true' : 'false');
+          var isLog = mode === 'log_add', isCal = mode === 'cal_add', isUpd = mode === 'update';
+          el('groupLanding').style.display = (isLog || isUpd) ? '' : 'none';
+          el('groupTeam').style.display = isCal ? '' : 'none';
+          el('groupOwner').style.display = isCal ? '' : 'none';
+          el('groupTopic').style.display = (isCal || isUpd) ? '' : 'none';
+          el('groupStatus').style.display = (isCal || isUpd) ? '' : 'none';
+          el('previewBox').style.display = isCal ? 'none' : '';
+          el('updateHint').className = 'update-hint' + (isUpd ? ' show' : '');
+          var stFirst = fStatus.options[0];
+          if (isUpd) {
+            if (!stFirst || stFirst.value !== '') {
+              var noOpt = document.createElement('option');
+              noOpt.value = ''; noOpt.textContent = '변경 안 함 / No change';
+              fStatus.insertBefore(noOpt, fStatus.firstChild);
+            }
+            fStatus.value = '';
+          } else {
+            if (stFirst && stFirst.value === '') fStatus.removeChild(stFirst);
+            if (!fStatus.value) fStatus.value = '예약 Scheduled';
+          }
+          var reqAdd = document.querySelectorAll('.req-add');
+          for (var i = 0; i < reqAdd.length; i++) reqAdd[i].style.display = isUpd ? 'none' : '';
+          var reqLog = document.querySelectorAll('.req-log');
+          for (var j = 0; j < reqLog.length; j++) reqLog[j].style.display = isUpd ? 'none' : '';
+          if (isUpd) { fDate.value = ''; } else if (!fDate.value) { fDate.value = todayStr(); }
+          submitBtn.textContent = I18N[isUpd ? 'submitUpdate' : 'submitAdd'][currentLang];
+          clearErrors(); hideResult(); updatePreview();
+        }
+        el('tabLog').addEventListener('click', function () { setMode('log_add'); });
+        el('tabCal').addEventListener('click', function () { setMode('cal_add'); });
+        el('tabUpdate').addEventListener('click', function () { setMode('update'); });
+
+        function buildFinalLink() {
+          var meta = channelMeta();
+          var landing = fLanding.value.trim();
+          if (!meta || !fCampaign.value || !fContent.value.trim() || !landing) return '';
+          var sep = landing.indexOf('?') !== -1 ? '&' : '?';
+          return landing + sep + 'utm_source=' + meta.src + '&utm_medium=' + meta.med +
+            '&utm_campaign=' + encodeURIComponent(fCampaign.value) + '&utm_content=' + encodeURIComponent(fContent.value.trim());
+        }
+        function updatePreview() {
+          if (!previewUrl) return;
+          var link = buildFinalLink();
+          if (link) { previewUrl.textContent = link; previewUrl.className = 'purl'; }
+          else { previewUrl.textContent = I18N.formPreviewEmpty[currentLang]; previewUrl.className = 'purl empty'; }
+        }
+        var watchIds = ['fChannel', 'fCampaign', 'fContent', 'fLanding'];
+        for (var wi = 0; wi < watchIds.length; wi++) {
+          el(watchIds[wi]).addEventListener('input', updatePreview);
+          el(watchIds[wi]).addEventListener('change', updatePreview);
+        }
+
+        function fieldError(input, errId, msg) {
+          var e = el(errId);
+          if (msg) { e.textContent = msg; e.className = 'field-err show'; input.setAttribute('aria-invalid', 'true'); return false; }
+          e.textContent = ''; e.className = 'field-err'; input.removeAttribute('aria-invalid'); return true;
+        }
+        function clearErrors() {
+          fieldError(fCode, 'err-code', ''); fieldError(fDate, 'err-date', ''); fieldError(fChannel, 'err-channel', '');
+          fieldError(fCampaign, 'err-campaign', ''); fieldError(fContent, 'err-content', ''); fieldError(fLanding, 'err-landing', '');
+        }
+        function validateContentVal(v) {
+          if (!v) return fm().errContentReq;
+          if (!/^(mhw_|cb_)[a-z0-9_]+$/.test(v)) return fm().errContentFmt;
+          return '';
+        }
+        function validateLandingVal(v, required) {
+          if (!v) return required ? fm().errLandingReq : '';
+          if (v.indexOf('https://') !== 0 || v.indexOf('#') !== -1) return fm().errLandingFmt;
+          return '';
+        }
+        function validate() {
+          var ok = true, m = fm();
+          ok = fieldError(fCode, 'err-code', fCode.value.trim() ? '' : m.errCode) && ok;
+          ok = fieldError(fChannel, 'err-channel', fChannel.value ? '' : m.errChannel) && ok;
+          ok = fieldError(fContent, 'err-content', validateContentVal(fContent.value.trim())) && ok;
+          if (formMode === 'log_add') {
+            ok = fieldError(fDate, 'err-date', fDate.value ? '' : m.errDate) && ok;
+            ok = fieldError(fCampaign, 'err-campaign', fCampaign.value ? '' : m.errCampaign) && ok;
+            ok = fieldError(fLanding, 'err-landing', validateLandingVal(fLanding.value.trim(), true)) && ok;
+          } else if (formMode === 'cal_add') {
+            ok = fieldError(fDate, 'err-date', fDate.value ? '' : m.errDate) && ok;
+            ok = fieldError(fCampaign, 'err-campaign', fCampaign.value ? '' : m.errCampaign) && ok;
+          } else {
+            ok = fieldError(fLanding, 'err-landing', validateLandingVal(fLanding.value.trim(), false)) && ok;
+            var hasChange = !!(fDate.value || fCampaign.value || fLanding.value.trim() || fTopic.value.trim() || fStatus.value);
+            if (!hasChange) { showResult('error', m.errNoChange, []); ok = false; }
+          }
+          return ok;
+        }
+
+        function hideResult() { resultBox.className = 'form-result'; resultBox.innerHTML = ''; }
+        function showResult(kind, msg, parts) {
+          resultBox.className = 'form-result show ' + kind;
+          var html = '<p class="r-msg"></p>';
+          resultBox.innerHTML = html;
+          resultBox.querySelector('.r-msg').textContent = msg;
+          (parts || []).forEach(function (p) {
+            if (p.type === 'meta') {
+              var d = document.createElement('p'); d.className = 'r-meta'; d.textContent = p.text; resultBox.appendChild(d);
+            } else if (p.type === 'link') {
+              var wrap = document.createElement('div'); wrap.className = 'final-link';
+              var u = document.createElement('span'); u.className = 'url'; u.textContent = p.url;
+              var b = document.createElement('button'); b.type = 'button'; b.className = 'copy-btn'; b.textContent = fm().copyLabel;
+              b.addEventListener('click', function () { copyText(p.url, b); });
+              wrap.appendChild(u); wrap.appendChild(b); resultBox.appendChild(wrap);
+            }
+          });
+        }
+        function copyText(text, btn) {
+          function done(ok) {
+            var orig = fm().copyLabel;
+            btn.textContent = ok ? fm().copied : fm().copyFail;
+            setTimeout(function () { btn.textContent = orig; }, 2200);
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+          } else {
+            var ta = document.createElement('textarea');
+            ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            var ok = false; try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+            document.body.removeChild(ta); done(ok);
+          }
+        }
+
+        function post(payload) {
+          return fetch(ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify(payload)
+          }).then(function (r) { return r.json(); });
+        }
+        function basePayload(action) {
+          return { action: action, code: fCode.value.trim(), channel: fChannel.value, content: fContent.value.trim() };
+        }
+        function resultParts(resp) {
+          var parts = [], m = fm();
+          if (resp.row) parts.push({ type: 'meta', text: m.rowLabel + ' ' + resp.row });
+          if (resp.check) parts.push({ type: 'meta', text: m.checkLabel + ': ' + resp.check });
+          if (resp.finalLink) parts.push({ type: 'link', url: resp.finalLink });
+          return parts;
+        }
+        function checkIsBad(resp) { return resp.check && resp.check !== 'OK'; }
+
+        el('entryForm').addEventListener('submit', function (ev) {
+          ev.preventDefault();
+          hideResult();
+          if (!validate()) return;
+          var m = fm();
+          submitBtn.disabled = true; submitBtn.textContent = m.saving;
+          function finish() { submitBtn.disabled = false; submitBtn.textContent = I18N[formMode === 'update' ? 'submitUpdate' : 'submitAdd'][currentLang]; }
+
+          if (formMode === 'log_add') {
+            var p1 = basePayload('log_add');
+            p1.date = fDate.value; p1.campaign = fCampaign.value; p1.landing = fLanding.value.trim();
+            post(p1).then(function (resp) {
+              finish();
+              if (resp.ok) showResult(checkIsBad(resp) ? 'warn' : 'success', checkIsBad(resp) ? m.successLog + ' ' + m.checkWarn : m.successLog, resultParts(resp));
+              else showResult('error', m.failPrefix + (resp.error || ''), []);
+            }, function () { finish(); showResult('error', m.networkFail, []); });
+          } else if (formMode === 'cal_add') {
+            var p2 = basePayload('cal_add');
+            p2.date = fDate.value; p2.campaign = fCampaign.value;
+            p2.team = fTeam.value.trim() || 'mhw'; p2.owner = fOwner.value.trim() || '(MHW)';
+            p2.topic = fTopic.value.trim(); p2.status = fStatus.value;
+            post(p2).then(function (resp) {
+              finish();
+              if (resp.ok) showResult('success', m.successCal, resultParts(resp));
+              else showResult('error', m.failPrefix + (resp.error || ''), []);
+            }, function () { finish(); showResult('error', m.networkFail, []); });
+          } else {
+            var landing = fLanding.value.trim(), topic = fTopic.value.trim();
+            var needLog = !!(fDate.value || fCampaign.value || landing);
+            var needCal = !!(fDate.value || fCampaign.value || topic || fStatus.value);
+            var jobs = [];
+            if (needLog) {
+              var pl = basePayload('log_update');
+              if (fDate.value) pl.date = fDate.value;
+              if (fCampaign.value) pl.campaign = fCampaign.value;
+              if (landing) pl.landing = landing;
+              jobs.push(post(pl).then(function (r) { return { kind: 'log', resp: r }; }, function () { return { kind: 'log', resp: null }; }));
+            }
+            if (needCal) {
+              var pc = basePayload('cal_update');
+              if (fDate.value) pc.date = fDate.value;
+              if (fCampaign.value) pc.campaign = fCampaign.value;
+              if (topic) pc.topic = topic;
+              if (fStatus.value) pc.status = fStatus.value;
+              jobs.push(post(pc).then(function (r) { return { kind: 'cal', resp: r }; }, function () { return { kind: 'cal', resp: null }; }));
+            }
+            Promise.all(jobs).then(function (results) {
+              finish();
+              var msgs = [], parts = [], failed = [], anyOk = false, anyBadCheck = false;
+              results.forEach(function (r) {
+                if (r.resp && r.resp.ok) {
+                  anyOk = true;
+                  msgs.push(r.kind === 'log' ? m.successUpdLog : m.successUpdCal);
+                  parts = parts.concat(resultParts(r.resp));
+                  if (checkIsBad(r.resp)) anyBadCheck = true;
+                } else {
+                  failed.push((r.kind === 'log' ? 'Log' : 'Calendar') + ': ' + (r.resp ? (r.resp.error || '') : m.networkFail));
+                }
+              });
+              if (anyOk && !failed.length) showResult(anyBadCheck ? 'warn' : 'success', msgs.join(' ') + (anyBadCheck ? ' ' + m.checkWarn : ''), parts);
+              else if (anyOk) showResult('warn', msgs.join(' ') + ' · ' + m.partialPrefix + failed.join(' / '), parts);
+              else showResult('error', m.failPrefix + failed.join(' / '), []);
+            });
+          }
+        });
+
+        setMode('log_add');
       })();
     </script>
   </body>
