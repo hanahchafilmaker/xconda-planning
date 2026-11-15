@@ -82,6 +82,7 @@ section{margin-top:40px}.sec-head{display:flex;align-items:baseline;gap:12px;fle
 .dec-detail .btn:disabled{opacity:.55;cursor:wait}
 #decisions .sync-note{margin:0 0 14px}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.fbtn{padding:9px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-family:inherit;font-weight:700;font-size:13.5px;cursor:pointer;color:var(--ink)}.fbtn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.dec-empty{grid-column:1/-1;background:var(--surface);border:1.5px dashed var(--ink2);border-radius:14px;padding:26px 20px;text-align:center;color:var(--ink2);font-size:14.5px;font-weight:700;line-height:1.6}.dec-empty b{color:var(--ink);display:block;font-size:16px;margin-bottom:4px}
 /* folds + wbs + tracks + checks */
 details.fold{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:0 20px;margin-top:12px}
 details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 0;list-style:none}details.fold summary::-webkit-details-marker{display:none}details.fold .fold-body{padding-bottom:20px}
@@ -218,7 +219,7 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
   <div class="sec-head"><span class="no">02</span><h2 id="decTitle">결정 요청 8건 (기한 11/16)</h2></div>
   <p class="sec-sub" id="decSub">전부 확정안 공란이고 기한은 11/16이에요. 카드를 누르면 추천 문안이 미리 채워진 입력칸에서 바로 확정할 수 있어요.</p>
   <p class="sync-note" id="decSyncNote" hidden role="status"></p>
-  <div class="filters" role="group" aria-label="결정 필터"><button class="fbtn on" data-f="all">전체 8건</button><button class="fbtn" data-f="ok">바로 확정 가능 6건</button><button class="fbtn" data-f="wait">확인 필요 2건</button></div>
+  <div class="filters" role="group" aria-label="결정 필터"><button class="fbtn" data-f="all">전체 8건</button><button class="fbtn on" data-f="ok">바로 확정 가능 6건</button><button class="fbtn" data-f="wait">확인 필요 2건</button></div>
   <div class="dec-sum" id="decSum"></div>
   <div class="dec-detail" id="decDetail" hidden></div>
 </section>
@@ -1590,12 +1591,33 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
       if(curDec>=0)showDec(curDec,true);
     }).catch(function(){decServer=false;decShowNote();});
   }
-  var decSum=document.getElementById('decSum'),decDetail=document.getElementById('decDetail'),curDec=-1,curFilter='all';
+  var decSum=document.getElementById('decSum'),decDetail=document.getElementById('decDetail'),curDec=-1,curFilter='ok';
+  function decFilterCounts(){
+    var ok=0,wait=0;
+    DECS.forEach(function(d){if(decOf(d.id))return;if(d.st==='ok')ok++;else if(d.st==='wait')wait++;});
+    return {ok:ok,wait:wait,all:DECS.length};
+  }
+  function updateDecFilterLabels(){
+    var c=decFilterCounts();
+    document.querySelectorAll('.fbtn').forEach(function(b){
+      var f=b.getAttribute('data-f');
+      if(f==='all')b.textContent='전체 '+c.all+'건';
+      else if(f==='ok')b.textContent='바로 확정 가능 '+c.ok+'건';
+      else if(f==='wait')b.textContent='확인 필요 '+c.wait+'건';
+    });
+  }
   function renderDecSum(){
     decSum.innerHTML='';
+    var visible=0;
     DECS.forEach(function(d,i){
-      if(curFilter!=='all'&&d.st!==curFilter) return;
       var cur=decOf(d.id);
+      if(curFilter==='all'){
+        /* 전체 보기에서만 확정된 카드를 포함해 8건 전부를 보여준다 */
+      }else{
+        if(cur) return;
+        if(d.st!==curFilter) return;
+      }
+      visible++;
       var b=document.createElement('button');b.type='button';b.className='dsum'+(i===curDec?' on':'')+(cur?' done':'');
       b.innerHTML='<span class="did"></span><span class="dq"></span><span class="pill"></span><span class="dmeta"></span>';
       b.querySelector('.did').textContent=d.id+' · '+d.sub;
@@ -1607,6 +1629,21 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
       b.addEventListener('click',function(){showDec(i===curDec?-1:i);});
       decSum.appendChild(b);
     });
+    if(visible===0){
+      var empty=document.createElement('div');empty.className='dec-empty';empty.setAttribute('role','status');
+      var remain=DECS.length-decCount();
+      if(remain===0){
+        empty.innerHTML='<b>남은 결정이 없어요</b>8건 모두 확정됐어요. 확정된 결정은 「전체 8건」에서 볼 수 있어요.';
+      }else if(curFilter==='ok'){
+        empty.innerHTML='<b>남은 결정이 없어요</b>바로 확정 가능한 남은 결정이 없어요. 「확인 필요」나 「전체 8건」에서 나머지를 볼 수 있어요.';
+      }else if(curFilter==='wait'){
+        empty.innerHTML='<b>남은 결정이 없어요</b>확인 필요한 남은 결정이 없어요. 「바로 확정 가능」이나 「전체 8건」에서 나머지를 볼 수 있어요.';
+      }else{
+        empty.innerHTML='<b>남은 결정이 없어요</b>';
+      }
+      decSum.appendChild(empty);
+    }
+    updateDecFilterLabels();
     updateDecHeader();
   }
   function showDec(i,skipScroll){
