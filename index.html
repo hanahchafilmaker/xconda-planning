@@ -1396,15 +1396,28 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
 </div>
 <div class="tgroup" data-group="vcube">
   <button type="button" class="group-head" aria-expanded="false"><span class="glabel">14. vCube 업스케일러 개발 (2026-11-15)</span><span class="gmeta">1건 · vCube 업스케일러 개발 태스크예요. T-111.</span><span class="chev" aria-hidden="true">▾</span></button>
-  <div class="group-body"><article class="tcard" data-id="T-111" data-cat="개발" data-track="기타" data-scat="todo" data-status="미착수">
+  <div class="group-body"><article class="tcard" data-id="T-111" data-cat="개발" data-track="기타" data-scat="hold" data-status="보류">
   <div class="tmain">
     <div class="tleft"><div class="tidrow"><span class="tid">T-111</span><span class="chip track">기타</span><span class="chip cat">개발</span></div>
     <h3 class="ttitle">vCube 업스케일러 개발 — BytePlus MediaKit 로컬 앱 보강</h3></div>
-    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-todo">미착수</span>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-other">보류</span>
     <label class="owner">담당 <select class="owner-sel" name="owner-T-111" data-task="T-111" aria-label="T-111 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
     <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
   </div>
   <div class="tdetail" hidden><p class="tfull">60분 무인 배치 큐. P0: 배치 큐·폴링 폴백·포트 가드·영속화·결과 유실 방지. P1: 예상 비용·후처리·등급 비교·진행 표시. 작업지시서 2026-10-10, 이진서 대표 지시. 착수 전 확인: 폴링 API 사양, Standard 등급 단가.</p><p class="tsrc">출처 · 작업지시서 2026-10-10 (이진서 대표 지시) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 기타</p></div>
+</article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
+</div>
+<div class="tgroup" data-group="mailalert">
+  <button type="button" class="group-head" aria-expanded="false"><span class="glabel">15. 서버 오류 메일 알림 (2026-11-15)</span><span class="gmeta">1건 · 서버 오류 메일 알림 태스크예요. T-112.</span><span class="chev" aria-hidden="true">▾</span></button>
+  <div class="group-body"><article class="tcard" data-id="T-112" data-cat="개발" data-track="기타" data-scat="hold" data-status="보류">
+  <div class="tmain">
+    <div class="tleft"><div class="tidrow"><span class="tid">T-112</span><span class="chip track">기타</span><span class="chip cat">개발</span></div>
+    <h3 class="ttitle">서버 오류 메일 알림 구축 (필터링 정책 포함)</h3></div>
+    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-other">보류</span>
+    <label class="owner">담당 <select class="owner-sel" name="owner-T-112" data-task="T-112" aria-label="T-112 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준" selected>전유준</option><option value="권태윤">권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="알프레드">알프레드</option><option value="기타">기타</option></select></label>
+    <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
+  </div>
+  <div class="tdetail" hidden><p class="tfull">외부 변경(Replicate 결과 주소 변경)으로 이미지 생성 전면 실패(11/13)를 미리 알지 못함 — 대표 지시. 서버 오류 로그 전체 확인 후 필터링 정책(메일 발송 범위) 정리하고 메일 알림 구축.</p><p class="tsrc">출처 · 차하나 지시 (2026-11-15) &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 기타</p></div>
 </article><div class="tempty" style="display:none">이 그룹에는 조건에 맞는 태스크가 없어요.</div></div>
 </div>
 </div>
@@ -1754,8 +1767,8 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
     /* Status: 완료 / 대기 / 진행 — saved the same way as assignees */
     var SKEY='xconda-task-statuses-v1',ssaved={};
     try{ssaved=JSON.parse(localStorage.getItem(SKEY)||'{}');}catch(e){ssaved={};}
-    var SMETA={done:{label:'완료',cls:'st-done'},wait:{label:'대기',cls:'st-todo'},doing:{label:'진행',cls:'st-doing'}};
-    function canonOf(card){var s=card.getAttribute('data-scat');if(s==='done')return 'done';if(s==='doing')return 'doing';return 'wait';}
+    var SMETA={done:{label:'완료',cls:'st-done'},wait:{label:'대기',cls:'st-todo'},doing:{label:'진행',cls:'st-doing'},hold:{label:'보류',cls:'st-other'}};
+    function canonOf(card){var s=card.getAttribute('data-scat');if(s==='done')return 'done';if(s==='doing')return 'doing';if(s==='hold')return 'hold';return 'wait';}
     function paintStatus(card,st){
       card.setAttribute('data-scat',st);
       card.setAttribute('data-status',SMETA[st].label);
@@ -1787,7 +1800,7 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
       var badge=card.querySelector('.chip.status');
       var lab=document.createElement('label');lab.className='statusctl';lab.appendChild(document.createTextNode('상태 '));
       var sel=document.createElement('select');sel.className='status-sel';sel.setAttribute('name','status-'+id);sel.setAttribute('data-task',id);sel.setAttribute('aria-label',id+' 상태 변경');
-      [['done','완료'],['wait','대기'],['doing','진행']].forEach(function(pr){var o=document.createElement('option');o.value=pr[0];o.textContent=pr[1];sel.appendChild(o);});
+      [['done','완료'],['wait','대기'],['doing','진행'],['hold','보류']].forEach(function(pr){var o=document.createElement('option');o.value=pr[0];o.textContent=pr[1];sel.appendChild(o);});
       lab.appendChild(sel);
       if(badge&&badge.parentNode)badge.parentNode.insertBefore(lab,badge.nextSibling);
       else{var tc=card.querySelector('.tchips');if(tc)tc.appendChild(lab);}
@@ -1814,7 +1827,7 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
     function showSyncNote(msg){var st=window.__syncState;st.task=true;st.taskPending=false;st.taskMsg=msg;syncRender();}
     function hideSyncNote(){var st=window.__syncState;st.task=false;st.taskPending=false;syncMarkSuccess();}
     function taskPendingNote(){var st=window.__syncState;st.taskPending=true;st.task=false;syncRender();}
-    function keyOfStatus(s){if(s==='완료'||s==='done')return 'done';if(s==='진행'||s==='doing')return 'doing';if(s==='대기'||s==='wait')return 'wait';return null;}
+    function keyOfStatus(s){if(s==='완료'||s==='done')return 'done';if(s==='진행'||s==='doing')return 'doing';if(s==='대기'||s==='wait')return 'wait';if(s==='보류'||s==='hold')return 'hold';return null;}
     function isCodeErr(res){return !!(res&&res.error&&/code|코드/i.test(String(res.error)));}
     function postSync(payload){
       return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)}).then(function(r){return r.json();});
