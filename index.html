@@ -138,6 +138,31 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
 .gcal-wrap{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .gcal-wrap iframe{display:block;width:100%;height:600px;border:0}
 @media(max-width:640px){.gcal-wrap iframe{height:480px}}
+/* calendar + developer week list side by side */
+.cal-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(310px,1fr);gap:16px;align-items:start}
+@media(max-width:960px){.cal-layout{grid-template-columns:1fr}}
+.devweek{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+.devweek-head h3{margin:0;font-size:17px;font-weight:900;letter-spacing:-.01em}
+.devweek-head p{margin:6px 0 0;font-size:13px;color:var(--ink2);line-height:1.55}
+.dev-block{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.dev-block:first-of-type{margin-top:14px}
+.dev-name{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.dev-name b{font-size:15.5px;font-weight:900}
+.dev-name .role{font-size:12.5px;color:var(--ink2);font-weight:600}
+.dev-name .cnt{margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--ink2)}
+.dw-sub{font-size:12px;font-weight:800;color:var(--ink2);margin:12px 0 6px}
+.dw-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.dw-row{width:100%;display:flex;gap:10px;align-items:flex-start;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-family:inherit;cursor:pointer;color:var(--ink)}
+.dw-row:hover{border-color:var(--ink)}
+.dw-row:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.dw-date{flex:none;font-family:var(--mono);font-size:11.5px;font-weight:600;background:var(--ink);color:var(--bg);border-radius:7px;padding:3px 7px;white-space:nowrap;margin-top:1px}
+.dw-date.undated{background:var(--amber-bg);color:var(--amber)}
+.dw-main{min-width:0;flex:1}
+.dw-title{display:block;font-size:13.5px;font-weight:700;line-height:1.45}
+.dw-title .tid{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--ink2);margin-right:5px}
+.dw-due{display:block;font-size:12px;color:var(--ink2);margin-top:1px}
+.dw-empty{font-size:13px;color:var(--ink2);margin:4px 0 2px}
+.devweek-note{margin:16px 0 0;font-size:12.5px;color:var(--ink2);border-top:1px dashed var(--line);padding-top:12px;line-height:1.55}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
 </style>
 </head>
@@ -203,15 +228,27 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
 <!-- 캘린더 — Dev_Xconda -->
 <section id="calendar" aria-labelledby="gcal-h">
   <div class="sec-head"><span class="no">일정</span><h2 id="gcal-h">캘린더 — 이번 주 마일스톤</h2></div>
-  <p class="sec-sub">Dev_Xconda 공개 캘린더예요 (Asia/Seoul · 로그인 없이 볼 수 있어요). 이번 주 마일스톤 4건이 올라가 있어요 — 11/15 G1 [초안] 통과 · 11/16 결정 확정 마감 · 11/17 test 배포·TC 실행 · 11/18 운영 배포.</p>
-  <div class="gcal-actions">
-    <a class="gcal-open" href="https://calendar.google.com/calendar/embed?src=9598da536b6e07933889a97b2fe36bf8b85e96a438f4b0e9791074b9ec04b044%40group.calendar.google.com&amp;ctz=Asia%2FSeoul" target="_blank" rel="noopener">Google 캘린더에서 열기 ↗</a>
-    <button type="button" class="gcal-open" id="gcalReload">캘린더 다시 불러오기</button>
+  <p class="sec-sub">Dev_Xconda 공개 캘린더예요 (Asia/Seoul · 로그인 없이 볼 수 있어요). 이번 주 마일스톤 4건이 올라가 있어요 — 11/15 G1 [초안] 통과 · 11/16 결정 확정 마감 · 11/17 test 배포·TC 실행 · 11/18 운영 배포. 달력에는 마일스톤만 올라가 있어서, 전유준·권태윤 개발자 업무는 옆 목록에서 따로 보여요.</p>
+  <div class="cal-layout">
+    <div class="cal-main">
+      <div class="gcal-actions">
+        <a class="gcal-open" href="https://calendar.google.com/calendar/embed?src=9598da536b6e07933889a97b2fe36bf8b85e96a438f4b0e9791074b9ec04b044%40group.calendar.google.com&amp;ctz=Asia%2FSeoul" target="_blank" rel="noopener">Google 캘린더에서 열기 ↗</a>
+        <button type="button" class="gcal-open" id="gcalReload">캘린더 다시 불러오기</button>
+      </div>
+      <div class="gcal-wrap">
+        <iframe id="gcalFrame" src="https://calendar.google.com/calendar/embed?src=9598da536b6e07933889a97b2fe36bf8b85e96a438f4b0e9791074b9ec04b044%40group.calendar.google.com&amp;ctz=Asia%2FSeoul" title="Dev_Xconda 캘린더"></iframe>
+      </div>
+      <p class="gcal-fallback" id="gcalFallback" role="status">캘린더가 비어 보이면 앱 안 브라우저가 외부 캘린더 표시를 막은 경우입니다. 위의 "Google 캘린더에서 열기" 버튼으로 직접 열면 일정을 볼 수 있습니다.</p>
+    </div>
+    <aside class="devweek" aria-labelledby="devweek-h">
+      <div class="devweek-head">
+        <h3 id="devweek-h">개발자별 이번 주 일정</h3>
+        <p>아래 「전체 보기」 태스크 보드에서 담당이 지정된 일을 뽑았어요. 일정을 누르면 해당 태스크로 이동해요. 담당·상태를 태스크 보드에서 바꾸면 여기도 바로 반영돼요.</p>
+      </div>
+      <div id="devWeekList"></div>
+      <p class="devweek-note">날짜가 없는 일정은 달력에 올릴 수 없어서 「날짜 미정」으로 따로 모았어요. 기한이 정해지면 태스크 보드에서 알려주세요 — 날짜가 생긴 일정은 날짜순 목록으로 올라가요.</p>
+    </aside>
   </div>
-  <div class="gcal-wrap">
-    <iframe id="gcalFrame" src="https://calendar.google.com/calendar/embed?src=9598da536b6e07933889a97b2fe36bf8b85e96a438f4b0e9791074b9ec04b044%40group.calendar.google.com&amp;ctz=Asia%2FSeoul" title="Dev_Xconda 캘린더"></iframe>
-  </div>
-  <p class="gcal-fallback" id="gcalFallback" role="status">캘린더가 비어 보이면 앱 안 브라우저가 외부 캘린더 표시를 막은 경우입니다. 위의 "Google 캘린더에서 열기" 버튼으로 직접 열면 일정을 볼 수 있습니다.</p>
 </section>
 
 <!-- 5. 결정 보드 -->
@@ -1860,6 +1897,127 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
     setTimeout(function(){frame.setAttribute('src',src);arm();},60);
   });
   arm();
+})();
+</script>
+<script>
+/* Developer week list beside the calendar — built live from the task board
+   (.tcard owner selects + status), so assignee/status edits and sheet sync
+   are reflected here without a second copy of the data.
+   "This week" = due date 11/15–11/21. Fast-track tasks without a parseable
+   date are listed separately as 날짜 미정 (they cannot go on the calendar). */
+(function(){
+  var host=document.getElementById('devWeekList');
+  if(!host)return;
+  var DEVS=[
+    {name:'전유준',role:'결제 · 블로킹보드'},
+    {name:'권태윤',role:'턴/Kling · MiniMax'}
+  ];
+  var WDAY={15:'일',16:'월',17:'화',18:'수',19:'목',20:'금',21:'토'};
+  var SLAB={doing:'진행',done:'완료',wait:'대기',todo:'대기',check:'대기'};
+  function parseDay(due){
+    var m=due.match(/11\/(\d{1,2})/);
+    return m?parseInt(m[1],10):null;
+  }
+  function collect(devName){
+    var dated=[],undated=[];
+    document.querySelectorAll('.tcard').forEach(function(card){
+      var sel=card.querySelector('.owner-sel');
+      if(!sel||sel.value!==devName)return;
+      if(card.getAttribute('data-scat')==='done')return;
+      var dueEl=card.querySelector('.chip.due');
+      var due=dueEl?dueEl.textContent.replace(/^\s*기한\s*·\s*/,'').trim():'';
+      var titleEl=card.querySelector('.ttitle');
+      var grp=card.parentNode;
+      while(grp&&!(grp.classList&&grp.classList.contains('tgroup')))grp=grp.parentNode;
+      var item={
+        id:card.getAttribute('data-id'),
+        title:titleEl?titleEl.textContent.trim():'',
+        due:due,
+        day:parseDay(due),
+        scat:card.getAttribute('data-scat'),
+        fast:!!(grp&&grp.getAttribute('data-group')==='fast'),
+        card:card
+      };
+      if(item.day!==null&&item.day>=15&&item.day<=21)dated.push(item);
+      else if(item.fast)undated.push(item);
+    });
+    dated.sort(function(a,b){return a.day-b.day||a.id.localeCompare(b.id);});
+    undated.sort(function(a,b){return a.id.localeCompare(b.id);});
+    return{dated:dated,undated:undated};
+  }
+  function makeRow(item,undated){
+    var btn=document.createElement('button');
+    btn.type='button';btn.className='dw-row';
+    var d=document.createElement('span');
+    d.className='dw-date'+(undated?' undated':'');
+    d.textContent=undated?'날짜 미정':'11/'+item.day+' ('+WDAY[item.day]+')';
+    btn.appendChild(d);
+    var main=document.createElement('span');main.className='dw-main';
+    var t=document.createElement('span');t.className='dw-title';
+    var tid=document.createElement('span');tid.className='tid';tid.textContent=item.id;
+    t.appendChild(tid);t.appendChild(document.createTextNode(item.title));
+    main.appendChild(t);
+    var due=document.createElement('span');due.className='dw-due';
+    due.textContent=(undated?('기한 · '+item.due):item.due)+' · '+(SLAB[item.scat]||'대기');
+    main.appendChild(due);
+    btn.appendChild(main);
+    btn.addEventListener('click',function(){jumpTo(item.card);});
+    return btn;
+  }
+  function jumpTo(card){
+    var fold=document.getElementById('allFold');
+    if(fold)fold.open=true;
+    var grp=card.parentNode;
+    while(grp&&!(grp.classList&&grp.classList.contains('tgroup')))grp=grp.parentNode;
+    if(grp&&!grp.classList.contains('open')){
+      grp.classList.add('open');
+      var head=grp.querySelector('.group-head');
+      if(head)head.setAttribute('aria-expanded','true');
+    }
+    card.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  function render(){
+    host.textContent='';
+    DEVS.forEach(function(dev){
+      var data=collect(dev.name);
+      var block=document.createElement('div');block.className='dev-block';
+      var head=document.createElement('div');head.className='dev-name';
+      var b=document.createElement('b');b.textContent=dev.name;head.appendChild(b);
+      var role=document.createElement('span');role.className='role';role.textContent=dev.role;head.appendChild(role);
+      var cnt=document.createElement('span');cnt.className='cnt';
+      cnt.textContent='날짜 확정 '+data.dated.length+'건 · 날짜 미정 '+data.undated.length+'건';
+      head.appendChild(cnt);
+      block.appendChild(head);
+      if(data.dated.length){
+        var ul=document.createElement('ul');ul.className='dw-list';
+        data.dated.forEach(function(it){var li=document.createElement('li');li.appendChild(makeRow(it,false));ul.appendChild(li);});
+        block.appendChild(ul);
+      }else{
+        var p=document.createElement('p');p.className='dw-empty';
+        p.textContent='이번 주(11/15~11/21) 날짜가 잡힌 일정이 없어요.';
+        block.appendChild(p);
+      }
+      if(data.undated.length){
+        var sub=document.createElement('p');sub.className='dw-sub';
+        sub.textContent='날짜 미정 — 즉시 착수인데 기한이 없어 달력에 못 올라가요';
+        block.appendChild(sub);
+        var ul2=document.createElement('ul');ul2.className='dw-list';
+        data.undated.forEach(function(it){var li=document.createElement('li');li.appendChild(makeRow(it,true));ul2.appendChild(li);});
+        block.appendChild(ul2);
+      }
+      host.appendChild(block);
+    });
+  }
+  render();
+  /* Re-render when assignees/statuses change in the task board (including
+     sheet-sync repaints, which mutate data-scat). */
+  document.addEventListener('change',function(e){
+    if(e.target&&(e.target.classList.contains('owner-sel')||e.target.classList.contains('status-sel')))render();
+  });
+  if(window.MutationObserver){
+    var mo=new MutationObserver(function(){render();});
+    document.querySelectorAll('.tcard').forEach(function(c){mo.observe(c,{attributes:true,attributeFilter:['data-scat']});});
+  }
 })();
 </script>
 </body>
