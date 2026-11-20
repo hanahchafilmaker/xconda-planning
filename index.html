@@ -208,13 +208,13 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
 <!-- 2. 지금 급한 것 -->
 <section id="blockers">
   <div class="sec-head"><span class="no">01</span><h2>지금 급한 것</h2></div>
-  <p class="sec-sub">월요일을 기다리지 않는 패스트트랙 <span id="urgFastN">8</span>건, 11/18 운영 배포를 막는 블로커 4건, 이번 주 일정이에요. 아래 현황은 「전체 보기」에서 바꾼 상태가 바로 반영돼요.</p>
+  <p class="sec-sub">월요일을 기다리지 않는 패스트트랙 <span id="urgFastN">7</span>건, 11/18 운영 배포를 막는 블로커 3건, 이번 주 일정이에요. 아래 현황은 「전체 보기」에서 바꾼 상태가 바로 반영돼요.</p>
   <p class="urgent-live" id="urgentLive" role="status"></p>
   <div class="fastbox">
-    <div class="fastbox-head"><b>패스트트랙 — 즉시 착수 <span id="fastRemain">8</span>건</b><span>신규 AI 모델 · 비상사태 · 오류 대응 · 결제 · 보안</span><span id="fastDone"></span></div>
+    <div class="fastbox-head"><b>패스트트랙 — 즉시 착수 <span id="fastRemain">7</span>건</b><span>신규 AI 모델 · 비상사태 · 오류 대응 · 결제 · 보안</span><span id="fastDone"></span></div>
     <ul class="fastlist">
       <li><b>T-06</b> 결제 PortOne V2</li>
-      <li><b>T-07</b> 턴 / Kling 연동</li>
+      <li><b>T-07</b> 턴 / Kling 연동 — 완료 2026-11-20</li>
       <li><b>T-14</b> 핵심 결제 보안 수정 (최우선)</li>
       <li><b>T-25</b> test.xconda.ai 차단</li>
       <li><b>T-44</b> Seedream 5.5 UI 반영</li>
@@ -223,11 +223,10 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
       <li><b>T-49</b> MiniMax H3 API 테스트 화면</li>
     </ul>
   </div>
-  <h3 class="subh">블로커 4건</h3>
+  <h3 class="subh">블로커 3건</h3>
   <div class="blockers">
     <article class="blocker"><span class="tag">배포 차단 · PAY-E2E · 11/17</span><h3>PAY-E2E 게이트 미통과 — 11/18 배포 차단 조건</h3><p>TC-PAY-005 (KRW 1건 + USD 1건) 통과와 증빙 캡처가 필요해요. 미통과면 11/18 운영 배포를 할 수 없어요. 이게 지금 게이트가 “미통과”인 이유예요. (T-82)</p></article>
     <article class="blocker"><span class="tag">검증 수단 없음 · 결-8</span><h3>결-8 관련 TC가 0건이에요</h3><p>결-1~7은 관련 TC가 연결됐는데(총 22건) 결-8만 0건이라, 확정해도 검증할 방법이 없어요. 결정권자는 v0.3에서 “차하나 PM · 전유준”으로 수정됐어요. (T-94)</p></article>
-    <article class="blocker"><span class="tag">일정 공란 · 턴/Kling</span><h3>TRN/Kling 11행 기한이 전부 비어 있어요</h3><p>TRN-REQ-01~06과 TRN-TAB은 정의됐고 TC-TRN 4건도 있지만, 4탭 TRN/KLING 11행 기한이 공란이라 공수·기한이 여전히 [확인 필요]예요. 지연 불가 트랙이라 가장 위험해요. (T-07)</p></article>
     <article class="blocker"><span class="tag">미선택 · 결-6 · 11/16 마감</span><h3>결-6 선택지가 아직 안 골라졌어요</h3><p>도면 업로드 용량·형식은 서버 한도 확인 후 결정해야 해요. 한도 확인 없이는 확정안을 쓸 수 없어요. 결정 요청 8건, 확정안 8/8 공란, 마감은 11/16이에요.</p></article>
   </div>
 
@@ -341,15 +340,15 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
   </div>
   <div class="tdetail" hidden><p class="tfull">결제 PortOne V2 (v0.3 PAY-REQ-01~07, FN-PAY-01~03) — PAY-01~06 기한 2026-11-16, PAY-E2E 게이트 미통과 (11/18 배포 차단, T-82). PAY-REQ-01 재확인 필요, PAY-REQ-05/06은 TC 0·범위 제외</p><p class="tsrc">출처 · 운영 시트 4_결제 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 결제·턴</p></div>
 </article>
-<article class="tcard" data-id="T-07" data-cat="개발" data-track="결제·턴" data-scat="doing" data-status="진행 중">
+<article class="tcard" data-id="T-07" data-cat="개발" data-track="결제·턴" data-scat="done" data-status="완료">
   <div class="tmain">
     <div class="tleft"><div class="tidrow"><span class="tid">T-07</span><span class="chip fast">즉시 착수</span><span class="chip track">결제·턴</span><span class="chip cat">개발</span></div>
     <h3 class="ttitle">턴 / Kling 연동</h3></div>
-    <div class="tchips"><span class="chip due">기한 · [확인 필요]</span><span class="chip status st-doing">진행 중</span>
+    <div class="tchips"><span class="chip due">기한 · —</span><span class="chip status st-done">완료</span>
     <label class="owner">담당 <select class="owner-sel" name="owner-T-07" data-task="T-07" aria-label="T-07 담당 지정"><option value="미지정">미지정</option><option value="차하나">차하나</option><option value="이진서(대표)">이진서(대표)</option><option value="전유준">전유준</option><option value="권태윤" selected>권태윤</option><option value="나서영">나서영</option><option value="김재환">김재환</option><option value="박찬혁">박찬혁</option><option value="최종현">최종현</option><option value="황보민혁">황보민혁</option><option value="기타">기타</option></select></label>
     <button type="button" class="detail-btn" aria-expanded="false">상세 ▾</button></div>
   </div>
-  <div class="tdetail" hidden><p class="tfull">턴/Kling (v0.3 TRN-REQ-01~06 + TRN-TAB 정의됨, TC-TRN-001~004 존재 — TRN-REQ-04/06은 TC 0·범위 제외, Kling 4.0·3.0 Pro·3.0 4K·OMNI·Image O1) — 공수·기한은 여전히 [확인 필요] (4탭 TRN/KLING 11행 기한 공란), 지연 불가. 11/16 현황: 클링 연동됨, 턴은 미확인.</p><p class="tsrc">출처 · 운영 시트 4_결제 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 결제·턴</p></div>
+  <div class="tdetail" hidden><p class="tfull">턴/Kling (v0.3 TRN-REQ-01~06 + TRN-TAB 정의됨, TC-TRN-001~004 존재 — TRN-REQ-04/06은 TC 0·범위 제외, Kling 4.0·3.0 Pro·3.0 4K·OMNI·Image O1) — 완료 2026-11-20 (차하나 PD 확인).</p><p class="tsrc">출처 · 운영 시트 4_결제 &nbsp;|&nbsp; 구분 · 개발 &nbsp;|&nbsp; 트랙 · 결제·턴</p></div>
 </article>
 <article class="tcard" data-id="T-14" data-cat="개발" data-track="스트라이프 사고" data-scat="doing" data-status="진행 중">
   <div class="tmain">
@@ -1684,7 +1683,7 @@ details.fold summary{cursor:pointer;font-weight:900;font-size:17px;padding:18px 
     <div class="tracks">
       <article class="track"><h3>블로킹보드 UI</h3><span class="st go">일정 있음 · 13.25MD</span><ul><li><b>요구 49건</b> (FR 36 + PAY 7 + TRN 6, FR-25~27 추가) · 커버리지 <b>40/49 = 82%</b></li><li><b>기능 74개</b> 관련 요구사항 연결 완료 · <b>QA 85건</b> (QA 시트 2026-11-17 판정 기준 — 통과 21 · 실패 16 · 보류 18 · 미실행 27 · 해당없음 3 · 실행 55/85)</li><li>FR-08·FR-11·FR-16 “외 N” 표기는 v0.3에서 전수 표기로 수정 (7개·7개·14개), FR-15는 3-20만으로 축소, FR-22 연결 기능은 “—”로 비워짐</li><li>P0인데 “다음 차수”로 빠진 <b>FR-07</b>(재배치·잠금)·<b>FR-22</b>(추정값 배지) — 우선순위를 내리거나 제외 사유를 적어야 해요</li><li>체험판 UI를 운영 서버로 옮기고 잠긴 저장·4·5단계·파일 메뉴를 여는 것이 골자</li></ul></article>
       <article class="track"><h3>결제 — PortOne V2</h3><span class="st hold">일정 [확인 필요]</span><ul><li><b>PAY-REQ-01~07 · FN-PAY-01~03</b></li><li>PAY-01~06 기한 <b>2026-11-16</b></li><li><b>PAY-E2E 미통과</b>가 11/18 배포 차단 조건 (TC-PAY-005, T-82)</li><li>해외(Stripe) 우선 방침, 토스는 가입만 된 상태로 별도 확인이 필요해요</li></ul></article>
-      <article class="track"><h3>턴 · Kling</h3><span class="st hold">권태윤 확인 후 기입</span><ul><li><b>TRN-REQ-01~06 + TRN-TAB</b> 정의됨 · TC-TRN 4건</li><li>대상 모델: <b>Kling 4.0 · 3.0 Pro · 3.0 4K · OMNI · Image O1</b></li><li>공수·기한은 여전히 [확인 필요] — 4탭 TRN/KLING <b>11행 기한 공란</b></li><li>Kling/턴 지연 불가(거래처 요구) — 일정이 비어 있는 게 가장 위험한 트랙이에요</li></ul></article>
+      <article class="track"><h3>턴 · Kling</h3><span class="st go">완료 · 2026-11-20</span><ul><li><b>TRN-REQ-01~06 + TRN-TAB</b> 정의됨 · TC-TRN 4건</li><li>대상 모델: <b>Kling 4.0 · 3.0 Pro · 3.0 4K · OMNI · Image O1</b></li><li>완료 2026-11-20 — 차하나 PD 확인 (T-07)</li></ul></article>
     </div>
   </div></details>
 
